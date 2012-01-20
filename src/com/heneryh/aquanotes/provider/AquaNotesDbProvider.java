@@ -17,6 +17,8 @@
 package com.heneryh.aquanotes.provider;
 
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Blocks;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.Controllers;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.Probes;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Rooms;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.SearchSuggest;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Sessions;
@@ -36,12 +38,14 @@ import android.app.SearchManager;
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.provider.BaseColumns;
@@ -64,6 +68,28 @@ public class AquaNotesDbProvider extends ContentProvider {
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
+	/**
+	 *  URI IDs to be used in the switch () statements
+	 *  notice two possible switch statements for the same twig depending on if something follows
+	 */
+	private static final int CONTROLLERS = 901;
+	private static final int CONTROLLERS_ID = 902;
+
+	private static final int CONTROLLERS_ID_PROBES = 903;
+	private static final int CONTROLLERS_ID_PROBES_ID = 904;
+	private static final int CONTROLLERS_ID_PROBES_NAME = 905;
+	private static final int CONTROLLERS_ID_OUTLETS = 906;
+	private static final int CONTROLLERS_ID_OUTLETS_ID = 907;
+	private static final int CONTROLLERS_ID_OUTLETS_DEVICE_ID = 908;
+	private static final int CONTROLLERS_ID_OUTLETS_RSC = 909; 
+
+	private static final int CONTROLLERS_ID_PROBEDATA_AT = 910; 
+	private static final int CONTROLLERS_ID_PROBEDATA_FOR_ID = 911; 
+	private static final int CONTROLLERS_ID_PROBEDATA_FOR_NAME = 912; 
+	private static final int CONTROLLERS_ID_OUTLETDATA_AT = 913; 
+	private static final int CONTROLLERS_ID_OUTLETDATA_FOR_ID = 914; 
+	private static final int CONTROLLERS_ID_OUTLETDATA_FOR_DEVICE_ID = 915; 
+    
     private static final int BLOCKS = 100;
     private static final int BLOCKS_BETWEEN = 101;
     private static final int BLOCKS_ID = 102;
@@ -107,7 +133,142 @@ public class AquaNotesDbProvider extends ContentProvider {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = AquaNotesDbContract.CONTENT_AUTHORITY;
 
-        matcher.addURI(authority, "blocks", BLOCKS);
+    	/**
+    	 *  URI IDs to be used in the switch () statements
+    	 *  notice two possible switch statements for the same twig depending on if something follows
+    	 */
+//////////////////////////////////////////////
+//    	private static final int CONTROLLERS = 101;
+//    	private static final int CONTROLLERS_ID = 102;
+//      private static final String PATH_CONTROLLERS = "controllers";
+        matcher.addURI(authority, "controllers", CONTROLLERS);
+		// query = return all controllers 
+		// insert = add the controller defined in the values object, auto-create a controller_id
+		// update = ?
+		// delete = delete all controllers, probes, data, etc ie everything!
+		// getType = ?
+
+        matcher.addURI(authority, "controllers/#", CONTROLLERS_ID);
+		// query = return just one controller
+		// insert = 
+		// update = ?
+		// delete = delete the referenced controller, its probes and all probe data for this controller
+		// getType = ?
+
+//////////////////////////////////////////////
+//    	private static final int CONTROLLERS_ID_PROBES = 201;
+//    	private static final int CONTROLLERS_ID_PROBES_ID = 202;
+//    	private static final int CONTROLLERS_ID_PROBES_NAME = 203;
+//    	private static final int CONTROLLERS_ID_OUTLETS = 204;
+//    	private static final int CONTROLLERS_ID_OUTLETS_ID = 205;
+//    	private static final int CONTROLLERS_ID_OUTLETS_DEVICE_ID = 206;
+//    	private static final int CONTROLLERS_ID_OUTLETS_RSC = 207; 
+//      private static final String PATH_PROBES = "probes";
+//      private static final String PATH_PROBES_NAME = "probes_nm";
+//      private static final String PATH_OUTLETS = "outlets";
+//      private static final String PATH_OUTLETS_RESOURCE_ID = "outlets_rsc";
+//      private static final String PATH_OUTLETS_DEVICE_ID = "outlets_did";
+        matcher.addURI(authority, "controllers/#/probes", CONTROLLERS_ID_PROBES);
+		// query = return all probes for a given controller
+		// insert = add a probe defined by the values object to the referenced controller, auto-create a probe_id 
+		// update = ?
+		// delete = delete ?
+		// getType = ?
+
+		matcher.addURI(authority, "controllers/#/probes/#", CONTROLLERS_ID_PROBES_ID);
+		// query = return just one probe, by ID
+		// insert = add ?
+		// update = ?
+		// delete = delete ?
+		// getType = ?
+
+		matcher.addURI(authority, "controllers/#/probes_nm/*", CONTROLLERS_ID_PROBES_NAME);
+		// query = return just one probe, by name
+		// insert = add ?
+		// update = ?
+		// delete = delete ?
+		// getType = ?
+
+		matcher.addURI(authority, "controllers/#/outlets", CONTROLLERS_ID_OUTLETS);
+		// query = return all probes for a given controller
+		// insert = add a probe defined by the values object to the referenced controller, auto-create a probe_id 
+		// update = ?
+		// delete = delete ?
+		// getType = ?
+
+		matcher.addURI(authority, "controllers/#/outlets/#", CONTROLLERS_ID_OUTLETS_ID);
+		// query = return just one probe, by ID
+		// insert = add ?
+		// update = ?
+		// delete = delete ?
+		// getType = ?
+
+		matcher.addURI(authority, "controllers/#/outlets_did/*", CONTROLLERS_ID_OUTLETS_DEVICE_ID);
+		// query = return just one probe, by name
+		// insert = add ?
+		// update = ?
+		// delete = delete ?
+		// getType = ?
+
+		matcher.addURI(authority, "controllers/#/outlets_rsc/#", CONTROLLERS_ID_OUTLETS_RSC);
+		// query = return the probe record for a given controller and outlet name.
+		// insert = N/A
+		// update = N/A
+		// delete = N/A
+		// getType = ?
+
+//////////////////////////////////////////////
+//    	private static final int CONTROLLERS_ID_PROBEDATA_AT = 303; 
+//    	private static final int CONTROLLERS_ID_OUTLETDATA_AT = 304; 
+//    	private static final int CONTROLLERS_ID_PROBEDATA_FOR_ID = 305; 
+//    	private static final int CONTROLLERS_ID_OUTLETDATA_FOR_ID = 306; 
+//    	private static final int CONTROLLERS_ID_PROBEDATA_FOR_NAME = 307; 
+//    	private static final int CONTROLLERS_ID_OUTLETDATA_FOR_DEVICE_ID = 310; 
+
+		matcher.addURI(authority, "controllers/#/probe_data_at/*", CONTROLLERS_ID_PROBEDATA_AT);
+		// query = return all the probe data records for a given controller at the timestamp provided.
+		// insert = N/A
+		// update = N/A
+		// delete = delete probe data older than '*'
+		// getType = ?
+
+		matcher.addURI(authority, "controllers/#/outlet_data_at/*", CONTROLLERS_ID_OUTLETDATA_AT);
+		// query = return all the probe data records for a given controller at the timestamp provided.
+		// insert = N/A
+		// update = N/A
+		// delete = delete outlet data older than '*'
+		// getType = ?
+
+
+		matcher.addURI(authority, "controllers/#/probe_data_for_id/#", CONTROLLERS_ID_PROBEDATA_FOR_ID);
+		// query = return all the probe data records for a given controller and probe name.
+		// insert = N/A
+		// update = N/A
+		// delete = N/A
+		// getType = ?
+
+		matcher.addURI(authority, "controllers/#/outlet_data_for_id/#", CONTROLLERS_ID_OUTLETDATA_FOR_ID);
+		// query = return all the probe data records for a given controller and outlet name.
+		// insert = N/A
+		// update = N/A
+		// delete = N/A
+		// getType = ?
+
+		matcher.addURI(authority, "controllers/#/probe_data_for_nm/*", CONTROLLERS_ID_PROBEDATA_FOR_NAME);
+		// query = return all the probe data records for a given controller and probe name.
+		// insert = N/A
+		// update = N/A
+		// delete = N/A
+		// getType = ?
+
+		matcher.addURI(authority, "controllers/#/outlet_data_for_deviceID/*", CONTROLLERS_ID_OUTLETDATA_FOR_DEVICE_ID);
+		// query = return all the probe data records for a given controller and outlet name.
+		// insert = N/A
+		// update = N/A
+		// delete = N/A
+		// getType = ?  
+		
+		matcher.addURI(authority, "blocks", BLOCKS);
         matcher.addURI(authority, "blocks/between/*/*", BLOCKS_BETWEEN);
         matcher.addURI(authority, "blocks/*", BLOCKS_ID);
         matcher.addURI(authority, "blocks/*/sessions", BLOCKS_ID_SESSIONS);
@@ -155,6 +316,64 @@ public class AquaNotesDbProvider extends ContentProvider {
     public String getType(Uri uri) {
         final int match = sUriMatcher.match(uri);
         switch (match) {
+//////////////////////////////////////////////
+//private static final int CONTROLLERS = 101;
+//private static final int CONTROLLERS_ID = 102;
+//private static final String PATH_CONTROLLERS = "controllers";
+        case CONTROLLERS:
+        	return Controllers.CONTENT_TYPE;
+        case CONTROLLERS_ID:
+        	return Controllers.CONTENT_ITEM_TYPE;
+
+//////////////////////////////////////////////
+//private static final int CONTROLLERS_ID_PROBES = 201;
+//private static final int CONTROLLERS_ID_PROBES_ID = 202;
+//private static final int CONTROLLERS_ID_PROBES_NAME = 203;
+//private static final int CONTROLLERS_ID_OUTLETS = 204;
+//private static final int CONTROLLERS_ID_OUTLETS_ID = 205;
+//private static final int CONTROLLERS_ID_OUTLETS_DEVICE_ID = 206;
+//private static final int CONTROLLERS_ID_OUTLETS_RSC = 207; 
+//private static final String PATH_PROBES = "probes";
+//private static final String PATH_PROBES_NAME = "probes_nm";
+//private static final String PATH_OUTLETS = "outlets";
+//private static final String PATH_OUTLETS_RESOURCE_ID = "outlets_rsc";
+//private static final String PATH_OUTLETS_DEVICE_ID = "outlets_did";
+        case CONTROLLERS_ID_PROBES:
+        	return Probes.CONTENT_TYPE;
+        case CONTROLLERS_ID_PROBES_ID:
+        	return Probes.CONTENT_ITEM_TYPE;
+        case CONTROLLERS_ID_PROBES_NAME:
+        	return Probes.CONTENT_ITEM_TYPE;
+        case CONTROLLERS_ID_OUTLETS:
+        	return Probes.CONTENT_TYPE;
+        case CONTROLLERS_ID_OUTLETS_ID:
+        	return Probes.CONTENT_ITEM_TYPE;
+        case CONTROLLERS_ID_OUTLETS_DEVICE_ID:
+        	return Probes.CONTENT_ITEM_TYPE;
+        case CONTROLLERS_ID_OUTLETS_RSC:
+        	return Probes.CONTENT_ITEM_TYPE;
+
+//////////////////////////////////////////////
+//private static final int CONTROLLERS_ID_PROBEDATA_AT = 303; 
+//private static final int CONTROLLERS_ID_OUTLETDATA_AT = 304; 
+//private static final int CONTROLLERS_ID_PROBEDATA_FOR_ID = 305; 
+//private static final int CONTROLLERS_ID_OUTLETDATA_FOR_ID = 306; 
+//private static final int CONTROLLERS_ID_PROBEDATA_FOR_NAME = 307; 
+//private static final int CONTROLLERS_ID_OUTLETDATA_FOR_DEVICE_ID = 310; 
+        case CONTROLLERS_ID_PROBEDATA_AT:
+        	return Probes.CONTENT_TYPE;
+        case CONTROLLERS_ID_OUTLETDATA_AT:
+        	return Probes.CONTENT_TYPE;
+        case CONTROLLERS_ID_PROBEDATA_FOR_ID:
+        	return Probes.CONTENT_TYPE;
+        case CONTROLLERS_ID_OUTLETDATA_FOR_ID:
+        	return Probes.CONTENT_TYPE;
+        case CONTROLLERS_ID_PROBEDATA_FOR_NAME:
+        	return Probes.CONTENT_TYPE;
+        case CONTROLLERS_ID_OUTLETDATA_FOR_DEVICE_ID:
+        	return Probes.CONTENT_TYPE;
+        	
+        	
             case BLOCKS:
                 return Blocks.CONTENT_TYPE;
             case BLOCKS_BETWEEN:
@@ -216,9 +435,25 @@ public class AquaNotesDbProvider extends ContentProvider {
             String sortOrder) {
         if (LOGV) Log.v(TAG, "query(uri=" + uri + ", proj=" + Arrays.toString(projection) + ")");
         final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+		String limit1 = null;
 
         final int match = sUriMatcher.match(uri);
         switch (match) {
+		// All controllers
+		case CONTROLLERS: {
+			qb.setTables(Tables.CONTROLLERS);
+			return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
+		}
+
+		// Controller where ID=x
+		case CONTROLLERS_ID: {
+			String controllerId = uri.getPathSegments().get(1);
+			qb.setTables(Tables.CONTROLLERS);
+			qb.appendWhere(BaseColumns._ID + "=" + controllerId);
+			return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
+		}
+
             default: {
                 // Most cases are handled with simple SelectionBuilder
                 final SelectionBuilder builder = buildExpandedSelection(uri, match);
@@ -249,7 +484,25 @@ public class AquaNotesDbProvider extends ContentProvider {
         if (LOGV) Log.v(TAG, "insert(uri=" + uri + ", values=" + values.toString() + ")");
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
+		long rowId;
+
         switch (match) {
+		case CONTROLLERS: {
+			rowId = db.insert(Tables.CONTROLLERS, Controllers.TITLE, values);
+            getContext().getContentResolver().notifyChange(uri, null);
+            return ContentUris.withAppendedId(uri, rowId);
+		}
+		case CONTROLLERS_ID_PROBES: {
+			// should probably move the 0/1 to here and use two URIs.
+			//                String probeName = uri.getPathSegments().get(3);
+			//                values.put(ProbesColumns.CONTROLLER_ID, controllerId);
+			//                values.put(ProbesColumns.PROBENAME, probeName);
+			//                values.put(ProbesColumns.UNITS, "tst");
+			rowId = db.insert(Tables.PROBES, Probes.PROBE_NAME, values);
+            getContext().getContentResolver().notifyChange(uri, null);
+            return ContentUris.withAppendedId(uri, rowId);
+		}
+
             case BLOCKS: {
                 db.insertOrThrow(Tables.BLOCKS, null, values);
                 getContext().getContentResolver().notifyChange(uri, null);
@@ -306,6 +559,15 @@ public class AquaNotesDbProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         if (LOGV) Log.v(TAG, "update(uri=" + uri + ", values=" + values.toString() + ")");
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        
+    	switch (sUriMatcher.match(uri)) {
+    	case CONTROLLERS_ID: {
+//			if (LOGD) Log.d(TAG, "update() controller by id with uri=" + uri);
+    		String controllerId = uri.getPathSegments().get(1);
+    		return db.update(Tables.CONTROLLERS, values, BaseColumns._ID + "=?",
+    				new String []{controllerId});
+		}
+    	}
         final SelectionBuilder builder = buildSimpleSelection(uri);
         int retVal = builder.where(selection, selectionArgs).update(db, values);
         getContext().getContentResolver().notifyChange(uri, null);

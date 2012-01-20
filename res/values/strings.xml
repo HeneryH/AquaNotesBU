@@ -135,4 +135,24 @@
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
 
+    <!--  Preferences Configuration Activity -->    
+    <string name="title_configure">Configure controller widget</string>
+    <string name="conf_controller_name_instr">Enter a title for this controller:</string>
+    <string name="conf_controller_name_default">My Apex</string>
+    <string name="conf_controller_url_instr">Enter a URL for this controller:</string>
+    <string name="conf_controller_url_default">http://heneryh.homeip.net:1080/</string>
+    <string name="conf_controller_wifi_url_instr">Enter a local URL for this controller when home:</string>
+    <string name="conf_controller_wifi_url_default">http://192.168.1.50/</string>
+    <string name="conf_controller_wifi_sid_instr">WiFi access point to detect when home:</string>
+    <string name="conf_controller_wifi_sid_default">Home_F</string>
+    <string name="conf_controller_user_instr">Enter a username for this controller:</string>
+    <string name="conf_controller_user_default">admin</string>
+    <string name="conf_controller_password_instr">Enter a password for this controller:</string>
+    <string name="conf_controller_password_default">1234</string>
+    <string name="conf_controller_update_interval_instr">Enter a widget update interval in minutes:</string>
+    <string name="conf_controller_update_interval_default">5</string>
+    <string name="conf_controller_prune_instr">Days of historic data to keep:</string>
+    <string name="conf_controller_prune_default">7</string>
+    <string name="conf_save">Save</string>
+        
 </resources>

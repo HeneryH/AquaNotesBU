@@ -74,7 +74,7 @@ public class SyncService extends IntentService {
     private static final String TAG = "SyncService";
 
     public static final String EXTRA_STATUS_RECEIVER =
-            "com.google.android.iosched.extra.STATUS_RECEIVER";
+            "com.heneryh.aquanotes.extra.STATUS_RECEIVER";
 
     public static final int STATUS_RUNNING = 0x1;
     public static final int STATUS_ERROR = 0x2;

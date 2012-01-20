@@ -18,6 +18,12 @@ package com.heneryh.aquanotes.provider;
 
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Blocks;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.BlocksColumns;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.Controllers;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.ControllersColumns;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.ProbeData;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.ProbeDataColumns;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.Probes;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.ProbesColumns;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Rooms;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.RoomsColumns;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Sessions;
@@ -44,18 +50,25 @@ import android.util.Log;
 public class AquaNotesDatabase extends SQLiteOpenHelper {
     private static final String TAG = "AquaNotesDatabase";
 
-    private static final String DATABASE_NAME = "schedule.db";
+    private static final String DATABASE_NAME = "aquanotes.db";
 
     // NOTE: carefully update onUpgrade() when bumping database versions to make
     // sure user data is saved.
 
-    private static final int VER_LAUNCH = 21;
-    private static final int VER_SESSION_FEEDBACK_URL = 22;
-    private static final int VER_SESSION_NOTES_URL_SLUG = 23;
+    private static final int VER_LAUNCH = 1;
+    private static final int VER_SESSION_NEXT = 2;
 
-    private static final int DATABASE_VERSION = VER_SESSION_NOTES_URL_SLUG;
+    private static final int DATABASE_VERSION = VER_LAUNCH;
 
     interface Tables {
+        String CONTROLLERS = "controllers";
+        String PROBES = "probes";
+        String PROBE_DATA = "probe_data";
+        
+        String PROBE_VIEW = "probe_view";
+        String DATA_VIEW = "data_view";
+
+        // delete below tables
         String BLOCKS = "blocks";
         String TRACKS = "tracks";
         String ROOMS = "rooms";
@@ -181,6 +194,97 @@ public class AquaNotesDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+    	
+//      String CONTROLLER_ID = "_id";
+//      String TITLE = "title";
+//      String WAN_URL = "wan_url";
+//      String WIFI_URL = "wifi_url";
+//      String WIFI_SSID = "wifi_ssid";
+//      String USER = "user";
+//      String PW = "pw";
+//      String LAST_UPDATED = "last_updated";
+//      String UPDATE_INTERVAL = "update_i";
+//      String DB_SAVE_DAYS = "db_save_days";
+//      String CONTROLLER_TYPE = "controller_type";
+
+      db.execSQL("CREATE TABLE " + Tables.CONTROLLERS + " ("
+              + BaseColumns._ID + " INTEGER PRIMARY KEY ,"  /*AUTOINCREMENT*/
+              + ControllersColumns.TITLE + " TEXT,"
+              + ControllersColumns.WAN_URL + " TEXT,"
+              + ControllersColumns.WIFI_URL + " TEXT,"
+              + ControllersColumns.WIFI_SSID + " TEXT,"
+              + ControllersColumns.USER + " TEXT,"
+              + ControllersColumns.PW + " TEXT,"
+              + ControllersColumns.LAST_UPDATED + " LONG,"
+              + ControllersColumns.UPDATE_INTERVAL + " INTEGER,"
+              + ControllersColumns.DB_SAVE_DAYS + " INTEGER,"
+              + ControllersColumns.CONTROLLER_TYPE + " TEXT"
+              + /*", UNIQUE (" + ControllersColumns.CONTROLLER_ID + ") ON CONFLICT REPLACE*/")");
+
+//      String PROBE_ID = "_id";
+//      String PROBE_NAME = "probe_name";
+//      String DEVICE_ID = "device_id";
+//      String TYPE = "probe_type";
+//      String RESOURCE_ID = "resource_id";
+//      String CONTROLLER_ID = "controller_id";
+
+      db.execSQL("CREATE TABLE " + Tables.PROBES + " ("
+              + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+              + ProbesColumns.PROBE_NAME + " TEXT,"
+              + ProbesColumns.DEVICE_ID + " TEXT,"
+              + ProbesColumns.TYPE + " INTEGER,"
+              + ProbesColumns.RESOURCE_ID + " INTEGER,"
+              + ProbesColumns.CONTROLLER_ID + " INTEGER"
+              + /*", UNIQUE (" + ProbesColumns.PROBE_ID + ") ON CONFLICT REPLACE*/")");
+
+//      String DATA_ID = "_id";
+//      String VALUE = "value";
+//      String TIMESTAMP = "timestamp";
+//      String PROBE_ID = "probe_id";
+
+      db.execSQL("CREATE TABLE " + Tables.PROBE_DATA + " ("
+              + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+              + ProbeDataColumns.VALUE + " TEXT,"
+              + ProbeDataColumns.PROBE_ID + " INTEGER,"
+              + ProbeDataColumns.TIMESTAMP + " LONG"
+              + /*", UNIQUE (" + ProbeDataColumns.DATA_ID + ") ON CONFLICT REPLACE*/")");
+      
+      db.execSQL("CREATE VIEW "+ Tables.PROBE_VIEW +
+      	    " AS SELECT " + Tables.PROBES + "." + Probes._ID + ","+
+      	    " " + Tables.PROBES + "." + Probes.PROBE_NAME + "," +
+      	    " " + Tables.PROBES + "." + Probes.DEVICE_ID + "," +
+      	    " " + Tables.PROBES + "." + Probes.TYPE + "," +
+      	    " " + Tables.PROBES + "." + Probes.RESOURCE_ID + "," +
+      	    " " + Tables.PROBES + "." + Probes.CONTROLLER_ID + "," +
+      	    " " + Tables.CONTROLLERS + "." + Controllers.TITLE + "," +
+      	    " " + Tables.CONTROLLERS + "." + Controllers.WAN_URL + "," +
+      	    " " + Tables.CONTROLLERS + "." + Controllers.WIFI_URL + "," +
+      	    " " + Tables.CONTROLLERS + "." + Controllers.WIFI_SSID + "," +
+      	    " " + Tables.CONTROLLERS + "." + Controllers.USER + "," +
+      	    " " + Tables.CONTROLLERS + "." + Controllers.PW + "," +
+      	    " " + Tables.CONTROLLERS + "." + Controllers.LAST_UPDATED + "," +
+      	    " " + Tables.CONTROLLERS + "." + Controllers.UPDATE_INTERVAL + "," +
+      	    " " + Tables.CONTROLLERS + "." + Controllers.DB_SAVE_DAYS + "," +
+      	    " " + Tables.CONTROLLERS + "." + Controllers.CONTROLLER_TYPE + "" +
+      	    " FROM " + Tables.PROBES + " JOIN " + Tables.CONTROLLERS +
+      	    " ON " + Tables.PROBES + "." + Probes.CONTROLLER_ID + " =" + Tables.CONTROLLERS + "." + Controllers._ID
+      	    );
+
+      db.execSQL("CREATE VIEW "+ Tables.DATA_VIEW +
+      	    " AS SELECT " + Tables.PROBE_DATA + "." + ProbeData._ID + " ," +
+      	    " " + Tables.PROBE_DATA + "." + ProbeData.VALUE + "," +
+      	    " " + Tables.PROBE_DATA + "." + ProbeData.TIMESTAMP + "," +
+      	    " " + Tables.PROBE_DATA + "." + ProbeData.PROBE_ID + "," +
+      	    " " + Tables.PROBES + "." + Probes.PROBE_NAME + "," +
+      	    " " + Tables.PROBES + "." + Probes.DEVICE_ID + "," +
+      	    " " + Tables.PROBES + "." + Probes.TYPE + "," +
+      	    " " + Tables.PROBES + "." + Probes.RESOURCE_ID + "," +
+      	    " " + Tables.PROBES + "." + Probes.CONTROLLER_ID + "" +
+      	    " FROM " + Tables.PROBE_DATA + " JOIN " + Tables.PROBES +
+      	    " ON " + Tables.PROBE_DATA + "." + ProbeData.PROBE_ID + " =" + Tables.PROBES + "." + Probes._ID
+      	    );
+
+      ////// delete below
         db.execSQL("CREATE TABLE " + Tables.BLOCKS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + BlocksColumns.BLOCK_ID + " TEXT NOT NULL,"
@@ -354,25 +458,33 @@ public class AquaNotesDatabase extends SQLiteOpenHelper {
         int version = oldVersion;
 
         switch (version) {
-            case VER_LAUNCH:
-                // Version 22 added column for session feedback URL.
-                db.execSQL("ALTER TABLE " + Tables.SESSIONS + " ADD COLUMN "
-                        + SessionsColumns.SESSION_FEEDBACK_URL + " TEXT");
-                version = VER_SESSION_FEEDBACK_URL;
-
-            case VER_SESSION_FEEDBACK_URL:
-                // Version 23 added columns for session official notes URL and slug.
-                db.execSQL("ALTER TABLE " + Tables.SESSIONS + " ADD COLUMN "
-                        + SessionsColumns.SESSION_NOTES_URL + " TEXT");
-                db.execSQL("ALTER TABLE " + Tables.SESSIONS + " ADD COLUMN "
-                        + SessionsColumns.SESSION_SLUG + " TEXT");
-                version = VER_SESSION_NOTES_URL_SLUG;
-        }
+//        case VER_LAUNCH:
+//        	// Version 2 added column for session feedback URL.
+//        	db.execSQL("ALTER TABLE " + Tables.SESSIONS + " ADD COLUMN "
+//        			+ SessionsColumns.SESSION_FEEDBACK_URL + " TEXT");
+//        	version = VER_SESSION_FEEDBACK_URL;
+//
+//  case VER_SESSION_FEEDBACK_URL:
+//      // Version 3 added columns for session official notes URL and slug.
+//      db.execSQL("ALTER TABLE " + Tables.SESSIONS + " ADD COLUMN "
+//              + SessionsColumns.SESSION_NOTES_URL + " TEXT");
+//      db.execSQL("ALTER TABLE " + Tables.SESSIONS + " ADD COLUMN "
+//              + SessionsColumns.SESSION_SLUG + " TEXT");
+//      version = VER_SESSION_NOTES_URL_SLUG;
+}
 
         Log.d(TAG, "after upgrade logic, at version " + version);
         if (version != DATABASE_VERSION) {
             Log.w(TAG, "Destroying old data during upgrade");
 
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.CONTROLLERS);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.PROBES);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.PROBE_DATA);
+            
+            db.execSQL("DROP VIEW IF EXISTS " + Tables.PROBE_VIEW);
+            db.execSQL("DROP VIEW IF EXISTS " + Tables.DATA_VIEW);
+
+            /// delete below
             db.execSQL("DROP TABLE IF EXISTS " + Tables.BLOCKS);
             db.execSQL("DROP TABLE IF EXISTS " + Tables.TRACKS);
             db.execSQL("DROP TABLE IF EXISTS " + Tables.ROOMS);

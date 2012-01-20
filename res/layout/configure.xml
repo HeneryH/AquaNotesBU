@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2012 Joe Flynn - Licensing to be determined
+-->
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:text="@string/conf_controller_name_instr"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <EditText
+            android:id="@+id/conf_title"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:text="@string/conf_controller_name_default"
+            android:freezesText="true" />
+
+        <TextView
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:text="@string/conf_controller_url_instr"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <EditText
+            android:id="@+id/conf_url"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:text="@string/conf_controller_url_default"
+            android:freezesText="true" />
+
+        <TextView
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:text="@string/conf_controller_wifi_url_instr"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <EditText
+            android:id="@+id/conf_wifi_url"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:text="@string/conf_controller_wifi_url_default"
+            android:freezesText="true" />
+
+                <TextView
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:text="@string/conf_controller_wifi_sid_instr"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <EditText
+            android:id="@+id/conf_wifi_sid"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:text="@string/conf_controller_wifi_sid_default"
+            android:freezesText="true" />
+
+        <TextView
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:text="@string/conf_controller_user_instr"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <EditText
+            android:id="@+id/conf_user"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:text="@string/conf_controller_user_default"
+            android:freezesText="true" />
+
+        <TextView
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:text="@string/conf_controller_password_instr"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <EditText
+            android:id="@+id/conf_password"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:text="@string/conf_controller_password_default"
+            android:password="true"
+            android:freezesText="true" />
+
+        <TextView
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:text="@string/conf_controller_update_interval_instr"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <EditText
+            android:id="@+id/conf_update_interval_mins"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:text="@string/conf_controller_update_interval_default"
+            android:freezesText="true" />
+
+        <TextView
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:text="@string/conf_controller_prune_instr"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <EditText
+            android:id="@+id/conf_prune"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:text="@string/conf_controller_prune_default"
+            android:freezesText="true" />
+        
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            style="@android:style/ButtonBar">
+
+
+
+            <Button
+                android:id="@+id/conf_save"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/conf_save" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
+
+

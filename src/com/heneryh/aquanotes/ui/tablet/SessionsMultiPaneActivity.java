@@ -20,7 +20,7 @@ import com.heneryh.aquanotes.R;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract;
 import com.heneryh.aquanotes.ui.BaseMultiPaneActivity;
 import com.heneryh.aquanotes.ui.SessionDetailFragment;
-import com.heneryh.aquanotes.ui.SessionsFragment;
+import com.heneryh.aquanotes.ui.DbMaintProbesFragment;
 import com.heneryh.aquanotes.ui.TracksFragment;
 import com.heneryh.aquanotes.ui.phone.SessionDetailActivity;
 import com.heneryh.aquanotes.ui.phone.SessionsActivity;
@@ -32,7 +32,7 @@ import android.view.ViewGroup;
 
 /**
  * A multi-pane activity, consisting of a {@link TracksDropdownFragment}, a
- * {@link SessionsFragment}, and {@link SessionDetailFragment}.
+ * {@link DbMaintProbesFragment}, and {@link SessionDetailFragment}.
  *
  * This activity requires API level 11 or greater because {@link TracksDropdownFragment} requires
  * API level 11.
@@ -72,7 +72,7 @@ public class SessionsMultiPaneActivity extends BaseMultiPaneActivity {
     public FragmentReplaceInfo onSubstituteFragmentForActivityLaunch(String activityClassName) {
         if (SessionsActivity.class.getName().equals(activityClassName)) {
             return new FragmentReplaceInfo(
-                    SessionsFragment.class,
+                    DbMaintProbesFragment.class,
                     "sessions",
                     R.id.fragment_container_sessions);
         } else if (SessionDetailActivity.class.getName().equals(activityClassName)) {

@@ -1,3 +1,4 @@
+package com.heneryh.aquanotes.io;
 /*
  * Copyright 2011 Google Inc.
  *
@@ -13,9 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.heneryh.aquanotes.io;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -23,10 +21,10 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.OperationApplicationException;
 import android.net.Uri;
 import android.os.RemoteException;
@@ -47,11 +45,9 @@ import javax.xml.parsers.SAXParserFactory;
  * <p>
  * This class is only designed to handle simple one-way synchronization.
  */
-public abstract class XmlHandler {
-    private final String mAuthority;
+public class NewXmlHandler {
 
-    public XmlHandler(String authority) {
-        mAuthority = authority;
+    public NewXmlHandler() {
     }
 
     /**
@@ -59,38 +55,42 @@ public abstract class XmlHandler {
      * {@link ContentProviderOperation} that are immediately applied using the
      * given {@link ContentResolver}.
      */
-    public void parseAndApply(XmlPullParser parser, ContentResolver resolver)
+    public static void parseAndStore(InputStream input, Uri controllerUri, DefaultHandler parser)
             throws HandlerException {
-        try {
-            final ArrayList<ContentProviderOperation> batch = parse(parser, resolver);
-            resolver.applyBatch(mAuthority, batch);
+    	try {
+    		/* Get a SAXParser from the SAXPArserFactory. */
+    		SAXParserFactory spf = SAXParserFactory.newInstance();
+    		SAXParser sp = spf.newSAXParser();
 
-        } catch (HandlerException e) {
-            throw e;
-        } catch (XmlPullParserException e) {
-            throw new HandlerException("Problem parsing XML response", e);
-        } catch (IOException e) {
-            throw new HandlerException("Problem reading response", e);
-        } catch (RemoteException e) {
-            // Failed binder transactions aren't recoverable
-            throw new RuntimeException("Problem applying batch operation", e);
-        } catch (OperationApplicationException e) {
-            // Failures like constraint violation aren't recoverable
-            // TODO: write unit tests to exercise full provider
-            // TODO: consider catching version checking asserts here, and then
-            // wrapping around to retry parsing again.
-            throw new RuntimeException("Problem applying batch operation", e);
-        }
+    		/* Get the XMLReader of the SAXParser we created. */
+    		XMLReader xr = sp.getXMLReader();
+
+    		xr.setContentHandler(parser);
+
+    		/* Parse the xml-data from our URL and store in the db. */
+    		xr.parse(new InputSource(input));
+
+    		// After parsing, the parse-handler should have populated the database.
+    	} catch (HandlerException e) {
+    		throw e;
+    	} catch (SAXException e) {
+    		throw new HandlerException("Problem parsing XML response", e);
+    	} catch (ParserConfigurationException e) {
+    		throw new HandlerException("Problem parsing XML response", e);
+    	} catch (IOException e) {
+    		throw new HandlerException("Problem reading response", e);
+//    	} catch (RemoteException e) {
+//    		// Failed binder transactions aren't recoverable
+//    		throw new RuntimeException("Problem applying batch operation", e);
+//    	} catch (OperationApplicationException e) {
+//    		// Failures like constraint violation aren't recoverable
+//    		// TODO: write unit tests to exercise full provider
+//    		// TODO: consider catching version checking asserts here, and then
+//    		// wrapping around to retry parsing again.
+//    		throw new RuntimeException("Problem applying batch operation", e);
+    	}
     }
-
-    /**
-     * Parse the given {@link XmlPullParser}, returning a set of
-     * {@link ContentProviderOperation} that will bring the
-     * {@link ContentProvider} into sync with the parsed data.
-     */
-    public abstract ArrayList<ContentProviderOperation> parse(XmlPullParser parser,
-            ContentResolver resolver) throws XmlPullParserException, IOException;
-
+    
     /**
      * General {@link IOException} that indicates a problem occured while
      * parsing or applying an {@link XmlPullParser}.
@@ -115,3 +115,4 @@ public abstract class XmlHandler {
         }
     }
 }
+

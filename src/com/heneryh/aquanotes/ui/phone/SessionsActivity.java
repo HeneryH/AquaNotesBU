@@ -17,7 +17,7 @@
 package com.heneryh.aquanotes.ui.phone;
 
 import com.heneryh.aquanotes.ui.BaseSinglePaneActivity;
-import com.heneryh.aquanotes.ui.SessionsFragment;
+import com.heneryh.aquanotes.ui.DbMaintProbesFragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,7 +25,7 @@ import android.support.v4.app.Fragment;
 public class SessionsActivity extends BaseSinglePaneActivity {
     @Override
     protected Fragment onCreatePane() {
-        return new SessionsFragment();
+        return new DbMaintProbesFragment();
     }
 
     @Override

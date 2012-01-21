@@ -119,13 +119,13 @@ public class ConfigurePrefs extends Activity implements View.OnClickListener {
 				}
 				
 				// Trigger pushing a widget update to surface
-//				SyncService.requestUpdate(new int[] {mAppWidgetId});
+				SyncService.requestUpdate(new int[] {mAppWidgetId});
 
 				Intent updateIntent = new Intent(ACTION_UPDATE_SINGLE);
-//				updateIntent.setClass(this, SyncService.class);
+				updateIntent.setClass(this, SyncService.class);
 
-				// note that startService() will only really start it if not already running
-//				startService(updateIntent);
+				// note that Service() will only really start it if not already running
+				startService(updateIntent);
 
 				setConfigureResult(Activity.RESULT_OK);
 				finish();
@@ -275,13 +275,13 @@ public class ConfigurePrefs extends Activity implements View.OnClickListener {
 			
 			// Trigger pushing a widget update to surface
 			
-//			SyncService.requestUpdate(new int[] {mAppWidgetId});
+			SyncService.requestUpdate(new int[] {mAppWidgetId});
 
 			Intent updateIntent = new Intent(ACTION_UPDATE_SINGLE);
 			updateIntent.setClass(this, SyncService.class);
 
 			// note that startService() will only really start it if not already running
-//			startService(updateIntent);
+			startService(updateIntent);
 
 			setConfigureResult(Activity.RESULT_OK);
 			finish();

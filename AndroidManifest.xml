@@ -60,8 +60,8 @@
             android:label="@string/title_tagstream" />
 
         <activity
-            android:name=".ui.StarredActivity"
-            android:label="@string/title_starred" />
+            android:name=".ui.DbMaintActivity"
+            android:label="@string/title_db_maint" />
 
         <activity
             android:name=".ui.SearchActivity"
@@ -103,7 +103,7 @@
         </activity>
 
         <activity
-            android:name=".ui.phone.SessionsActivity"
+            android:name=".ui.phone.DbMaintProbesActivity"
             android:label="@string/title_sessions">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -122,7 +122,7 @@
         </activity>
 
         <activity
-            android:name=".ui.phone.VendorsActivity"
+            android:name=".ui.phone.DbMaintControllersActivity"
             android:label="@string/title_vendors">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -161,7 +161,7 @@
             android:label="@string/title_map"
             android:configChanges="orientation|keyboardHidden" />
         <activity
-            android:name=".ui.tablet.NowPlayingMultiPaneActivityyingMultiPaneActivityyingMultiPaneActivity"
+            android:name=".ui.tablet.NowPlayingMultiPaneActivity"
             android:label="@string/title_now_playing" />
 
         <!-- Used for install referrer tracking -->

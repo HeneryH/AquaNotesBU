@@ -127,7 +127,7 @@ public class HomeActivity extends BaseActivity {
     				 */
     				cursor.moveToFirst();
     				mControllerId = cursor.getInt(ControllersQuery._ID); 
-//    				SyncService.requestUpdate(mControllerId);
+    				SyncService.requestUpdate(mControllerId);
     	            Log.d(TAG, "Launching app from app-drawer - one controller in the db, using " + mControllerId);
     			} else {
     				final CharSequence[] items = {"Red", "Green", "Blue"};
@@ -227,8 +227,8 @@ public class HomeActivity extends BaseActivity {
 
     private void triggerRefresh() {
         final Intent intent = new Intent(Intent.ACTION_SYNC, null, this, SyncService.class);
-//        intent.putExtra(SyncService.EXTRA_STATUS_RECEIVER, mSyncStatusUpdaterFragment.mReceiver);
-//        startService(intent);
+        intent.putExtra(SyncService.EXTRA_STATUS_RECEIVER, mSyncStatusUpdaterFragment.mReceiver);
+        startService(intent);
 
         if (mTagStreamFragment != null) {
             mTagStreamFragment.refresh();

@@ -31,7 +31,7 @@
     <string name="title_schedule">Schedule</string>
     <string name="title_sessions">Sessions</string>
     <string name="title_session_detail">Session information</string>
-    <string name="title_starred">Starred</string>
+    <string name="title_db_maint">DB Maint</string>
     <string name="title_tracks">Tracks</string>
     <string name="title_vendors">Sandbox</string>
     <string name="title_vendor_detail">Company information</string>
@@ -50,7 +50,7 @@
     <string name="btn_schedule">Schedule</string>
     <string name="btn_map">Map</string>
     <string name="btn_sessions">Sessions</string>
-    <string name="btn_starred">Starred</string>
+    <string name="btn_db_maint">DB Maint</string>
     <string name="btn_vendors">Sandbox</string>
     <string name="btn_announcements">Bulletin</string>
 
@@ -89,8 +89,8 @@
     <string name="search_sessions">Sessions</string>
     <string name="search_vendors">Sandbox</string>
 
-    <string name="starred_sessions">Sessions</string>
-    <string name="starred_vendors">Sandbox</string>
+    <string name="db_maint_controllers">Controllers</string>
+    <string name="db_maint_probes">Probes</string>
 
     <string name="search_label">Google I/O</string>
     <string name="search_hint">Session keywords</string>
@@ -136,12 +136,12 @@
     <string name="decline">Decline</string>
 
     <!--  Preferences Configuration Activity -->    
-    <string name="title_configure">Configure controller widget</string>
+    <string name="title_configure">Configure controller</string>
     <string name="conf_controller_name_instr">Enter a title for this controller:</string>
     <string name="conf_controller_name_default">My Apex</string>
-    <string name="conf_controller_url_instr">Enter a URL for this controller:</string>
+    <string name="conf_controller_url_instr">Enter a URL for this controller (WAN):</string>
     <string name="conf_controller_url_default">http://heneryh.homeip.net:1080/</string>
-    <string name="conf_controller_wifi_url_instr">Enter a local URL for this controller when home:</string>
+    <string name="conf_controller_wifi_url_instr">Enter a local URL for this controller when home (LAN):</string>
     <string name="conf_controller_wifi_url_default">http://192.168.1.50/</string>
     <string name="conf_controller_wifi_sid_instr">WiFi access point to detect when home:</string>
     <string name="conf_controller_wifi_sid_default">Home_F</string>

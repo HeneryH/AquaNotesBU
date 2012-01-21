@@ -20,9 +20,9 @@ import com.heneryh.aquanotes.R;
 import com.heneryh.aquanotes.ui.BaseMultiPaneActivity;
 import com.heneryh.aquanotes.ui.MapFragment;
 import com.heneryh.aquanotes.ui.SessionDetailFragment;
-import com.heneryh.aquanotes.ui.SessionsFragment;
+import com.heneryh.aquanotes.ui.DbMaintProbesFragment;
 import com.heneryh.aquanotes.ui.VendorDetailFragment;
-import com.heneryh.aquanotes.ui.VendorsFragment;
+import com.heneryh.aquanotes.ui.DbMaintControllersFragment;
 import com.heneryh.aquanotes.ui.phone.SessionDetailActivity;
 import com.heneryh.aquanotes.ui.phone.SessionsActivity;
 import com.heneryh.aquanotes.ui.phone.VendorDetailActivity;
@@ -37,7 +37,7 @@ import android.view.View;
 
 /**
  * A multi-pane activity, where the primary navigation pane is a {@link MapFragment}, that shows
- * {@link SessionsFragment}, {@link SessionDetailFragment}, {@link VendorsFragment}, and
+ * {@link DbMaintProbesFragment}, {@link SessionDetailFragment}, {@link DbMaintControllersFragment}, and
  * {@link VendorDetailFragment} as popups.
  *
  * This activity requires API level 11 or greater because of its use of {@link FragmentBreadCrumbs}.
@@ -99,7 +99,7 @@ public class MapMultiPaneActivity extends BaseMultiPaneActivity implements
             mPopupType = POPUP_TYPE_SESSIONS;
             showHideDetailAndPan(true);
             return new FragmentReplaceInfo(
-                    SessionsFragment.class,
+                    DbMaintProbesFragment.class,
                     "sessions",
                     R.id.fragment_container_map_detail);
         } else if (SessionDetailActivity.class.getName().equals(activityClassName)) {
@@ -114,7 +114,7 @@ public class MapMultiPaneActivity extends BaseMultiPaneActivity implements
             mPopupType = POPUP_TYPE_VENDORS;
             showHideDetailAndPan(true);
             return new FragmentReplaceInfo(
-                    VendorsFragment.class,
+                    DbMaintControllersFragment.class,
                     "vendors",
                     R.id.fragment_container_map_detail);
         } else if (VendorDetailActivity.class.getName().equals(activityClassName)) {
@@ -132,7 +132,7 @@ public class MapMultiPaneActivity extends BaseMultiPaneActivity implements
     protected void onBeforeCommitReplaceFragment(FragmentManager fm, FragmentTransaction ft,
             Fragment fragment) {
         super.onBeforeCommitReplaceFragment(fm, ft, fragment);
-        if (fragment instanceof SessionsFragment || fragment instanceof VendorsFragment) {
+        if (fragment instanceof DbMaintProbesFragment || fragment instanceof DbMaintControllersFragment) {
             mPauseBackStackWatcher = true;
             clearBackStack(fm);
             mPauseBackStackWatcher = false;

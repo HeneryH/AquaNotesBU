@@ -20,7 +20,7 @@ import com.heneryh.aquanotes.R;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Sessions;
 import com.heneryh.aquanotes.ui.BaseMultiPaneActivity;
 import com.heneryh.aquanotes.ui.SessionDetailFragment;
-import com.heneryh.aquanotes.ui.SessionsFragment;
+import com.heneryh.aquanotes.ui.DbMaintProbesFragment;
 import com.heneryh.aquanotes.ui.phone.SessionDetailActivity;
 
 import android.content.Intent;
@@ -34,7 +34,7 @@ import android.view.ViewGroup;
  */
 public class NowPlayingMultiPaneActivity extends BaseMultiPaneActivity {
 
-    private SessionsFragment mSessionsFragment;
+    private DbMaintProbesFragment mSessionsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +46,9 @@ public class NowPlayingMultiPaneActivity extends BaseMultiPaneActivity {
         setContentView(R.layout.activity_now_playing);
 
         final FragmentManager fm = getSupportFragmentManager();
-        mSessionsFragment = (SessionsFragment) fm.findFragmentByTag("sessions");
+        mSessionsFragment = (DbMaintProbesFragment) fm.findFragmentByTag("sessions");
         if (mSessionsFragment == null) {
-            mSessionsFragment = new SessionsFragment();
+            mSessionsFragment = new DbMaintProbesFragment();
             mSessionsFragment.setArguments(intentToFragmentArguments(intent));
             fm.beginTransaction()
                     .add(R.id.fragment_container_sessions, mSessionsFragment, "sessions")

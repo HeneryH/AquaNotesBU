@@ -80,7 +80,7 @@ public class DashboardFragment extends Fragment {
             public void onClick(View view) {
                 fireTrackerEvent("Starred");
                 // Launch list of sessions and vendors the user has starred
-                startActivity(new Intent(getActivity(), StarredActivity.class));                
+                startActivity(new Intent(getActivity(), DbMaintActivity.class));                
             }
         });
 

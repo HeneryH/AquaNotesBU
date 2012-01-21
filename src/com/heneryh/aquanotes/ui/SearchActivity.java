@@ -49,8 +49,8 @@ public class SearchActivity extends BaseMultiPaneActivity {
     private TabHost mTabHost;
     private TabWidget mTabWidget;
 
-    private SessionsFragment mSessionsFragment;
-    private VendorsFragment mVendorsFragment;
+    private DbMaintProbesFragment mSessionsFragment;
+    private DbMaintControllersFragment mVendorsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,19 +104,19 @@ public class SearchActivity extends BaseMultiPaneActivity {
     private void setupSessionsTab() {
         // TODO: this is very inefficient and messy, clean it up
         FrameLayout fragmentContainer = new FrameLayout(this);
-        fragmentContainer.setId(R.id.fragment_sessions);
+        fragmentContainer.setId(R.id.fragment_probes);
         fragmentContainer.setLayoutParams(
                 new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
                         ViewGroup.LayoutParams.FILL_PARENT));
         ((ViewGroup) findViewById(android.R.id.tabcontent)).addView(fragmentContainer);
 
         final FragmentManager fm = getSupportFragmentManager();
-        mSessionsFragment = (SessionsFragment) fm.findFragmentByTag("sessions");
+        mSessionsFragment = (DbMaintProbesFragment) fm.findFragmentByTag("sessions");
         if (mSessionsFragment == null) {
-            mSessionsFragment = new SessionsFragment();
+            mSessionsFragment = new DbMaintProbesFragment();
             mSessionsFragment.setArguments(getSessionsFragmentArguments());
             fm.beginTransaction()
-                    .add(R.id.fragment_sessions, mSessionsFragment, "sessions")
+                    .add(R.id.fragment_probes, mSessionsFragment, "sessions")
                     .commit();
         } else {
             mSessionsFragment.reloadFromArguments(getSessionsFragmentArguments());
@@ -124,8 +124,8 @@ public class SearchActivity extends BaseMultiPaneActivity {
 
         // Sessions content comes from reused activity
         mTabHost.addTab(mTabHost.newTabSpec(TAG_SESSIONS)
-                .setIndicator(buildIndicator(R.string.starred_sessions))
-                .setContent(R.id.fragment_sessions));
+                .setIndicator(buildIndicator(R.string.db_maint_probes))
+                .setContent(R.id.fragment_probes));
     }
 
     /**
@@ -134,19 +134,19 @@ public class SearchActivity extends BaseMultiPaneActivity {
     private void setupVendorsTab() {
         // TODO: this is very inefficient and messy, clean it up
         FrameLayout fragmentContainer = new FrameLayout(this);
-        fragmentContainer.setId(R.id.fragment_vendors);
+        fragmentContainer.setId(R.id.fragment_controllers);
         fragmentContainer.setLayoutParams(
                 new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
                         ViewGroup.LayoutParams.FILL_PARENT));
         ((ViewGroup) findViewById(android.R.id.tabcontent)).addView(fragmentContainer);
 
         final FragmentManager fm = getSupportFragmentManager();
-        mVendorsFragment = (VendorsFragment) fm.findFragmentByTag("vendors");
+        mVendorsFragment = (DbMaintControllersFragment) fm.findFragmentByTag("vendors");
         if (mVendorsFragment == null) {
-            mVendorsFragment = new VendorsFragment();
+            mVendorsFragment = new DbMaintControllersFragment();
             mVendorsFragment.setArguments(getVendorsFragmentArguments());
             fm.beginTransaction()
-                    .add(R.id.fragment_vendors, mVendorsFragment, "vendors")
+                    .add(R.id.fragment_controllers, mVendorsFragment, "vendors")
                     .commit();
         } else {
             mVendorsFragment.reloadFromArguments(getVendorsFragmentArguments());
@@ -154,8 +154,8 @@ public class SearchActivity extends BaseMultiPaneActivity {
 
         // Vendors content comes from reused activity
         mTabHost.addTab(mTabHost.newTabSpec(TAG_VENDORS)
-                .setIndicator(buildIndicator(R.string.starred_vendors))
-                .setContent(R.id.fragment_vendors));
+                .setIndicator(buildIndicator(R.string.db_maint_controllers))
+                .setContent(R.id.fragment_controllers));
     }
 
     private Bundle getSessionsFragmentArguments() {

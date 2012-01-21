@@ -38,30 +38,30 @@ import android.widget.TextView;
  * support that {@link BaseMultiPaneActivity} offers, so we inherit from it instead of
  * {@link BaseSinglePaneActivity}.
  */
-public class StarredActivity extends BaseMultiPaneActivity {
+public class DbMaintActivity extends BaseMultiPaneActivity {
 
-    public static final String TAG_SESSIONS = "sessions";
-    public static final String TAG_VENDORS = "vendors";
+    public static final String TAG_PROBES = "probes";
+    public static final String TAG_CONTROLLERS = "controllers";
 
     private TabHost mTabHost;
     private TabWidget mTabWidget;
 
-    private SessionsFragment mSessionsFragment;
-    private VendorsFragment mVendorsFragment;
+    private DbMaintProbesFragment mProbesFragment;
+    private DbMaintControllersFragment mControllersFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_starred);
+        setContentView(R.layout.activity_db_maint);
         getActivityHelper().setupActionBar(getTitle(), 0);
 
         mTabHost = (TabHost) findViewById(android.R.id.tabhost);
         mTabWidget = (TabWidget) findViewById(android.R.id.tabs);
         mTabHost.setup();
 
-        setupSessionsTab();
-        setupVendorsTab();
-    }
+        setupControllersTab();
+        setupProbesTab();
+   }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -77,10 +77,10 @@ public class StarredActivity extends BaseMultiPaneActivity {
     /**
      * Build and add "sessions" tab.
      */
-    private void setupSessionsTab() {
+    private void setupProbesTab() {
         // TODO: this is very inefficient and messy, clean it up
         FrameLayout fragmentContainer = new FrameLayout(this);
-        fragmentContainer.setId(R.id.fragment_sessions);
+        fragmentContainer.setId(R.id.fragment_probes);
         fragmentContainer.setLayoutParams(
                 new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
                         ViewGroup.LayoutParams.FILL_PARENT));
@@ -89,28 +89,28 @@ public class StarredActivity extends BaseMultiPaneActivity {
         final Intent intent = new Intent(Intent.ACTION_VIEW, Sessions.CONTENT_STARRED_URI);
 
         final FragmentManager fm = getSupportFragmentManager();
-        mSessionsFragment = (SessionsFragment) fm.findFragmentByTag("sessions");
-        if (mSessionsFragment == null) {
-            mSessionsFragment = new SessionsFragment();
-            mSessionsFragment.setArguments(intentToFragmentArguments(intent));
+        mProbesFragment = (DbMaintProbesFragment) fm.findFragmentByTag("sessions");
+        if (mProbesFragment == null) {
+            mProbesFragment = new DbMaintProbesFragment();
+            mProbesFragment.setArguments(intentToFragmentArguments(intent));
             fm.beginTransaction()
-                    .add(R.id.fragment_sessions, mSessionsFragment, "sessions")
+                    .add(R.id.fragment_probes, mProbesFragment, "sessions")
                     .commit();
         }
 
         // Sessions content comes from reused activity
-        mTabHost.addTab(mTabHost.newTabSpec(TAG_SESSIONS)
-                .setIndicator(buildIndicator(R.string.starred_sessions))
-                .setContent(R.id.fragment_sessions));
+        mTabHost.addTab(mTabHost.newTabSpec(TAG_PROBES)
+                .setIndicator(buildIndicator(R.string.db_maint_probes))
+                .setContent(R.id.fragment_probes));
     }
 
     /**
      * Build and add "vendors" tab.
      */
-    private void setupVendorsTab() {
+    private void setupControllersTab() {
         // TODO: this is very inefficient and messy, clean it up
         FrameLayout fragmentContainer = new FrameLayout(this);
-        fragmentContainer.setId(R.id.fragment_vendors);
+        fragmentContainer.setId(R.id.fragment_controllers);
         fragmentContainer.setLayoutParams(
                 new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
                         ViewGroup.LayoutParams.FILL_PARENT));
@@ -120,19 +120,19 @@ public class StarredActivity extends BaseMultiPaneActivity {
 
         final FragmentManager fm = getSupportFragmentManager();
 
-        mVendorsFragment = (VendorsFragment) fm.findFragmentByTag("vendors");
-        if (mVendorsFragment == null) {
-            mVendorsFragment = new VendorsFragment();
-            mVendorsFragment.setArguments(intentToFragmentArguments(intent));
+        mControllersFragment = (DbMaintControllersFragment) fm.findFragmentByTag("vendors");
+        if (mControllersFragment == null) {
+            mControllersFragment = new DbMaintControllersFragment();
+            mControllersFragment.setArguments(intentToFragmentArguments(intent));
             fm.beginTransaction()
-                    .add(R.id.fragment_vendors, mVendorsFragment, "vendors")
+                    .add(R.id.fragment_controllers, mControllersFragment, "vendors")
                     .commit();
         }
 
         // Vendors content comes from reused activity
-        mTabHost.addTab(mTabHost.newTabSpec(TAG_VENDORS)
-                .setIndicator(buildIndicator(R.string.starred_vendors))
-                .setContent(R.id.fragment_vendors));
+        mTabHost.addTab(mTabHost.newTabSpec(TAG_CONTROLLERS)
+                .setIndicator(buildIndicator(R.string.db_maint_controllers))
+                .setContent(R.id.fragment_controllers));
     }
 
     /**
@@ -169,11 +169,11 @@ public class StarredActivity extends BaseMultiPaneActivity {
     }
 
     private void clearSelectedItems() {
-        if (mSessionsFragment != null) {
-            mSessionsFragment.clearCheckedPosition();
+        if (mProbesFragment != null) {
+            mProbesFragment.clearCheckedPosition();
         }
-        if (mVendorsFragment != null) {
-            mVendorsFragment.clearCheckedPosition();
+        if (mControllersFragment != null) {
+            mControllersFragment.clearCheckedPosition();
         }
     }
 }

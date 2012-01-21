@@ -17,7 +17,7 @@
 package com.heneryh.aquanotes.ui.phone;
 
 import com.heneryh.aquanotes.ui.BaseSinglePaneActivity;
-import com.heneryh.aquanotes.ui.VendorsFragment;
+import com.heneryh.aquanotes.ui.DbMaintControllersFragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,7 +25,7 @@ import android.support.v4.app.Fragment;
 public class VendorsActivity extends BaseSinglePaneActivity {
     @Override
     protected Fragment onCreatePane() {
-        return new VendorsFragment();
+        return new DbMaintControllersFragment();
     }
 
     @Override

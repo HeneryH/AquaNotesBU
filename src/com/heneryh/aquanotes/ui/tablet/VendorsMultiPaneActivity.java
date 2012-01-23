@@ -23,7 +23,7 @@ import com.heneryh.aquanotes.ui.TracksFragment;
 import com.heneryh.aquanotes.ui.VendorDetailFragment;
 import com.heneryh.aquanotes.ui.DbMaintControllersFragment;
 import com.heneryh.aquanotes.ui.phone.VendorDetailActivity;
-import com.heneryh.aquanotes.ui.phone.VendorsActivity;
+import com.heneryh.aquanotes.ui.phone.DBMaintActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -72,7 +72,7 @@ public class VendorsMultiPaneActivity extends BaseMultiPaneActivity {
 
     @Override
     public FragmentReplaceInfo onSubstituteFragmentForActivityLaunch(String activityClassName) {
-        if (VendorsActivity.class.getName().equals(activityClassName)) {
+        if (DBMaintActivity.class.getName().equals(activityClassName)) {
             return new FragmentReplaceInfo(
                     DbMaintControllersFragment.class,
                     "vendors",

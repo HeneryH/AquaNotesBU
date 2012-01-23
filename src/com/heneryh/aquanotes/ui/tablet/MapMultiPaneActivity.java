@@ -26,7 +26,7 @@ import com.heneryh.aquanotes.ui.DbMaintControllersFragment;
 import com.heneryh.aquanotes.ui.phone.SessionDetailActivity;
 import com.heneryh.aquanotes.ui.phone.SessionsActivity;
 import com.heneryh.aquanotes.ui.phone.VendorDetailActivity;
-import com.heneryh.aquanotes.ui.phone.VendorsActivity;
+import com.heneryh.aquanotes.ui.phone.DBMaintActivity;
 
 import android.app.FragmentBreadCrumbs;
 import android.os.Bundle;
@@ -109,7 +109,7 @@ public class MapMultiPaneActivity extends BaseMultiPaneActivity implements
                     SessionDetailFragment.class,
                     "session_detail",
                     R.id.fragment_container_map_detail);
-        } else if (VendorsActivity.class.getName().equals(activityClassName)) {
+        } else if (DBMaintActivity.class.getName().equals(activityClassName)) {
             clearBackStack(getSupportFragmentManager());
             mPopupType = POPUP_TYPE_VENDORS;
             showHideDetailAndPan(true);

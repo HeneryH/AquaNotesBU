@@ -17,6 +17,9 @@
 package com.heneryh.aquanotes.ui;
 
 import com.heneryh.aquanotes.R;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.Controllers;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.ProbeData;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.Probes;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Sessions;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Vendors;
 import com.heneryh.aquanotes.ui.phone.SessionDetailActivity;
@@ -40,14 +43,16 @@ import android.widget.TextView;
  */
 public class DbMaintActivity extends BaseMultiPaneActivity {
 
-    public static final String TAG_PROBES = "probes";
     public static final String TAG_CONTROLLERS = "controllers";
+    public static final String TAG_PROBES = "probes";
+    public static final String TAG_DATA = "data";
 
     private TabHost mTabHost;
     private TabWidget mTabWidget;
 
-    private DbMaintProbesFragment mProbesFragment;
     private DbMaintControllersFragment mControllersFragment;
+    private DbMaintProbesFragment mProbesFragment;
+    private DbMaintDataFragment mDataFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +66,7 @@ public class DbMaintActivity extends BaseMultiPaneActivity {
 
         setupControllersTab();
         setupProbesTab();
+        setupDataTab();
    }
 
     @Override
@@ -75,6 +81,37 @@ public class DbMaintActivity extends BaseMultiPaneActivity {
     }
 
     /**
+     * Build and add "Controllers" tab.
+     */
+    private void setupControllersTab() {
+        // TODO: this is very inefficient and messy, clean it up
+        FrameLayout fragmentContainer = new FrameLayout(this);
+        fragmentContainer.setId(R.id.fragment_controllers);
+        fragmentContainer.setLayoutParams(
+                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+                        ViewGroup.LayoutParams.FILL_PARENT));
+        ((ViewGroup) findViewById(android.R.id.tabcontent)).addView(fragmentContainer);
+
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Controllers.CONTENT_URI);
+
+        final FragmentManager fm = getSupportFragmentManager();
+
+        mControllersFragment = (DbMaintControllersFragment) fm.findFragmentByTag("controllers");
+        if (mControllersFragment == null) {
+            mControllersFragment = new DbMaintControllersFragment();
+            mControllersFragment.setArguments(intentToFragmentArguments(intent));
+            fm.beginTransaction()
+                    .add(R.id.fragment_controllers, mControllersFragment, "controllers")
+                    .commit();
+        }
+
+        // Vendors content comes from reused activity
+        mTabHost.addTab(mTabHost.newTabSpec(TAG_CONTROLLERS)
+                .setIndicator(buildIndicator(R.string.db_maint_controllers))
+                .setContent(R.id.fragment_controllers));
+    }
+
+    /**
      * Build and add "sessions" tab.
      */
     private void setupProbesTab() {
@@ -86,15 +123,15 @@ public class DbMaintActivity extends BaseMultiPaneActivity {
                         ViewGroup.LayoutParams.FILL_PARENT));
         ((ViewGroup) findViewById(android.R.id.tabcontent)).addView(fragmentContainer);
 
-        final Intent intent = new Intent(Intent.ACTION_VIEW, Sessions.CONTENT_STARRED_URI);
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Probes.CONTENT_URI);
 
         final FragmentManager fm = getSupportFragmentManager();
-        mProbesFragment = (DbMaintProbesFragment) fm.findFragmentByTag("sessions");
+        mProbesFragment = (DbMaintProbesFragment) fm.findFragmentByTag("probes");
         if (mProbesFragment == null) {
             mProbesFragment = new DbMaintProbesFragment();
             mProbesFragment.setArguments(intentToFragmentArguments(intent));
             fm.beginTransaction()
-                    .add(R.id.fragment_probes, mProbesFragment, "sessions")
+                    .add(R.id.fragment_probes, mProbesFragment, "probes")
                     .commit();
         }
 
@@ -105,34 +142,33 @@ public class DbMaintActivity extends BaseMultiPaneActivity {
     }
 
     /**
-     * Build and add "vendors" tab.
+     * Build and add "sessions" tab.
      */
-    private void setupControllersTab() {
+    private void setupDataTab() {
         // TODO: this is very inefficient and messy, clean it up
         FrameLayout fragmentContainer = new FrameLayout(this);
-        fragmentContainer.setId(R.id.fragment_controllers);
+        fragmentContainer.setId(R.id.fragment_data);
         fragmentContainer.setLayoutParams(
                 new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
                         ViewGroup.LayoutParams.FILL_PARENT));
         ((ViewGroup) findViewById(android.R.id.tabcontent)).addView(fragmentContainer);
 
-        final Intent intent = new Intent(Intent.ACTION_VIEW, Vendors.CONTENT_STARRED_URI);
+        final Intent intent = new Intent(Intent.ACTION_VIEW, ProbeData.CONTENT_URI);
 
         final FragmentManager fm = getSupportFragmentManager();
-
-        mControllersFragment = (DbMaintControllersFragment) fm.findFragmentByTag("vendors");
-        if (mControllersFragment == null) {
-            mControllersFragment = new DbMaintControllersFragment();
-            mControllersFragment.setArguments(intentToFragmentArguments(intent));
+        mDataFragment = (DbMaintDataFragment) fm.findFragmentByTag("data");
+        if (mDataFragment == null) {
+        	mDataFragment = new DbMaintDataFragment();
+        	mDataFragment.setArguments(intentToFragmentArguments(intent));
             fm.beginTransaction()
-                    .add(R.id.fragment_controllers, mControllersFragment, "vendors")
+                    .add(R.id.fragment_data, mDataFragment, "data")
                     .commit();
         }
 
-        // Vendors content comes from reused activity
-        mTabHost.addTab(mTabHost.newTabSpec(TAG_CONTROLLERS)
-                .setIndicator(buildIndicator(R.string.db_maint_controllers))
-                .setContent(R.id.fragment_controllers));
+        // Sessions content comes from reused activity
+        mTabHost.addTab(mTabHost.newTabSpec(TAG_DATA)
+                .setIndicator(buildIndicator(R.string.db_maint_data))
+                .setContent(R.id.fragment_data));
     }
 
     /**
@@ -156,6 +192,12 @@ public class DbMaintActivity extends BaseMultiPaneActivity {
                 return new FragmentReplaceInfo(
                         SessionDetailFragment.class,
                         "session_detail",
+                        R.id.fragment_container_starred_detail);
+            } else if (VendorDetailActivity.class.getName().equals(activityClassName)) {
+                clearSelectedItems();
+                return new FragmentReplaceInfo(
+                        VendorDetailFragment.class,
+                        "vendor_detail",
                         R.id.fragment_container_starred_detail);
             } else if (VendorDetailActivity.class.getName().equals(activityClassName)) {
                 clearSelectedItems();

@@ -706,11 +706,14 @@ public class AquaNotesDbContract {
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.reefandy.controllers";
 
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_CONTROLLERS).build();
+
         /** Count of {@link Sessions} inside given block. */
         public static final String PROBES_COUNT = "probes_count";
 
         /** Default "ORDER BY" clause. */
-        public static final String DEFAULT_SORT = ControllersColumns.LAST_UPDATED + " ASC, "
+        public static final String DEFAULT_SORT = ControllersColumns.LAST_UPDATED + " ASC "
               /*  + ControllersColumns.BLOCK_END + " ASC"*/;
 
         /** Build {@link Uri} for requested {@link #CONTROLLER_ID}. */
@@ -758,11 +761,15 @@ public class AquaNotesDbContract {
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.reefandy.probes";
 
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_PROBES).build();
+
         /** Count of {@link Sessions} inside given track. */
         public static final String DATA_COUNT = "data_count";
 
         /** Default "ORDER BY" clause. */
-        public static final String DEFAULT_SORT = ProbesColumns.PROBE_NAME + " ASC";
+        public static final String DEFAULT_SORT = ProbesColumns.TYPE + " DESC, " + ProbesColumns.PROBE_NAME + " ASC";
+
 
 //////////////////////////////////////////////
 //private static final int CONTROLLERS_ID_PROBES = 201;
@@ -881,6 +888,9 @@ public class AquaNotesDbContract {
         	return buildQueryOutletsUri(controllerUri); // same as query
         }
 
+        public static String getControllerId(Uri controllerXprobeYUri) {
+            return controllerXprobeYUri.getPathSegments().get(1);
+        }
         public static Integer getProbeId(Uri controllerXprobeYUri) {
             return Integer.valueOf(controllerXprobeYUri.getPathSegments().get(3));
         }
@@ -900,9 +910,15 @@ public class AquaNotesDbContract {
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/vnd.reefandy.probe_data";
 
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_PROBE_DATA).build();
+ 
+
         /** Default "ORDER BY" clause. */
-        public static final String DEFAULT_SORT = ProbeDataColumns.PROBE_ID + " ASC, "
-                + ProbeDataColumns.VALUE + " COLLATE NOCASE ASC";
+//        public static final String DEFAULT_SORT = ProbeDataColumns.PROBE_ID + " ASC, "
+//                + ProbeDataColumns.VALUE + " COLLATE NOCASE ASC";
+        public static final String DEFAULT_SORT = ProbeDataColumns.TIMESTAMP + " DESC ";
+//                + ProbeDataColumns.VALUE + " COLLATE NOCASE ASC";
 
         /** Build {@link Uri} for requested {@link #DATA_ID}. */
         //          content://org.dvrc.reefandy/controllers/x/probes/y/data
@@ -985,6 +1001,109 @@ public class AquaNotesDbContract {
         }
 
     }
+
+    /**
+     * ProbeData are physical locations at the conference venue.
+     */
+    public static class ViewProbeData implements ViewProbeDataColumns, BaseColumns {
+
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/vnd.reefandy.probe_data";
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/vnd.reefandy.probe_data";
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_PROBE_DATA).build();
+ 
+
+        /** Default "ORDER BY" clause. */
+//        public static final String DEFAULT_SORT = ProbeDataColumns.PROBE_ID + " ASC, "
+//                + ProbeDataColumns.VALUE + " COLLATE NOCASE ASC";
+        public static final String DEFAULT_SORT = ProbeDataColumns.TIMESTAMP + " DESC ";
+//                + ProbeDataColumns.VALUE + " COLLATE NOCASE ASC";
+
+        /** Build {@link Uri} for requested {@link #DATA_ID}. */
+        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
+        public static Uri buildQueryProbeDataUri(Integer controllerId, Integer probeId) {
+            return BASE_CONTENT_URI.buildUpon()
+            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
+            		.appendPath(PATH_PROBES).appendPath(probeId.toString())
+            		.appendPath(PATH_PROBE_DATA)
+            		.build();
+        }
+
+//////////////////////////////////////////////
+//private static final int CONTROLLERS_ID_PROBEDATA_AT = 303; 
+//private static final int CONTROLLERS_ID_OUTLETDATA_AT = 304; 
+//private static final int CONTROLLERS_ID_PROBEDATA_FOR_ID = 305; 
+//private static final int CONTROLLERS_ID_OUTLETDATA_FOR_ID = 306; 
+//private static final int CONTROLLERS_ID_PROBEDATA_FOR_NAME = 307; 
+//private static final int CONTROLLERS_ID_OUTLETDATA_FOR_DEVICE_ID = 310; 
+        /** Build {@link Uri} for requested {@link #DATA_ID}. */
+        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
+        public static Uri buildQueryProbeDataUri(Uri controllerUri, Integer probeId) {
+            return controllerUri.buildUpon()
+            		.appendPath(PATH_PROBES).appendPath(probeId.toString())
+            		.appendPath(PATH_PROBE_DATA)
+            		.build();
+        }
+
+//        /** Build {@link Uri} for requested {@link #DATA_ID}. */
+//        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
+//        public static Uri buildQueryProbeDataUri(Uri probeUri) {
+//            return probeUri.buildUpon()
+//            		.appendPath(PATH_PROBE_DATA)
+//            		.build();
+//        }
+//        
+//        /** Build {@link Uri} for requested {@link #DATA_ID}. */
+//        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
+//        public static Uri buildQueryProbeDataXUri(Integer controllerId, Integer probeId, Integer dataId) {
+//            return BASE_CONTENT_URI.buildUpon()
+//            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
+//            		.appendPath(PATH_PROBES).appendPath(probeId.toString())
+//            		.appendPath(PATH_PROBE_DATA).appendPath(dataId.toString())
+//            		.build();
+//        }
+//
+//        /** Build {@link Uri} for requested {@link #DATA_ID}. */
+//        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
+//        public static Uri buildQueryProbeDataXUri(Uri controllerUri, Integer probeId, Integer dataId) {
+//            return controllerUri.buildUpon()
+//            		.appendPath(PATH_PROBES).appendPath(probeId.toString())
+//            		.appendPath(PATH_PROBE_DATA)
+//            		.appendPath(PATH_PROBE_DATA).appendPath(dataId.toString())
+//            		.build();
+//        }
+//
+//        /** Build {@link Uri} for requested {@link #DATA_ID}. */
+//        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
+//        public static Uri buildQueryProbeDataXUri(Uri probeUri, Integer dataId) {
+//            return probeUri.buildUpon()
+//            		.appendPath(PATH_PROBE_DATA)
+//            		.appendPath(PATH_PROBE_DATA).appendPath(dataId.toString())
+//            		.build();
+//        }
+//        
+//        /** Build {@link Uri} for requested {@link #DATA_ID}. */
+//        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
+//        public static Uri buildQueryOutletDataXUri(Uri outletUri, Integer dataId) {
+//            return outletUri.buildUpon()
+//            		.appendPath(PATH_PROBE_DATA)
+//            		.appendPath(PATH_PROBE_DATA).appendPath(dataId.toString())
+//            		.build();
+//        }
+        
+        /** Build {@link Uri} for requested {@link #DATA_ID}. */
+        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
+        public static Uri buildInsertProbeDataUri(Uri controllerUri, Integer probeId) {
+            return controllerUri.buildUpon()
+            		.appendPath(PATH_PROBES).appendPath(probeId.toString())
+            		.build();
+        }
+
+    }
+
 
     private AquaNotesDbContract() {
     }

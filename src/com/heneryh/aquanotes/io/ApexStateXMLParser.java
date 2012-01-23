@@ -307,7 +307,7 @@ public class ApexStateXMLParser extends DefaultHandler {
 					parentRecord = cursor.getInt(ProbesQuery._ID);
 					resourceID = cursor.getInt(ProbesQuery.RESOURCE_ID);
 				} catch (SQLException e) {
-					Log.e("Database error", "Couldn't parse the returned date field", e);	
+					Log.e("Database error", "Couldn't parse the returned probe field", e);	
 				}
 				finally {
 					if (cursor != null) {
@@ -386,7 +386,7 @@ public class ApexStateXMLParser extends DefaultHandler {
 					
 					
 				} catch (SQLException e) {
-					Log.e("Database error", "Couldn't parse the returned date field", e);	
+					Log.e("Database error", "Couldn't parse the returned outlet field", e);	
 				}
 				finally {
 					if (cursor != null) {

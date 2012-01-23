@@ -18,6 +18,7 @@ package com.heneryh.aquanotes.provider;
 
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Blocks;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Controllers;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.ProbeData;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Probes;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Rooms;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.SearchSuggest;
@@ -56,13 +57,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 /**
  * Provider that stores {@link AquaNotesDbContract} data. Data is usually inserted
  * by {@link SyncService}, and queried by various {@link Activity} instances.
  */
 public class AquaNotesDbProvider extends ContentProvider {
     private static final String TAG = "AquaNotesDbProvider";
-    private static final boolean LOGV = Log.isLoggable(TAG, Log.VERBOSE);
+    private static final boolean LOGV = true; //Log.isLoggable(TAG, Log.VERBOSE);
 
     private AquaNotesDatabase mOpenHelper;
 
@@ -75,6 +77,7 @@ public class AquaNotesDbProvider extends ContentProvider {
 	private static final int CONTROLLERS = 901;
 	private static final int CONTROLLERS_ID = 902;
 
+	private static final int PROBES = 916;
 	private static final int CONTROLLERS_ID_PROBES = 903;
 	private static final int CONTROLLERS_ID_PROBES_ID = 904;
 	private static final int CONTROLLERS_ID_PROBES_NAME = 905;
@@ -83,6 +86,7 @@ public class AquaNotesDbProvider extends ContentProvider {
 	private static final int CONTROLLERS_ID_OUTLETS_DEVICE_ID = 908;
 	private static final int CONTROLLERS_ID_OUTLETS_RSC = 909; 
 
+	private static final int PROBEDATA = 917; 
 	private static final int CONTROLLERS_ID_PROBEDATA_AT = 910; 
 	private static final int CONTROLLERS_ID_PROBEDATA_FOR_ID = 911; 
 	private static final int CONTROLLERS_ID_PROBEDATA_FOR_NAME = 912; 
@@ -175,6 +179,13 @@ public class AquaNotesDbProvider extends ContentProvider {
 		// delete = delete ?
 		// getType = ?
 
+        matcher.addURI(authority, "probes", PROBES);
+		// query = return all probes for a given controller
+		// insert = add a probe defined by the values object to the referenced controller, auto-create a probe_id 
+		// update = ?
+		// delete = delete ?
+		// getType = ?
+
 		matcher.addURI(authority, "controllers/#/probes/#", CONTROLLERS_ID_PROBES_ID);
 		// query = return just one probe, by ID
 		// insert = add ?
@@ -224,6 +235,13 @@ public class AquaNotesDbProvider extends ContentProvider {
 //    	private static final int CONTROLLERS_ID_OUTLETDATA_FOR_ID = 306; 
 //    	private static final int CONTROLLERS_ID_PROBEDATA_FOR_NAME = 307; 
 //    	private static final int CONTROLLERS_ID_OUTLETDATA_FOR_DEVICE_ID = 310; 
+
+		matcher.addURI(authority, "data", PROBEDATA);
+		// query = return all the probe data records for a given controller at the timestamp provided.
+		// insert = N/A
+		// update = N/A
+		// delete = delete probe data older than '*'
+		// getType = ?
 
 		matcher.addURI(authority, "controllers/#/probe_data_at/*", CONTROLLERS_ID_PROBEDATA_AT);
 		// query = return all the probe data records for a given controller at the timestamp provided.
@@ -338,6 +356,8 @@ public class AquaNotesDbProvider extends ContentProvider {
 //private static final String PATH_OUTLETS = "outlets";
 //private static final String PATH_OUTLETS_RESOURCE_ID = "outlets_rsc";
 //private static final String PATH_OUTLETS_DEVICE_ID = "outlets_did";
+        case PROBES:
+        	return Probes.CONTENT_TYPE;
         case CONTROLLERS_ID_PROBES:
         	return Probes.CONTENT_TYPE;
         case CONTROLLERS_ID_PROBES_ID:
@@ -360,6 +380,8 @@ public class AquaNotesDbProvider extends ContentProvider {
 //private static final int CONTROLLERS_ID_OUTLETDATA_FOR_ID = 306; 
 //private static final int CONTROLLERS_ID_PROBEDATA_FOR_NAME = 307; 
 //private static final int CONTROLLERS_ID_OUTLETDATA_FOR_DEVICE_ID = 310; 
+        case PROBEDATA:
+        	return Probes.CONTENT_TYPE;
         case CONTROLLERS_ID_PROBEDATA_AT:
         	return Probes.CONTENT_TYPE;
         case CONTROLLERS_ID_OUTLETDATA_AT:
@@ -454,6 +476,36 @@ public class AquaNotesDbProvider extends ContentProvider {
 			return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
 		}
 
+		case PROBES: {
+			qb.setTables(Tables.PROBES);
+			return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
+		}
+
+        case CONTROLLERS_ID_PROBES_NAME: {
+			String controllerId = uri.getPathSegments().get(1);
+			String probeName = uri.getPathSegments().get(3);
+			qb.setTables(Tables.PROBES);
+			qb.appendWhere(Probes.CONTROLLER_ID + "=");
+			qb.appendWhereEscapeString(controllerId);
+			qb.appendWhere(" and " + Probes.PROBE_NAME + "=");
+			qb.appendWhereEscapeString(probeName);
+			return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
+        }
+
+		case CONTROLLERS_ID_OUTLETS_DEVICE_ID: {   
+			String controllerId = uri.getPathSegments().get(1);
+			String outletDeviceID = uri.getPathSegments().get(3);
+			qb.setTables(Tables.PROBES);
+			qb.appendWhere(Probes.CONTROLLER_ID + "=");
+			qb.appendWhereEscapeString(controllerId);
+			qb.appendWhere(" and " + Probes.DEVICE_ID + "=");
+			qb.appendWhereEscapeString(outletDeviceID);
+			return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
+		}
+		case PROBEDATA: {
+			qb.setTables(Tables.DATA_VIEW);
+			return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
+		}
             default: {
                 // Most cases are handled with simple SelectionBuilder
                 final SelectionBuilder builder = buildExpandedSelection(uri, match);
@@ -499,6 +551,26 @@ public class AquaNotesDbProvider extends ContentProvider {
 			//                values.put(ProbesColumns.PROBENAME, probeName);
 			//                values.put(ProbesColumns.UNITS, "tst");
 			rowId = db.insert(Tables.PROBES, Probes.PROBE_NAME, values);
+            getContext().getContentResolver().notifyChange(uri, null);
+            return ContentUris.withAppendedId(uri, rowId);
+		}
+		case CONTROLLERS_ID_OUTLETS: {
+			// should probably move the 0/1 to here and use two URIs.
+			//                String probeName = uri.getPathSegments().get(3);
+			//                values.put(ProbesColumns.CONTROLLER_ID, controllerId);
+			//                values.put(ProbesColumns.PROBENAME, probeName);
+			//                values.put(ProbesColumns.UNITS, "tst");
+			rowId = db.insert(Tables.PROBES, Probes.PROBE_NAME, values);
+            getContext().getContentResolver().notifyChange(uri, null);
+            return ContentUris.withAppendedId(uri, rowId);
+		}
+		case CONTROLLERS_ID_PROBES_ID: {
+			rowId = db.insert(Tables.PROBE_DATA, ProbeData.VALUE, values);
+            getContext().getContentResolver().notifyChange(uri, null);
+            return ContentUris.withAppendedId(uri, rowId);
+		}
+		case CONTROLLERS_ID_OUTLETS_ID: {
+			rowId = db.insert(Tables.PROBE_DATA, ProbeData.VALUE, values);
             getContext().getContentResolver().notifyChange(uri, null);
             return ContentUris.withAppendedId(uri, rowId);
 		}
@@ -692,7 +764,25 @@ public class AquaNotesDbProvider extends ContentProvider {
     private SelectionBuilder buildExpandedSelection(Uri uri, int match) {
         final SelectionBuilder builder = new SelectionBuilder();
         switch (match) {
-            case BLOCKS: {
+
+        // I just don't get this yet, I have a view for the join anyway...
+        case CONTROLLERS_ID_PROBES_NAME: {
+            final String controllerId = Probes.getControllerId(uri);
+            final String probeName = Probes.getProbeName(uri);
+            return builder.table(Tables.PROBES)
+            		.where(Probes.CONTROLLER_ID + "=", controllerId)
+                    .where(Probes.PROBE_NAME + "=?", Uri.encode(probeName));
+        }
+
+        case CONTROLLERS_ID_OUTLETS_DEVICE_ID: {
+            final String controllerId = Probes.getControllerId(uri);
+            final String outletDID = Probes.getProbeName(uri);
+            return builder.table(Tables.PROBES)
+            		.where(Probes.CONTROLLER_ID + "=", controllerId)
+                    .where(Probes.DEVICE_ID + "=?", Uri.encode(outletDID));
+        }
+
+        case BLOCKS: {
                 return builder.table(Tables.BLOCKS);
             }
             case BLOCKS_BETWEEN: {

@@ -175,6 +175,23 @@ public class SyncService extends IntentService {
 		 * Using the intent, we can tell why we are running this service
 		 */
 		if (ACTION_UPDATE_ALL.equals(intent.getAction())) { // This came from the timer expiring, get all widgets onto queue
+
+			Uri controllerUri = Controllers.buildQueryControllerXUri(999);
+ 			Cursor cursor = null;
+			try {
+				cursor = dbResolverSyncSrvc.query(controllerUri, ControllersQuery.PROJECTION, null, null, null);
+				if (cursor != null && cursor.moveToFirst()) {
+					// there is a gui version, add that to the queue
+					requestUpdate(999);
+				}
+			} catch (SQLException e) {
+				Log.e(TAG, "Checking if the controller is configured", e);
+			} finally {
+				if (cursor != null) {
+					cursor.close();
+				}
+			}
+
 		} else if (ACTION_UPDATE_SINGLE.equals(intent.getAction())) { // This came from the a widget update, id is in the queue
 
 		} else if(Intent.ACTION_SYNC.equals(intent.getAction())) { // this came from the main GUI

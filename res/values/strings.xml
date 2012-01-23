@@ -66,8 +66,10 @@
     <string name="all_sessions_subtitle">Touch to filter sessions by track.</string>
 
     <string name="empty_sessions">No sessions found.</string>
+    <string name="empty_probes">No probes found.</string>
     <string name="empty_session_detail">No session details found.</string>
     <string name="empty_vendors">No sandbox results found.</string>
+    <string name="empty_controllers">No controllers found.</string>
     <string name="empty_search">No search results found.</string>
     <string name="empty_links">No links available.</string>
 
@@ -91,7 +93,8 @@
 
     <string name="db_maint_controllers">Controllers</string>
     <string name="db_maint_probes">Probes</string>
-
+    <string name="db_maint_data">Data</string>
+        
     <string name="search_label">Google I/O</string>
     <string name="search_hint">Session keywords</string>
 

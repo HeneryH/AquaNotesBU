@@ -41,6 +41,8 @@ import android.widget.TextView;
 
 import static com.heneryh.aquanotes.util.UIUtils.buildStyledSnippet;
 
+
+// Vendors --> Controllers
 /**
  * A {@link ListFragment} showing a list of sandbox comapnies.
  */
@@ -75,35 +77,35 @@ public class DbMaintControllersFragment extends ListFragment implements
         setListAdapter(null);
 
         mHandler.cancelOperation(SearchQuery._TOKEN);
-        mHandler.cancelOperation(VendorsQuery._TOKEN);
+        mHandler.cancelOperation(ControllersQuery._TOKEN);
 
         // Load new arguments
         final Intent intent = BaseActivity.fragmentArgumentsToIntent(arguments);
-        final Uri vendorsUri = intent.getData();
-        final int vendorQueryToken;
+        final Uri controllersUri = intent.getData();
+        final int controllerQueryToken;
 
-        if (vendorsUri == null) {
+        if (controllersUri == null) {
             return;
         }
 
         String[] projection;
-        if (!AquaNotesDbContract.Vendors.isSearchUri(vendorsUri)) {
-            mAdapter = new VendorsAdapter(getActivity());
-            projection = VendorsQuery.PROJECTION;
-            vendorQueryToken = VendorsQuery._TOKEN;
+        if (!AquaNotesDbContract.Vendors.isSearchUri(controllersUri)) {
+            mAdapter = new ControllersAdapter(getActivity());
+            projection = ControllersQuery.PROJECTION;
+            controllerQueryToken = ControllersQuery._TOKEN;
 
         } else {
             Log.d("DbMaintControllersFragment/reloadFromArguments", "A search URL definitely gets passed in.");
             mAdapter = new SearchAdapter(getActivity());
             projection = SearchQuery.PROJECTION;
-            vendorQueryToken = SearchQuery._TOKEN;
+            controllerQueryToken = SearchQuery._TOKEN;
         }
 
         setListAdapter(mAdapter);
 
-        // Start background query to load vendors
-        mHandler.startQuery(vendorQueryToken, null, vendorsUri, projection, null, null,
-                AquaNotesDbContract.Vendors.DEFAULT_SORT);
+        // Start background query to load controllers
+        mHandler.startQuery(controllerQueryToken, null, controllersUri, projection, null, null,
+                AquaNotesDbContract.Controllers.DEFAULT_SORT);
 
         // If caller launched us with specific track hint, pass it along when
         // launching vendor details. Also start a query to load the track info.
@@ -125,7 +127,7 @@ public class DbMaintControllersFragment extends ListFragment implements
         if (!mHasSetEmptyText) {
             // Could be a bug, but calling this twice makes it become visible when it shouldn't
             // be visible.
-            setEmptyText(getString(R.string.empty_vendors));
+            setEmptyText(getString(R.string.empty_controllers));
             mHasSetEmptyText = true;
         }
     }
@@ -137,8 +139,8 @@ public class DbMaintControllersFragment extends ListFragment implements
             return;
         }
 
-        if (token == VendorsQuery._TOKEN || token == SearchQuery._TOKEN) {
-            onVendorsOrSearchQueryComplete(cursor);
+        if (token == ControllersQuery._TOKEN || token == SearchQuery._TOKEN) {
+            onControllersOrSearchQueryComplete(cursor);
         } else if (token == TracksQuery._TOKEN) {
             onTrackQueryComplete(cursor);
         } else {
@@ -149,7 +151,7 @@ public class DbMaintControllersFragment extends ListFragment implements
     /**
      * Handle {@link VendorsQuery} {@link Cursor}.
      */
-    private void onVendorsOrSearchQueryComplete(Cursor cursor) {
+    private void onControllersOrSearchQueryComplete(Cursor cursor) {
         if (mCursor != null) {
             // In case cancelOperation() doesn't work and we end up with consecutive calls to this
             // callback.
@@ -192,7 +194,7 @@ public class DbMaintControllersFragment extends ListFragment implements
     public void onResume() {
         super.onResume();
         getActivity().getContentResolver().registerContentObserver(
-                AquaNotesDbContract.Vendors.CONTENT_URI, true, mVendorChangesObserver);
+                AquaNotesDbContract.Vendors.CONTENT_URI, true, mControllerChangesObserver);
         if (mCursor != null) {
             mCursor.requery();
         }
@@ -201,7 +203,7 @@ public class DbMaintControllersFragment extends ListFragment implements
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().getContentResolver().unregisterContentObserver(mVendorChangesObserver);
+        getActivity().getContentResolver().unregisterContentObserver(mControllerChangesObserver);
     }
 
     @Override
@@ -213,15 +215,15 @@ public class DbMaintControllersFragment extends ListFragment implements
     /** {@inheritDoc} */
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        // Launch viewer for specific vendor.
-        final Cursor cursor = (Cursor)mAdapter.getItem(position);
-        final String vendorId = cursor.getString(VendorsQuery.VENDOR_ID);
-        final Uri vendorUri = AquaNotesDbContract.Vendors.buildVendorUri(vendorId);
-        ((BaseActivity) getActivity()).openActivityOrFragment(new Intent(Intent.ACTION_VIEW,
-                vendorUri));
-
-        getListView().setItemChecked(position, true);
-        mCheckedPosition = position;
+//        // Launch viewer for specific vendor.
+//        final Cursor cursor = (Cursor)mAdapter.getItem(position);
+//        final String vendorId = cursor.getString(VendorsQuery.VENDOR_ID);
+//        final Uri vendorUri = AquaNotesDbContract.Vendors.buildVendorUri(vendorId);
+//        ((BaseActivity) getActivity()).openActivityOrFragment(new Intent(Intent.ACTION_VIEW,
+//                vendorUri));
+//
+//        getListView().setItemChecked(position, true);
+//        mCheckedPosition = position;
     }
 
     public void clearCheckedPosition() {
@@ -234,25 +236,32 @@ public class DbMaintControllersFragment extends ListFragment implements
     /**
      * {@link CursorAdapter} that renders a {@link VendorsQuery}.
      */
-    private class VendorsAdapter extends CursorAdapter {
-        public VendorsAdapter(Context context) {
+    private class ControllersAdapter extends CursorAdapter {
+        public ControllersAdapter(Context context) {
             super(context, null);
         }
 
         /** {@inheritDoc} */
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            return getActivity().getLayoutInflater().inflate(R.layout.list_item_vendor_oneline,
+            return getActivity().getLayoutInflater().inflate(R.layout.list_item_controller,
                     parent, false);
         }
 
         /** {@inheritDoc} */
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
-            ((TextView) view.findViewById(R.id.vendor_name)).setText(
-                    cursor.getString(VendorsQuery.NAME));
+        	String debugtest = cursor.getString(ControllersQuery.TITLE);
+            ((TextView) view.findViewById(R.id.controller_name)).setText(
+            		debugtest);
 
-            final boolean starred = cursor.getInt(VendorsQuery.STARRED) != 0;
+        	String debugtest2 = cursor.getString(ControllersQuery.WAN_URL);
+        	String debugtest3 = cursor.getString(ControllersQuery.WIFI_URL);
+        	String debugtest4 = debugtest2 + " \n" + debugtest3;
+            ((TextView) view.findViewById(R.id.controller_urls)).setText(
+            		debugtest4);
+
+            final boolean starred = false; /*cursor.getInt(VendorsQuery.STARRED) != 0;*/
             view.findViewById(R.id.star_button).setVisibility(
                     starred ? View.VISIBLE : View.INVISIBLE);
         }
@@ -269,19 +278,19 @@ public class DbMaintControllersFragment extends ListFragment implements
         /** {@inheritDoc} */
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            return getActivity().getLayoutInflater().inflate(R.layout.list_item_vendor, parent,
+            return getActivity().getLayoutInflater().inflate(R.layout.list_item_controller, parent,
                     false);
         }
 
         /** {@inheritDoc} */ 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
-            ((TextView) view.findViewById(R.id.vendor_name)).setText(cursor
+            ((TextView) view.findViewById(R.id.controller_name)).setText(cursor
                     .getString(SearchQuery.NAME));
 
             final String snippet = cursor.getString(SearchQuery.SEARCH_SNIPPET);
             final Spannable styledSnippet = buildStyledSnippet(snippet);
-            ((TextView) view.findViewById(R.id.vendor_location)).setText(styledSnippet);
+            ((TextView) view.findViewById(R.id.controller_urls)).setText(styledSnippet);
 
             final boolean starred = cursor.getInt(VendorsQuery.STARRED) != 0;
             view.findViewById(R.id.star_button).setVisibility(
@@ -289,7 +298,7 @@ public class DbMaintControllersFragment extends ListFragment implements
         }
     }
 
-    private ContentObserver mVendorChangesObserver = new ContentObserver(new Handler()) {
+    private ContentObserver mControllerChangesObserver = new ContentObserver(new Handler()) {
         @Override
         public void onChange(boolean selfChange) {
             if (mCursor != null) {
@@ -352,5 +361,45 @@ public class DbMaintControllersFragment extends ListFragment implements
         int NAME = 2;
         int SEARCH_SNIPPET = 3;
         int STARRED = 4;
+    }
+
+    private interface ControllersQuery {
+        int _TOKEN = 0x4;
+        String[] PROJECTION = {
+//              String CONTROLLER_ID = "_id";
+//              String TITLE = "title";
+//              String WAN_URL = "wan_url";
+//              String WIFI_URL = "wifi_url";
+//              String WIFI_SSID = "wifi_ssid";
+//              String USER = "user";
+//              String PW = "pw";
+//              String LAST_UPDATED = "last_updated";
+//              String UPDATE_INTERVAL = "update_i";
+//              String DB_SAVE_DAYS = "db_save_days";
+//              String CONTROLLER_TYPE = "controller_type";
+                BaseColumns._ID,
+                AquaNotesDbContract.Controllers.TITLE,
+                AquaNotesDbContract.Controllers.WAN_URL,
+                AquaNotesDbContract.Controllers.WIFI_URL,
+                AquaNotesDbContract.Controllers.WIFI_SSID,
+                AquaNotesDbContract.Controllers.USER,
+                AquaNotesDbContract.Controllers.PW,
+                AquaNotesDbContract.Controllers.LAST_UPDATED,
+                AquaNotesDbContract.Controllers.UPDATE_INTERVAL,
+                AquaNotesDbContract.Controllers.DB_SAVE_DAYS,
+                AquaNotesDbContract.Controllers.CONTROLLER_TYPE,
+        };
+        
+        int _ID = 0;
+        int TITLE = 1;
+        int WAN_URL = 2;
+        int WIFI_URL = 3;
+        int WIFI_SSID = 4;
+        int USER = 5;
+        int PW = 6;
+        int LAST_UPDATED = 7;
+        int UPDATE_INTERVAL = 8;
+        int DB_SAVE_DAYS = 9;
+        int CONTROLLER_TYPE = 10;
     }
 }

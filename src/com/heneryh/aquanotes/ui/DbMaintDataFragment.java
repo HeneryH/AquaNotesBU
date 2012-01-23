@@ -16,6 +16,9 @@
 
 package com.heneryh.aquanotes.ui;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+
 import com.heneryh.aquanotes.R;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract;
 import com.heneryh.aquanotes.util.ActivityHelper;
@@ -27,6 +30,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -47,7 +51,7 @@ import static com.heneryh.aquanotes.util.UIUtils.formatSessionSubtitle;
 /**
  * A {@link ListFragment} showing a list of sessions.
  */
-public class DbMaintProbesFragment extends ListFragment implements
+public class DbMaintDataFragment extends ListFragment implements
         NotifyingAsyncQueryHandler.AsyncQueryListener {
 
     public static final String EXTRA_SCHEDULE_TIME_STRING =
@@ -82,35 +86,35 @@ public class DbMaintProbesFragment extends ListFragment implements
         setListAdapter(null);
 
         mHandler.cancelOperation(SearchQuery._TOKEN);
-        mHandler.cancelOperation(ProbesQuery._TOKEN);
+        mHandler.cancelOperation(DataQuery._TOKEN);
         mHandler.cancelOperation(TracksQuery._TOKEN);
 
         // Load new arguments
         final Intent intent = BaseActivity.fragmentArgumentsToIntent(arguments);
-        final Uri probesUri = intent.getData();
-        final int probesQueryToken;
+        final Uri dataUri = intent.getData();
+        final int dataQueryToken;
 
-        if (probesUri == null) {
+        if (dataUri == null) {
             return;
         }
 
         String[] projection;
-        if (!AquaNotesDbContract.Sessions.isSearchUri(probesUri)) {
-            mAdapter = new ProbesAdapter(getActivity());
-            projection = ProbesQuery.PROJECTION;
-            probesQueryToken = ProbesQuery._TOKEN;
+//        if (!AquaNotesDbContract.Sessions.isSearchUri(dataUri)) {
+            mAdapter = new DataAdapter(getActivity());
+            projection = DataQuery.PROJECTION;
+            dataQueryToken = DataQuery._TOKEN;
 
-        } else {
-            mAdapter = new SearchAdapter(getActivity());
-            projection = SearchQuery.PROJECTION;
-            probesQueryToken = SearchQuery._TOKEN;
-        }
+//        } else {
+//            mAdapter = new SearchAdapter(getActivity());
+//            projection = SearchQuery.PROJECTION;
+//            sessionQueryToken = SearchQuery._TOKEN;
+//        }
 
         setListAdapter(mAdapter);
 
         // Start background query to load sessions
-        mHandler.startQuery(probesQueryToken, null, probesUri, projection, null, null,
-                AquaNotesDbContract.Probes.DEFAULT_SORT);
+        mHandler.startQuery(dataQueryToken, null, dataUri, projection, null, null,
+                AquaNotesDbContract.ProbeData.DEFAULT_SORT);
 
         // If caller launched us with specific track hint, pass it along when
         // launching session details. Also start a query to load the track info.
@@ -132,7 +136,7 @@ public class DbMaintProbesFragment extends ListFragment implements
         if (!mHasSetEmptyText) {
             // Could be a bug, but calling this twice makes it become visible when it shouldn't
             // be visible.
-            setEmptyText(getString(R.string.empty_probes));
+            setEmptyText(getString(R.string.empty_sessions));
             mHasSetEmptyText = true;
         }
     }
@@ -143,12 +147,12 @@ public class DbMaintProbesFragment extends ListFragment implements
             return;
         }
 
-        if (token == ProbesQuery._TOKEN /*|| token == SearchQuery._TOKEN */) {
-            onProbesOrSearchQueryComplete(cursor);
+        if (token == DataQuery._TOKEN || token == SearchQuery._TOKEN) {
+            onDataOrSearchQueryComplete(cursor);
         } else if (token == TracksQuery._TOKEN) {
             onTrackQueryComplete(cursor);
         } else {
-            Log.d("DbMaintProbesFragment/onQueryComplete", "Query complete, Not Actionable: " + token);
+            Log.d("DbMaintDataFragment/onQueryComplete", "Query complete, Not Actionable: " + token);
             cursor.close();
         }
     }
@@ -156,7 +160,7 @@ public class DbMaintProbesFragment extends ListFragment implements
     /**
      * Handle {@link SessionsQuery} {@link Cursor}.
      */
-    private void onProbesOrSearchQueryComplete(Cursor cursor) {
+    private void onDataOrSearchQueryComplete(Cursor cursor) {
         if (mCursor != null) {
             // In case cancelOperation() doesn't work and we end up with consecutive calls to this
             // callback.
@@ -244,36 +248,43 @@ public class DbMaintProbesFragment extends ListFragment implements
     /**
      * {@link CursorAdapter} that renders a {@link SessionsQuery}.
      */
-    private class ProbesAdapter extends CursorAdapter {
-        public ProbesAdapter(Context context) {
+    private class DataAdapter extends CursorAdapter {
+        public DataAdapter(Context context) {
             super(context, null);
         }
 
         /** {@inheritDoc} */
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            return getActivity().getLayoutInflater().inflate(R.layout.list_item_probe, parent,
+            return getActivity().getLayoutInflater().inflate(R.layout.list_item_datum, parent,
                     false);
         }
 
         /** {@inheritDoc} */
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
-            final TextView titleView = (TextView) view.findViewById(R.id.probe_title);
-            final TextView subtitleView = (TextView) view.findViewById(R.id.probe_subtitle);
+            final TextView titleView = (TextView) view.findViewById(R.id.datum_name);
+            final TextView subtitleView = (TextView) view.findViewById(R.id.datum_timstamp);
 
-            String debugstring1 = cursor.getString(ProbesQuery.PROBE_NAME);
-            titleView.setText(debugstring1);
+            String name = cursor.getString(DataQuery.PROBE_NAME);
+            String value = cursor.getString(DataQuery.VALUE);
+            long timestampL = cursor.getLong(DataQuery.TIMESTAMP);
+
+            String line1 = name + " = " + value;
+            titleView.setText(line1);
 
             // Format time block this session occupies
 //            final long blockStart = cursor.getLong(SessionsQuery.BLOCK_START);
 //            final long blockEnd = cursor.getLong(SessionsQuery.BLOCK_END);
 //            final String roomName = cursor.getString(SessionsQuery.ROOM_NAME);
-//            final String subtitle = formatSessionSubtitle(blockStart, blockEnd, roomName, context);
-            String debugstring2 = cursor.getString(ProbesQuery.DEVICE_ID);
-            subtitleView.setText(debugstring2);
+//            final String subtitle = formatSessionSubtitle(timestamp, timestamp, " ", context);
+			Date timestampD = new Date(timestampL);
+			SimpleDateFormat formatter = new SimpleDateFormat("M/d/yy h:mm a");
+			String timestampS = formatter.format(timestampD);
 
-            final boolean starred = false;; //cursor.getInt(SessionsQuery.STARRED) != 0;
+            subtitleView.setText(timestampS);
+
+            final boolean starred = false; //cursor.getInt(SessionsQuery.STARRED) != 0;
             view.findViewById(R.id.star_button).setVisibility(
                     starred ? View.VISIBLE : View.INVISIBLE);
 
@@ -293,7 +304,7 @@ public class DbMaintProbesFragment extends ListFragment implements
         /** {@inheritDoc} */
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            return getActivity().getLayoutInflater().inflate(R.layout.list_item_probe, parent,
+            return getActivity().getLayoutInflater().inflate(R.layout.list_item_datum_oneline, parent,
                     false);
         }
 
@@ -397,89 +408,31 @@ public class DbMaintProbesFragment extends ListFragment implements
         int STARRED = 4;
     }
     
-    private interface ControllersQuery {
-
-        int _TOKEN = 0x3;
-        
-        String[] PROJECTION = {
-//              String CONTROLLER_ID = "_id";
-//              String TITLE = "title";
-//              String WAN_URL = "wan_url";
-//              String WIFI_URL = "wifi_url";
-//              String WIFI_SSID = "wifi_ssid";
-//              String USER = "user";
-//              String PW = "pw";
-//              String LAST_UPDATED = "last_updated";
-//              String UPDATE_INTERVAL = "update_i";
-//              String DB_SAVE_DAYS = "db_save_days";
-//              String CONTROLLER_TYPE = "controller_type";
-                BaseColumns._ID,
-                AquaNotesDbContract.Controllers.TITLE,
-                AquaNotesDbContract.Controllers.WAN_URL,
-                AquaNotesDbContract.Controllers.WIFI_URL,
-                AquaNotesDbContract.Controllers.WIFI_SSID,
-                AquaNotesDbContract.Controllers.USER,
-                AquaNotesDbContract.Controllers.PW,
-                AquaNotesDbContract.Controllers.LAST_UPDATED,
-                AquaNotesDbContract.Controllers.UPDATE_INTERVAL,
-                AquaNotesDbContract.Controllers.DB_SAVE_DAYS,
-                AquaNotesDbContract.Controllers.CONTROLLER_TYPE,
-        };
-        
-        int _ID = 0;
-        int TITLE = 1;
-        int WAN_URL = 2;
-        int WIFI_URL = 3;
-        int WIFI_SSID = 4;
-        int USER = 5;
-        int PW = 6;
-        int LAST_UPDATED = 7;
-        int UPDATE_INTERVAL = 8;
-        int DB_SAVE_DAYS = 9;
-        int CONTROLLER_TYPE = 10;
-    }
-    
-	private interface ProbesQuery {
+    private interface DataQuery {
         int _TOKEN = 0x4;
-        String[] PROJECTION = {
-        	//  String PROBE_ID = "_id";
-        	//  String PROBE_NAME = "probe_name";
-        	//  String DEVICE_ID = "device_id";
-        	//  String TYPE = "probe_type";
-        	//  String RESOURCE_ID = "resource_id";
-        	//  String CONTROLLER_ID = "controller_id";
-                BaseColumns._ID,
-                AquaNotesDbContract.Probes.PROBE_NAME,
-                AquaNotesDbContract.Probes.DEVICE_ID,
-                AquaNotesDbContract.Probes.TYPE,
-                AquaNotesDbContract.Probes.RESOURCE_ID,
-                AquaNotesDbContract.Probes.CONTROLLER_ID,
-        };
         
-        int _ID = 0;
-        int PROBE_NAME = 1;
-        int DEVICE_ID = 2;
-        int TYPE = 3;
-        int RESOURCE_ID = 4;
-        int CONTROLLER_ID = 5;
-    }
-	
-	private interface ProbeDataQuery {
-        int _TOKEN = 0x5;
         String[] PROJECTION = {
-//              String DATA_ID = "_id";
-//              String VALUE = "value";
-//              String TIMESTAMP = "timestamp";
-//              String PROBE_ID = "probe_id";
                 BaseColumns._ID,
-                AquaNotesDbContract.ProbeData.VALUE,
-                AquaNotesDbContract.ProbeData.TIMESTAMP,
-                AquaNotesDbContract.ProbeData.PROBE_ID,
+                AquaNotesDbContract.ViewProbeData.DATA_ID,
+                AquaNotesDbContract.ViewProbeData.VALUE,
+                AquaNotesDbContract.ViewProbeData.TIMESTAMP,
+                AquaNotesDbContract.ViewProbeData.PROBE_ID,
+                AquaNotesDbContract.ViewProbeData.PROBE_NAME,
+                AquaNotesDbContract.ViewProbeData.DEVICE_ID,
+                AquaNotesDbContract.ViewProbeData.TYPE,
+                AquaNotesDbContract.ViewProbeData.RESOURCE_ID,
+                AquaNotesDbContract.ViewProbeData.CONTROLLER_ID,
         };
-        
+
         int _ID = 0;
-        int VALUE = 1;
-        int TIMESTAMP = 2;
-        int PROBE_ID = 3;
+        int DATA_ID = 1;
+        int VALUE = 2;
+        int TIMESTAMP = 3;
+        int PROBE_ID = 4;
+        int PROBE_NAME = 5;
+        int TYPE = 6;
+        int RESOURCE_ID = 7;
+        int CONTROLLER_ID = 8;
     }
+
 }

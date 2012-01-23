@@ -20,10 +20,12 @@ import com.heneryh.aquanotes.provider.AquaNotesDbContract.Blocks;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.BlocksColumns;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Controllers;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.ControllersColumns;
-import com.heneryh.aquanotes.provider.AquaNotesDbContract.ProbeData;
-import com.heneryh.aquanotes.provider.AquaNotesDbContract.ProbeDataColumns;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.Data;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.DataColumns;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Probes;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.ProbesColumns;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.Outlets;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.OutletsColumns;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Rooms;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.RoomsColumns;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Sessions;
@@ -56,17 +58,20 @@ public class AquaNotesDatabase extends SQLiteOpenHelper {
     // sure user data is saved.
 
     private static final int VER_LAUNCH = 1;
-    private static final int VER_SESSION_NEXT = 2;
+    private static final int VER_REWORK_ALL_TABLES = 2;
 
-    private static final int DATABASE_VERSION = VER_LAUNCH;
+    private static final int DATABASE_VERSION = VER_REWORK_ALL_TABLES;
 
     interface Tables {
         String CONTROLLERS = "controllers";
         String PROBES = "probes";
-        String PROBE_DATA = "probe_data";
+        String OUTLETS = "outlets";
+        String DATA = "data";
         
         String PROBE_VIEW = "probe_view";
-        String DATA_VIEW = "data_view";
+        String OUTLET_VIEW = "outlet_view";
+        String PDATA_VIEW = "pdata_view";
+        String ODATA_VIEW = "odata_view";
 
         // delete below tables
         String BLOCKS = "blocks";
@@ -198,7 +203,7 @@ public class AquaNotesDatabase extends SQLiteOpenHelper {
 //      String CONTROLLER_ID = "_id";
 //      String TITLE = "title";
 //      String WAN_URL = "wan_url";
-//      String WIFI_URL = "wifi_url";
+//      String LAN_URL = "wifi_url";
 //      String WIFI_SSID = "wifi_ssid";
 //      String USER = "user";
 //      String PW = "pw";
@@ -211,15 +216,15 @@ public class AquaNotesDatabase extends SQLiteOpenHelper {
               + BaseColumns._ID + " INTEGER PRIMARY KEY ,"  /*AUTOINCREMENT*/
               + ControllersColumns.TITLE + " TEXT,"
               + ControllersColumns.WAN_URL + " TEXT,"
-              + ControllersColumns.WIFI_URL + " TEXT,"
+              + ControllersColumns.LAN_URL + " TEXT,"
               + ControllersColumns.WIFI_SSID + " TEXT,"
               + ControllersColumns.USER + " TEXT,"
               + ControllersColumns.PW + " TEXT,"
               + ControllersColumns.LAST_UPDATED + " LONG,"
               + ControllersColumns.UPDATE_INTERVAL + " INTEGER,"
               + ControllersColumns.DB_SAVE_DAYS + " INTEGER,"
-              + ControllersColumns.CONTROLLER_TYPE + " TEXT"
-              + /*", UNIQUE (" + ControllersColumns.CONTROLLER_ID + ") ON CONFLICT REPLACE*/")");
+              + ControllersColumns.MODEL + " TEXT"
+              + ")");
 
 //      String PROBE_ID = "_id";
 //      String PROBE_NAME = "probe_name";
@@ -230,59 +235,98 @@ public class AquaNotesDatabase extends SQLiteOpenHelper {
 
       db.execSQL("CREATE TABLE " + Tables.PROBES + " ("
               + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-              + ProbesColumns.PROBE_NAME + " TEXT,"
-              + ProbesColumns.DEVICE_ID + " TEXT,"
-              + ProbesColumns.TYPE + " INTEGER,"
+              + ProbesColumns.NAME + " TEXT,"
               + ProbesColumns.RESOURCE_ID + " INTEGER,"
               + ProbesColumns.CONTROLLER_ID + " INTEGER"
-              + /*", UNIQUE (" + ProbesColumns.PROBE_ID + ") ON CONFLICT REPLACE*/")");
+              + ")");
+
+      db.execSQL("CREATE TABLE " + Tables.OUTLETS + " ("
+              + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+              + OutletsColumns.NAME + " TEXT,"
+              + OutletsColumns.DEVICE_ID + " TEXT,"
+              + OutletsColumns.RESOURCE_ID + " INTEGER,"
+              + OutletsColumns.CONTROLLER_ID + " INTEGER"
+              + ")");
 
 //      String DATA_ID = "_id";
 //      String VALUE = "value";
 //      String TIMESTAMP = "timestamp";
 //      String PROBE_ID = "probe_id";
-
-      db.execSQL("CREATE TABLE " + Tables.PROBE_DATA + " ("
+      db.execSQL("CREATE TABLE " + Tables.DATA + " ("
               + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-              + ProbeDataColumns.VALUE + " TEXT,"
-              + ProbeDataColumns.PROBE_ID + " INTEGER,"
-              + ProbeDataColumns.TIMESTAMP + " LONG"
-              + /*", UNIQUE (" + ProbeDataColumns.DATA_ID + ") ON CONFLICT REPLACE*/")");
+              + DataColumns.TYPE + " INTEGER,"
+              + DataColumns.VALUE + " TEXT,"
+              + DataColumns.PARENT_ID + " INTEGER,"
+              + DataColumns.TIMESTAMP + " LONG"
+              + ")");
       
       db.execSQL("CREATE VIEW "+ Tables.PROBE_VIEW +
-      	    " AS SELECT " + Tables.PROBES + "." + Probes._ID + ","+
-      	    " " + Tables.PROBES + "." + Probes.PROBE_NAME + "," +
-      	    " " + Tables.PROBES + "." + Probes.DEVICE_ID + "," +
-      	    " " + Tables.PROBES + "." + Probes.TYPE + "," +
+      	    " AS SELECT" +
+      	  " " +   Tables.PROBES + "." + BaseColumns._ID + ","+
+      	    " " + Tables.PROBES + "." + Probes.NAME + "," +
       	    " " + Tables.PROBES + "." + Probes.RESOURCE_ID + "," +
       	    " " + Tables.PROBES + "." + Probes.CONTROLLER_ID + "," +
       	    " " + Tables.CONTROLLERS + "." + Controllers.TITLE + "," +
       	    " " + Tables.CONTROLLERS + "." + Controllers.WAN_URL + "," +
-      	    " " + Tables.CONTROLLERS + "." + Controllers.WIFI_URL + "," +
+      	    " " + Tables.CONTROLLERS + "." + Controllers.LAN_URL + "," +
       	    " " + Tables.CONTROLLERS + "." + Controllers.WIFI_SSID + "," +
       	    " " + Tables.CONTROLLERS + "." + Controllers.USER + "," +
       	    " " + Tables.CONTROLLERS + "." + Controllers.PW + "," +
       	    " " + Tables.CONTROLLERS + "." + Controllers.LAST_UPDATED + "," +
       	    " " + Tables.CONTROLLERS + "." + Controllers.UPDATE_INTERVAL + "," +
       	    " " + Tables.CONTROLLERS + "." + Controllers.DB_SAVE_DAYS + "," +
-      	    " " + Tables.CONTROLLERS + "." + Controllers.CONTROLLER_TYPE + "" +
+      	    " " + Tables.CONTROLLERS + "." + Controllers.MODEL + "" +
       	    " FROM " + Tables.PROBES + " JOIN " + Tables.CONTROLLERS +
-      	    " ON " + Tables.PROBES + "." + Probes.CONTROLLER_ID + " =" + Tables.CONTROLLERS + "." + Controllers._ID
+      	    " ON " + Tables.PROBES + "." + Probes.CONTROLLER_ID + " =" + Tables.CONTROLLERS + "." + BaseColumns._ID
       	    );
 
-      db.execSQL("CREATE VIEW "+ Tables.DATA_VIEW +
-      	    " AS SELECT " + Tables.PROBE_DATA + "." + ProbeData._ID + " ," +
-      	    " " + Tables.PROBE_DATA + "." + ProbeData.VALUE + "," +
-      	    " " + Tables.PROBE_DATA + "." + ProbeData.TIMESTAMP + "," +
-      	    " " + Tables.PROBE_DATA + "." + ProbeData.PROBE_ID + "," +
-      	    " " + Tables.PROBES + "." + Probes.PROBE_NAME + "," +
-      	    " " + Tables.PROBES + "." + Probes.DEVICE_ID + "," +
-      	    " " + Tables.PROBES + "." + Probes.TYPE + "," +
+      db.execSQL("CREATE VIEW "+ Tables.OUTLET_VIEW +
+        	    " AS SELECT" +
+        	  " " +   Tables.OUTLETS + "." + BaseColumns._ID + ","+
+        	    " " + Tables.OUTLETS + "." + Outlets.NAME + "," +
+        	    " " + Tables.OUTLETS + "." + Outlets.DEVICE_ID + "," +
+        	    " " + Tables.OUTLETS + "." + Outlets.RESOURCE_ID + "," +
+        	    " " + Tables.OUTLETS + "." + Outlets.CONTROLLER_ID + "," +
+        	    " " + Tables.CONTROLLERS + "." + Controllers.TITLE + "," +
+        	    " " + Tables.CONTROLLERS + "." + Controllers.WAN_URL + "," +
+        	    " " + Tables.CONTROLLERS + "." + Controllers.LAN_URL + "," +
+        	    " " + Tables.CONTROLLERS + "." + Controllers.WIFI_SSID + "," +
+        	    " " + Tables.CONTROLLERS + "." + Controllers.USER + "," +
+        	    " " + Tables.CONTROLLERS + "." + Controllers.PW + "," +
+        	    " " + Tables.CONTROLLERS + "." + Controllers.LAST_UPDATED + "," +
+        	    " " + Tables.CONTROLLERS + "." + Controllers.UPDATE_INTERVAL + "," +
+        	    " " + Tables.CONTROLLERS + "." + Controllers.DB_SAVE_DAYS + "," +
+        	    " " + Tables.CONTROLLERS + "." + Controllers.MODEL + "" +
+        	    " FROM " + Tables.OUTLETS + " JOIN " + Tables.CONTROLLERS +
+        	    " ON " + Tables.OUTLETS + "." + Outlets.CONTROLLER_ID + " =" + Tables.CONTROLLERS + "." + BaseColumns._ID
+        	    );
+
+      db.execSQL("CREATE VIEW "+ Tables.PDATA_VIEW +
+      	    " AS SELECT " + Tables.DATA + "." + BaseColumns._ID + " ," +
+      	    " " + Tables.DATA + "." + Data.TYPE + "," +
+      	    " " + Tables.DATA + "." + Data.VALUE + "," +
+      	    " " + Tables.DATA + "." + Data.TIMESTAMP + "," +
+      	    " " + Tables.DATA + "." + Data.PARENT_ID + "," +
+      	    " " + Tables.PROBES + "." + Probes.NAME + "," +
       	    " " + Tables.PROBES + "." + Probes.RESOURCE_ID + "," +
       	    " " + Tables.PROBES + "." + Probes.CONTROLLER_ID + "" +
-      	    " FROM " + Tables.PROBE_DATA + " JOIN " + Tables.PROBES +
-      	    " ON " + Tables.PROBE_DATA + "." + ProbeData.PROBE_ID + " =" + Tables.PROBES + "." + Probes._ID
+      	    " FROM " + Tables.DATA + " JOIN " + Tables.PROBES +
+      	    " ON " + Tables.DATA + "." + Data.PARENT_ID + " =" + Tables.PROBES + "." + BaseColumns._ID
       	    );
+
+      db.execSQL("CREATE VIEW "+ Tables.ODATA_VIEW +
+        	    " AS SELECT " + Tables.DATA + "." + BaseColumns._ID + " ," +
+          	    " " + Tables.DATA + "." + Data.TYPE + "," +
+        	    " " + Tables.DATA + "." + Data.VALUE + "," +
+        	    " " + Tables.DATA + "." + Data.TIMESTAMP + "," +
+        	    " " + Tables.DATA + "." + Data.PARENT_ID + "," +
+        	    " " + Tables.OUTLETS + "." + Outlets.NAME + "," +
+        	    " " + Tables.OUTLETS + "." + Outlets.DEVICE_ID + "," +
+        	    " " + Tables.OUTLETS + "." + Outlets.RESOURCE_ID + "," +
+        	    " " + Tables.OUTLETS + "." + Outlets.CONTROLLER_ID + "" +
+        	    " FROM " + Tables.DATA + " JOIN " + Tables.OUTLETS +
+        	    " ON " + Tables.DATA + "." + Data.PARENT_ID + " =" + Tables.OUTLETS + "." + BaseColumns._ID
+        	    );
 
       ////// delete below
         db.execSQL("CREATE TABLE " + Tables.BLOCKS + " ("
@@ -458,11 +502,42 @@ public class AquaNotesDatabase extends SQLiteOpenHelper {
         int version = oldVersion;
 
         switch (version) {
-//        case VER_LAUNCH:
-//        	// Version 2 added column for session feedback URL.
-//        	db.execSQL("ALTER TABLE " + Tables.SESSIONS + " ADD COLUMN "
-//        			+ SessionsColumns.SESSION_FEEDBACK_URL + " TEXT");
-//        	version = VER_SESSION_FEEDBACK_URL;
+        case VER_LAUNCH:
+        	// Version 2 reworked a lot but not the controllers.
+            Log.w(TAG, "Destroying old data during upgrade");
+
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.CONTROLLERS);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.PROBES);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.OUTLETS);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.DATA);
+            
+            db.execSQL("DROP VIEW IF EXISTS " + Tables.PROBE_VIEW);
+            db.execSQL("DROP VIEW IF EXISTS " + Tables.OUTLET_VIEW);
+            db.execSQL("DROP VIEW IF EXISTS " + Tables.PDATA_VIEW);
+            db.execSQL("DROP VIEW IF EXISTS " + Tables.ODATA_VIEW);
+
+            /// delete below
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.BLOCKS);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.TRACKS);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.ROOMS);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.SESSIONS);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.SPEAKERS);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.SESSIONS_SPEAKERS);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.SESSIONS_TRACKS);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.VENDORS);
+
+            db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.SESSIONS_SEARCH_INSERT);
+            db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.SESSIONS_SEARCH_DELETE);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.SESSIONS_SEARCH);
+
+            db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.VENDORS_SEARCH_INSERT);
+            db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.VENDORS_SEARCH_DELETE);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.VENDORS_SEARCH);
+
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.SEARCH_SUGGEST);
+
+            onCreate(db);
+        	version = VER_REWORK_ALL_TABLES;
 //
 //  case VER_SESSION_FEEDBACK_URL:
 //      // Version 3 added columns for session official notes URL and slug.
@@ -479,10 +554,13 @@ public class AquaNotesDatabase extends SQLiteOpenHelper {
 
             db.execSQL("DROP TABLE IF EXISTS " + Tables.CONTROLLERS);
             db.execSQL("DROP TABLE IF EXISTS " + Tables.PROBES);
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.PROBE_DATA);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.OUTLETS);
+            db.execSQL("DROP TABLE IF EXISTS " + Tables.DATA);
             
             db.execSQL("DROP VIEW IF EXISTS " + Tables.PROBE_VIEW);
-            db.execSQL("DROP VIEW IF EXISTS " + Tables.DATA_VIEW);
+            db.execSQL("DROP VIEW IF EXISTS " + Tables.OUTLET_VIEW);
+            db.execSQL("DROP VIEW IF EXISTS " + Tables.PDATA_VIEW);
+            db.execSQL("DROP VIEW IF EXISTS " + Tables.ODATA_VIEW);
 
             /// delete below
             db.execSQL("DROP TABLE IF EXISTS " + Tables.BLOCKS);

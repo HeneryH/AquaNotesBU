@@ -86,7 +86,7 @@ public class DbMaintDataFragment extends ListFragment implements
         setListAdapter(null);
 
         mHandler.cancelOperation(SearchQuery._TOKEN);
-        mHandler.cancelOperation(DataQuery._TOKEN);
+        mHandler.cancelOperation(PDataQuery._TOKEN);
         mHandler.cancelOperation(TracksQuery._TOKEN);
 
         // Load new arguments
@@ -101,8 +101,8 @@ public class DbMaintDataFragment extends ListFragment implements
         String[] projection;
 //        if (!AquaNotesDbContract.Sessions.isSearchUri(dataUri)) {
             mAdapter = new DataAdapter(getActivity());
-            projection = DataQuery.PROJECTION;
-            dataQueryToken = DataQuery._TOKEN;
+            projection = PDataQuery.PROJECTION;
+            dataQueryToken = PDataQuery._TOKEN;
 
 //        } else {
 //            mAdapter = new SearchAdapter(getActivity());
@@ -114,7 +114,7 @@ public class DbMaintDataFragment extends ListFragment implements
 
         // Start background query to load sessions
         mHandler.startQuery(dataQueryToken, null, dataUri, projection, null, null,
-                AquaNotesDbContract.ProbeData.DEFAULT_SORT);
+                AquaNotesDbContract.Data.DEFAULT_SORT);
 
         // If caller launched us with specific track hint, pass it along when
         // launching session details. Also start a query to load the track info.
@@ -147,7 +147,7 @@ public class DbMaintDataFragment extends ListFragment implements
             return;
         }
 
-        if (token == DataQuery._TOKEN || token == SearchQuery._TOKEN) {
+        if (token == PDataQuery._TOKEN || token == SearchQuery._TOKEN) {
             onDataOrSearchQueryComplete(cursor);
         } else if (token == TracksQuery._TOKEN) {
             onTrackQueryComplete(cursor);
@@ -266,9 +266,9 @@ public class DbMaintDataFragment extends ListFragment implements
             final TextView titleView = (TextView) view.findViewById(R.id.datum_name);
             final TextView subtitleView = (TextView) view.findViewById(R.id.datum_timstamp);
 
-            String name = cursor.getString(DataQuery.PROBE_NAME);
-            String value = cursor.getString(DataQuery.VALUE);
-            long timestampL = cursor.getLong(DataQuery.TIMESTAMP);
+            String name = cursor.getString(PDataQuery.NAME);
+            String value = cursor.getString(PDataQuery.VALUE);
+            long timestampL = cursor.getLong(PDataQuery.TIMESTAMP);
 
             String line1 = name + " = " + value;
             titleView.setText(line1);
@@ -408,29 +408,52 @@ public class DbMaintDataFragment extends ListFragment implements
         int STARRED = 4;
     }
     
-    private interface DataQuery {
+    private interface PDataQuery {
         int _TOKEN = 0x4;
         
         String[] PROJECTION = {
                 BaseColumns._ID,
-                AquaNotesDbContract.ViewProbeData.DATA_ID,
+                AquaNotesDbContract.ViewProbeData.TYPE,
                 AquaNotesDbContract.ViewProbeData.VALUE,
                 AquaNotesDbContract.ViewProbeData.TIMESTAMP,
-                AquaNotesDbContract.ViewProbeData.PROBE_ID,
-                AquaNotesDbContract.ViewProbeData.PROBE_NAME,
-                AquaNotesDbContract.ViewProbeData.DEVICE_ID,
-                AquaNotesDbContract.ViewProbeData.TYPE,
+                AquaNotesDbContract.ViewProbeData.PARENT_ID,
+                AquaNotesDbContract.ViewProbeData.NAME,
                 AquaNotesDbContract.ViewProbeData.RESOURCE_ID,
                 AquaNotesDbContract.ViewProbeData.CONTROLLER_ID,
         };
 
         int _ID = 0;
-        int DATA_ID = 1;
+        int TYPE = 1;
         int VALUE = 2;
         int TIMESTAMP = 3;
-        int PROBE_ID = 4;
-        int PROBE_NAME = 5;
-        int TYPE = 6;
+        int PARENT_ID = 4;
+        int NAME = 5;
+        int RESOURCE_ID = 6;
+        int CONTROLLER_ID = 7;
+    }
+    
+    private interface ODataQuery {
+        int _TOKEN = 0x5;
+        
+        String[] PROJECTION = {
+                BaseColumns._ID,
+                AquaNotesDbContract.ViewOutletData.TYPE,
+                AquaNotesDbContract.ViewOutletData.VALUE,
+                AquaNotesDbContract.ViewOutletData.TIMESTAMP,
+                AquaNotesDbContract.ViewOutletData.PARENT_ID,
+                AquaNotesDbContract.ViewOutletData.NAME,
+                AquaNotesDbContract.ViewOutletData.DEVICE_ID,
+                AquaNotesDbContract.ViewOutletData.RESOURCE_ID,
+                AquaNotesDbContract.ViewOutletData.CONTROLLER_ID,
+        };
+
+        int _ID = 0;
+        int TYPE = 1;
+        int VALUE = 2;
+        int TIMESTAMP = 3;
+        int PARENT_ID = 4;
+        int NAME = 5;
+        int DEVICE_ID = 6;
         int RESOURCE_ID = 7;
         int CONTROLLER_ID = 8;
     }

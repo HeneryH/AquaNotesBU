@@ -262,7 +262,7 @@ public class DbMaintProbesFragment extends ListFragment implements
             final TextView titleView = (TextView) view.findViewById(R.id.probe_title);
             final TextView subtitleView = (TextView) view.findViewById(R.id.probe_subtitle);
 
-            String debugstring1 = cursor.getString(ProbesQuery.PROBE_NAME);
+            String debugstring1 = cursor.getString(ProbesQuery.NAME);
             titleView.setText(debugstring1);
 
             // Format time block this session occupies
@@ -270,8 +270,8 @@ public class DbMaintProbesFragment extends ListFragment implements
 //            final long blockEnd = cursor.getLong(SessionsQuery.BLOCK_END);
 //            final String roomName = cursor.getString(SessionsQuery.ROOM_NAME);
 //            final String subtitle = formatSessionSubtitle(blockStart, blockEnd, roomName, context);
-            String debugstring2 = cursor.getString(ProbesQuery.DEVICE_ID);
-            subtitleView.setText(debugstring2);
+//            String debugstring2 = cursor.getString(ProbesQuery.DEVICE_ID);
+//            subtitleView.setText(debugstring2);
 
             final boolean starred = false;; //cursor.getInt(SessionsQuery.STARRED) != 0;
             view.findViewById(R.id.star_button).setVisibility(
@@ -405,7 +405,7 @@ public class DbMaintProbesFragment extends ListFragment implements
 //              String CONTROLLER_ID = "_id";
 //              String TITLE = "title";
 //              String WAN_URL = "wan_url";
-//              String WIFI_URL = "wifi_url";
+//              String LAN_URL = "wifi_url";
 //              String WIFI_SSID = "wifi_ssid";
 //              String USER = "user";
 //              String PW = "pw";
@@ -416,27 +416,27 @@ public class DbMaintProbesFragment extends ListFragment implements
                 BaseColumns._ID,
                 AquaNotesDbContract.Controllers.TITLE,
                 AquaNotesDbContract.Controllers.WAN_URL,
-                AquaNotesDbContract.Controllers.WIFI_URL,
+                AquaNotesDbContract.Controllers.LAN_URL,
                 AquaNotesDbContract.Controllers.WIFI_SSID,
                 AquaNotesDbContract.Controllers.USER,
                 AquaNotesDbContract.Controllers.PW,
                 AquaNotesDbContract.Controllers.LAST_UPDATED,
                 AquaNotesDbContract.Controllers.UPDATE_INTERVAL,
                 AquaNotesDbContract.Controllers.DB_SAVE_DAYS,
-                AquaNotesDbContract.Controllers.CONTROLLER_TYPE,
+                AquaNotesDbContract.Controllers.MODEL,
         };
         
         int _ID = 0;
         int TITLE = 1;
         int WAN_URL = 2;
-        int WIFI_URL = 3;
+        int LAN_URL = 3;
         int WIFI_SSID = 4;
         int USER = 5;
         int PW = 6;
         int LAST_UPDATED = 7;
         int UPDATE_INTERVAL = 8;
         int DB_SAVE_DAYS = 9;
-        int CONTROLLER_TYPE = 10;
+        int MODEL = 10;
     }
     
 	private interface ProbesQuery {
@@ -449,37 +449,38 @@ public class DbMaintProbesFragment extends ListFragment implements
         	//  String RESOURCE_ID = "resource_id";
         	//  String CONTROLLER_ID = "controller_id";
                 BaseColumns._ID,
-                AquaNotesDbContract.Probes.PROBE_NAME,
-                AquaNotesDbContract.Probes.DEVICE_ID,
-                AquaNotesDbContract.Probes.TYPE,
+                AquaNotesDbContract.Probes.NAME,
                 AquaNotesDbContract.Probes.RESOURCE_ID,
                 AquaNotesDbContract.Probes.CONTROLLER_ID,
         };
         
         int _ID = 0;
-        int PROBE_NAME = 1;
-        int DEVICE_ID = 2;
-        int TYPE = 3;
-        int RESOURCE_ID = 4;
-        int CONTROLLER_ID = 5;
+        int NAME = 1;
+        int RESOURCE_ID = 2;
+        int CONTROLLER_ID = 3;
     }
 	
-	private interface ProbeDataQuery {
+	private interface OutletsQuery {
         int _TOKEN = 0x5;
         String[] PROJECTION = {
-//              String DATA_ID = "_id";
-//              String VALUE = "value";
-//              String TIMESTAMP = "timestamp";
-//              String PROBE_ID = "probe_id";
+        	//  String PROBE_ID = "_id";
+        	//  String PROBE_NAME = "probe_name";
+        	//  String DEVICE_ID = "device_id";
+        	//  String TYPE = "probe_type";
+        	//  String RESOURCE_ID = "resource_id";
+        	//  String CONTROLLER_ID = "controller_id";
                 BaseColumns._ID,
-                AquaNotesDbContract.ProbeData.VALUE,
-                AquaNotesDbContract.ProbeData.TIMESTAMP,
-                AquaNotesDbContract.ProbeData.PROBE_ID,
+                AquaNotesDbContract.Outlets.NAME,
+                AquaNotesDbContract.Outlets.DEVICE_ID,
+                AquaNotesDbContract.Outlets.RESOURCE_ID,
+                AquaNotesDbContract.Outlets.CONTROLLER_ID,
         };
         
         int _ID = 0;
-        int VALUE = 1;
-        int TIMESTAMP = 2;
-        int PROBE_ID = 3;
+        int NAME = 1;
+        int DEVICE_ID = 2;
+        int RESOURCE_ID = 3;
+        int CONTROLLER_ID = 4;
     }
+	
 }

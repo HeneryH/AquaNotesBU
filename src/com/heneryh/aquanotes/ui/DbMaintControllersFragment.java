@@ -256,7 +256,7 @@ public class DbMaintControllersFragment extends ListFragment implements
             		debugtest);
 
         	String debugtest2 = cursor.getString(ControllersQuery.WAN_URL);
-        	String debugtest3 = cursor.getString(ControllersQuery.WIFI_URL);
+        	String debugtest3 = cursor.getString(ControllersQuery.LAN_URL);
         	String debugtest4 = debugtest2 + " \n" + debugtest3;
             ((TextView) view.findViewById(R.id.controller_urls)).setText(
             		debugtest4);
@@ -369,7 +369,7 @@ public class DbMaintControllersFragment extends ListFragment implements
 //              String CONTROLLER_ID = "_id";
 //              String TITLE = "title";
 //              String WAN_URL = "wan_url";
-//              String WIFI_URL = "wifi_url";
+//              String LAN_URL = "wifi_url";
 //              String WIFI_SSID = "wifi_ssid";
 //              String USER = "user";
 //              String PW = "pw";
@@ -380,26 +380,26 @@ public class DbMaintControllersFragment extends ListFragment implements
                 BaseColumns._ID,
                 AquaNotesDbContract.Controllers.TITLE,
                 AquaNotesDbContract.Controllers.WAN_URL,
-                AquaNotesDbContract.Controllers.WIFI_URL,
+                AquaNotesDbContract.Controllers.LAN_URL,
                 AquaNotesDbContract.Controllers.WIFI_SSID,
                 AquaNotesDbContract.Controllers.USER,
                 AquaNotesDbContract.Controllers.PW,
                 AquaNotesDbContract.Controllers.LAST_UPDATED,
                 AquaNotesDbContract.Controllers.UPDATE_INTERVAL,
                 AquaNotesDbContract.Controllers.DB_SAVE_DAYS,
-                AquaNotesDbContract.Controllers.CONTROLLER_TYPE,
+                AquaNotesDbContract.Controllers.MODEL,
         };
         
         int _ID = 0;
         int TITLE = 1;
         int WAN_URL = 2;
-        int WIFI_URL = 3;
+        int LAN_URL = 3;
         int WIFI_SSID = 4;
         int USER = 5;
         int PW = 6;
         int LAST_UPDATED = 7;
         int UPDATE_INTERVAL = 8;
         int DB_SAVE_DAYS = 9;
-        int CONTROLLER_TYPE = 10;
+        int MODEL = 10;
     }
 }

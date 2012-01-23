@@ -7,7 +7,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.heneryh.aquanotes.provider.AquaNotesDbContract;
-import com.heneryh.aquanotes.provider.AquaNotesDbContract.ProbeData;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.Data;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.Outlets;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Probes;
 
 import android.content.ContentResolver;
@@ -203,7 +204,7 @@ public class ApexStateXMLParser extends DefaultHandler {
 			// Update the database to tag the fact that the firmware is old and not supported
 			ContentValues values = new ContentValues();
 	        values.clear();
-			values.put(AquaNotesDbContract.Probes.TYPE, "Apex-old");
+			values.put(AquaNotesDbContract.Controllers.MODEL, "Apex-old");
 			try {
 				mResolver.update(controllerUri, values, null, null);
 			} catch (SQLException e) {
@@ -287,8 +288,7 @@ public class ApexStateXMLParser extends DefaultHandler {
 						ContentValues values = new ContentValues();
 						//values.put(BaseColumns._ID, xxx);  auto-generate key
 						values.put(AquaNotesDbContract.Probes.CONTROLLER_ID, controllerId);
-						values.put(AquaNotesDbContract.Probes.PROBE_NAME, currentName);
-						values.put(AquaNotesDbContract.Probes.TYPE, 1); // 1=probe, 0=outlet
+						values.put(AquaNotesDbContract.Probes.NAME, currentName);
 						Uri insertProbeUri = AquaNotesDbContract.Probes.buildInsertProbeUri(controllerUri);
 						mResolver.insert(insertProbeUri, values);
 						
@@ -321,10 +321,10 @@ public class ApexStateXMLParser extends DefaultHandler {
 //				values2.put(ProbeDataColumns.CONTROLLER_ID, controllerId); // redundant but easier without join capability
 //				values2.put(ProbeDataColumns.PROBENAME, currentName); // redundant but easier without join capability
 //				values2.put(ProbeDataColumns.DATUM_TYPE, 1); // 1=probe, 0=outlet
-				values2.put(AquaNotesDbContract.ProbeData.VALUE, currentValue);
-				values2.put(AquaNotesDbContract.ProbeData.TIMESTAMP, timeStamp.getTime());
-				values2.put(AquaNotesDbContract.ProbeData.PROBE_ID, parentRecord);
-				Uri probeUri = ProbeData.buildInsertProbeDataUri(controllerUri, parentRecord);
+				values2.put(AquaNotesDbContract.Data.VALUE, currentValue);
+				values2.put(AquaNotesDbContract.Data.TIMESTAMP, timeStamp.getTime());
+				values2.put(AquaNotesDbContract.Data.PARENT_ID, parentRecord);
+				Uri probeUri = Data.buildInsertProbeDataUri(controllerUri, parentRecord);
 				mResolver.insert(probeUri, values2);
 
 				/////////////////////////////////
@@ -345,7 +345,7 @@ public class ApexStateXMLParser extends DefaultHandler {
 
 //				Uri activeOutletsUri = Uri.withAppendedPath(controllerUri, Probes.TWIG_OUTLETS_DEVICE_ID);
 //				Uri outletByDevIdUri = Uri.withAppendedPath(activeOutletsUri,Uri.encode(currentDeviceID));
-				Uri outletByDevIdUri = Probes.buildQueryOutletXByDeviceIdUri(controllerUri, currentDeviceID);
+				Uri outletByDevIdUri = Outlets.buildQueryOutletXByDeviceIdUri(controllerUri, currentDeviceID);
 				
 				int controllerId = Integer.parseInt(controllerUri.getPathSegments().get(1));
 
@@ -358,15 +358,14 @@ public class ApexStateXMLParser extends DefaultHandler {
 						// to inserting this data record
 						ContentValues values = new ContentValues();
 						//values.put(BaseColumns._ID, xxx);  auto-generate key
-						values.put(AquaNotesDbContract.Probes.CONTROLLER_ID, controllerId);
-						values.put(AquaNotesDbContract.Probes.PROBE_NAME, currentName);
+						values.put(AquaNotesDbContract.Outlets.CONTROLLER_ID, controllerId);
+						values.put(AquaNotesDbContract.Outlets.NAME, currentName);
 						if(deviceType.equalsIgnoreCase("AC3")) {
-							values.put(AquaNotesDbContract.Probes.DEVICE_ID, currentName);
+							values.put(AquaNotesDbContract.Outlets.DEVICE_ID, currentName);
 						} else {
-							values.put(AquaNotesDbContract.Probes.DEVICE_ID, currentDeviceID);
+							values.put(AquaNotesDbContract.Outlets.DEVICE_ID, currentDeviceID);
 						}
-						values.put(AquaNotesDbContract.Probes.TYPE, 0); // 1=probe, 0=outlet
-						Uri insertOutletUri = Probes.buildInsertOutletUri(controllerUri);
+						Uri insertOutletUri = Outlets.buildInsertOutletUri(controllerUri);
 						mResolver.insert(insertOutletUri, values);
 						
 						// ugh, now I have to get the record again??
@@ -401,10 +400,10 @@ public class ApexStateXMLParser extends DefaultHandler {
 //				values2.put(ProbeDataColumns.CONTROLLER_ID, controllerId); // redundant but easier without join capability
 //				values2.put(ProbeDataColumns.PROBENAME, currentName); // redundant but easier without join capability
 //				values2.put(ProbeDataColumns.DATUM_TYPE, 1); // 1=probe, 0=outlet
-				values2.put(AquaNotesDbContract.ProbeData.VALUE, currentValue);
-				values2.put(AquaNotesDbContract.ProbeData.TIMESTAMP, timeStamp.getTime());
-				values2.put(AquaNotesDbContract.ProbeData.PROBE_ID, parentRecord);
-				Uri outletUri = ProbeData.buildInsertProbeDataUri(controllerUri, parentRecord);
+				values2.put(AquaNotesDbContract.Data.VALUE, currentValue);
+				values2.put(AquaNotesDbContract.Data.TIMESTAMP, timeStamp.getTime());
+				values2.put(AquaNotesDbContract.Data.PARENT_ID, parentRecord);
+				Uri outletUri = Data.buildInsertOutletDataUri(controllerUri, parentRecord);
 				mResolver.insert(outletUri, values2);
 
 				/////////////////////////////////
@@ -435,7 +434,7 @@ public class ApexStateXMLParser extends DefaultHandler {
 			
 			ContentValues values = new ContentValues();
 	        values.clear();
-			values.put(AquaNotesDbContract.Controllers.CONTROLLER_TYPE, deviceType);
+			values.put(AquaNotesDbContract.Controllers.MODEL, deviceType);
 			try {
 				mResolver.update(controllerUri, values, null, null);
 			} catch (SQLException e) {
@@ -483,7 +482,7 @@ public class ApexStateXMLParser extends DefaultHandler {
 //              String CONTROLLER_ID = "_id";
 //              String TITLE = "title";
 //              String WAN_URL = "wan_url";
-//              String WIFI_URL = "wifi_url";
+//              String LAN_URL = "wifi_url";
 //              String WIFI_SSID = "wifi_ssid";
 //              String USER = "user";
 //              String PW = "pw";
@@ -494,14 +493,14 @@ public class ApexStateXMLParser extends DefaultHandler {
                 BaseColumns._ID,
                 AquaNotesDbContract.Controllers.TITLE,
                 AquaNotesDbContract.Controllers.WAN_URL,
-                AquaNotesDbContract.Controllers.WIFI_URL,
+                AquaNotesDbContract.Controllers.LAN_URL,
                 AquaNotesDbContract.Controllers.WIFI_SSID,
                 AquaNotesDbContract.Controllers.USER,
                 AquaNotesDbContract.Controllers.PW,
                 AquaNotesDbContract.Controllers.LAST_UPDATED,
                 AquaNotesDbContract.Controllers.UPDATE_INTERVAL,
                 AquaNotesDbContract.Controllers.DB_SAVE_DAYS,
-                AquaNotesDbContract.Controllers.CONTROLLER_TYPE,
+                AquaNotesDbContract.Controllers.MODEL,
         };
         
         int _ID = 0;
@@ -526,34 +525,32 @@ public class ApexStateXMLParser extends DefaultHandler {
         	//  String RESOURCE_ID = "resource_id";
         	//  String CONTROLLER_ID = "controller_id";
                 BaseColumns._ID,
-                AquaNotesDbContract.Probes.PROBE_NAME,
-                AquaNotesDbContract.Probes.DEVICE_ID,
-                AquaNotesDbContract.Probes.TYPE,
+                AquaNotesDbContract.Probes.NAME,
                 AquaNotesDbContract.Probes.RESOURCE_ID,
                 AquaNotesDbContract.Probes.CONTROLLER_ID,
         };
         
         int _ID = 0;
-        int PROBE_NAME = 1;
-        int DEVICE_ID = 2;
-        int TYPE = 3;
-        int RESOURCE_ID = 4;
-        int CONTROLLER_ID = 5;
+        int NAME = 1;
+        int RESOURCE_ID = 2;
+        int CONTROLLER_ID = 3;
     }
 	
-	private interface ProbeDataQuery {
+	private interface DataQuery {
         String[] PROJECTION = {
 //              String DATA_ID = "_id";
 //              String VALUE = "value";
 //              String TIMESTAMP = "timestamp";
 //              String PROBE_ID = "probe_id";
                 BaseColumns._ID,
-                AquaNotesDbContract.ProbeData.VALUE,
-                AquaNotesDbContract.ProbeData.TIMESTAMP,
-                AquaNotesDbContract.ProbeData.PROBE_ID,
+                AquaNotesDbContract.Data.TYPE,
+                AquaNotesDbContract.Data.VALUE,
+                AquaNotesDbContract.Data.TIMESTAMP,
+                AquaNotesDbContract.Data.PARENT_ID,
         };
         
         int _ID = 0;
+        int TYPE = 1;
         int VALUE = 1;
         int TIMESTAMP = 2;
         int PROBE_ID = 3;

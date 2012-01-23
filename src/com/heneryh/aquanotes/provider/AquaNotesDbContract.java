@@ -51,7 +51,7 @@ public class AquaNotesDbContract {
 
     interface ControllersColumns {
         /** Unique string identifying this block of time. */
-        String CONTROLLER_ID = "_id";
+        String _ID = "_id";
         
         /** Title describing this block of time. */
         String TITLE = "title";
@@ -60,7 +60,7 @@ public class AquaNotesDbContract {
         String WAN_URL = "wan_url";
         
         /** Title describing this block of time. */
-        String WIFI_URL = "wifi_url";
+        String LAN_URL = "lan_url";
         
         /** Title describing this block of time. */
         String WIFI_SSID = "wifi_ssid";
@@ -81,22 +81,33 @@ public class AquaNotesDbContract {
         String DB_SAVE_DAYS = "db_save_days";
         
         /** Type describing this block. */
-        String CONTROLLER_TYPE = "controller_type";
+        String MODEL = "model";
     }
 
 
     interface ProbesColumns {
         /** Unique string identifying this track. */
-        String PROBE_ID = "_id";
+        String _ID = "_id";
         
         /** Name describing this track. */
-        String PROBE_NAME = "probe_name";
+        String NAME = "name";
+        
+        /** Color used to identify this track, in {@link Color#argb} format. */
+        String RESOURCE_ID = "resource_id";
+        
+        /** Body of text explaining this track in detail. */
+        String CONTROLLER_ID = "controller_id";
+    }
+
+    interface OutletsColumns {
+        /** Unique string identifying this track. */
+        String _ID = "_id";
+        
+        /** Name describing this track. */
+        String NAME = "name";
         
         /** Name describing this track. */
         String DEVICE_ID = "device_id";
-        
-        /** Color used to identify this track, in {@link Color#argb} format. */
-        String TYPE = "probe_type";
         
         /** Color used to identify this track, in {@link Color#argb} format. */
         String RESOURCE_ID = "resource_id";
@@ -106,9 +117,12 @@ public class AquaNotesDbContract {
     }
 
 
-    interface ProbeDataColumns {
+    interface DataColumns {
         /** Unique string identifying this room. */
-        String DATA_ID = "_id";
+        String _ID = "_id";
+        
+        /** Color used to identify this track, in {@link Color#argb} format. */
+        String TYPE = "type";
         
         /** Name describing this room. */
         String VALUE = "value";
@@ -117,18 +131,12 @@ public class AquaNotesDbContract {
         String TIMESTAMP = "timestamp";
         
         /** Building floor this room exists on. */
-        String PROBE_ID = "probe_id";
+        String PARENT_ID = "parent_id";
     }
     
     interface ViewProbesColumns {
         /** Name describing this track. */
-        String PROBE_NAME = "probe_name";
-        
-        /** Name describing this track. */
-        String DEVICE_ID = "device_id";
-        
-        /** Color used to identify this track, in {@link Color#argb} format. */
-        String TYPE = "probe_type";
+        String NAME = "name";
         
         /** Color used to identify this track, in {@link Color#argb} format. */
         String RESOURCE_ID = "resource_id";
@@ -147,7 +155,7 @@ public class AquaNotesDbContract {
         String WAN_URL = "wan_url";
         
         /** Title describing this block of time. */
-        String WIFI_URL = "wifi_url";
+        String LAN_URL = "lan_url";
         
         /** Title describing this block of time. */
         String WIFI_SSID = "wifi_ssid";
@@ -168,14 +176,67 @@ public class AquaNotesDbContract {
         String DB_SAVE_DAYS = "db_save_days";
         
         /** Type describing this block. */
-        String CONTROLLER_TYPE = "controller_type";
+        String MODEL = "model";
+
+	
+    }
+    
+    interface ViewOutletsColumns {
+        /** Name describing this track. */
+        String NAME = "name";
+        
+        /** Name describing this track. */
+        String DEVICE_ID = "device_id";
+        
+        /** Color used to identify this track, in {@link Color#argb} format. */
+        String RESOURCE_ID = "resource_id";
+        
+        /** Body of text explaining this track in detail. */
+        String CONTROLLER_ID = "controller_id";
+        
+//		//\\
+//		Join
+//		\\//
+        
+        /** Title describing this block of time. */
+        String TITLE = "title";
+        
+        /** Title describing this block of time. */
+        String WAN_URL = "wan_url";
+        
+        /** Title describing this block of time. */
+        String LAN_URL = "lan_url";
+        
+        /** Title describing this block of time. */
+        String WIFI_SSID = "wifi_ssid";
+        
+        /** Title describing this block of time. */
+        String USER = "user";
+        
+        /** Title describing this block of time. */
+        String PW = "pw";
+        
+        /** Time when this block starts. */
+        String LAST_UPDATED = "last_updated";
+        
+        /** Title describing this block of time. */
+        String UPDATE_INTERVAL = "update_i";
+        
+        /** Title describing this block of time. */
+        String DB_SAVE_DAYS = "db_save_days";
+        
+        /** Type describing this block. */
+        String MODEL = "model";
 
 	
     }
     
     interface ViewProbeDataColumns {
         /** Unique string identifying this room. */
-        String DATA_ID = "_id";
+        String _ID = "_id";
+        
+        /** Color used to identify this track, in {@link Color#argb} format. */
+        String TYPE = "type";
         
         /** Name describing this room. */
         String VALUE = "value";
@@ -184,20 +245,48 @@ public class AquaNotesDbContract {
         String TIMESTAMP = "timestamp";
         
         /** Building floor this room exists on. */
-        String PROBE_ID = "probe_id";   	
+        String PARENT_ID = "parent_id";   	
 
 //		//\\
 //		Join
 //		\\//
         
         /** Name describing this track. */
-        String PROBE_NAME = "probe_name";
+        String NAME = "name";
+        
+        /** Color used to identify this track, in {@link Color#argb} format. */
+        String RESOURCE_ID = "resource_id";
+        
+        /** Body of text explaining this track in detail. */
+        String CONTROLLER_ID = "controller_id";
+        
+    }
+
+    interface ViewOutletDataColumns {
+        /** Unique string identifying this room. */
+        String _ID = "_id";
+        
+        /** Color used to identify this track, in {@link Color#argb} format. */
+        String TYPE = "type";
+        
+        /** Name describing this room. */
+        String VALUE = "value";
+        
+        /** Name describing this room. */
+        String TIMESTAMP = "timestamp";
+        
+        /** Building floor this room exists on. */
+        String PARENT_ID = "parent_id";   	
+
+//		//\\
+//		Join
+//		\\//
+        
+        /** Name describing this track. */
+        String NAME = "name";
         
         /** Name describing this track. */
         String DEVICE_ID = "device_id";
-        
-        /** Color used to identify this track, in {@link Color#argb} format. */
-        String TYPE = "probe_type";
         
         /** Color used to identify this track, in {@link Color#argb} format. */
         String RESOURCE_ID = "resource_id";
@@ -320,15 +409,18 @@ public class AquaNotesDbContract {
 
     private static final String PATH_PROBES = "probes";
     private static final String PATH_PROBES_NAME = "probes_nm";
+    
     private static final String PATH_OUTLETS = "outlets";
     private static final String PATH_OUTLETS_RESOURCE_ID = "outlets_rsc";
     private static final String PATH_OUTLETS_DEVICE_ID = "outlets_did";
 
-    private static final String PATH_PROBE_DATA = "data";
-    private static final String PATH_PROBE_DATA_AT = "data_at";
-    private static final String PATH_PROBE_DATA_FOR_ID = "data_id";
-    private static final String PATH_PROBE_DATA_FOR_NAME = "data_nm";
-    private static final String PATH_PROBE_DATA_FOR_DID = "data_did";
+    private static final String PATH_DATA = "data";
+    private static final String PATH_PROBE_DATA_AT = "pdata_at";
+    private static final String PATH_PROBE_DATA_FOR_ID = "pdata_id";
+    private static final String PATH_PROBE_DATA_FOR_NAME = "pdata_nm";
+    private static final String PATH_OUTLET_DATA_AT = "odata_at";
+    private static final String PATH_OUTLET_DATA_FOR_ID = "odata_id";
+    private static final String PATH_OUTLET_DATA_FOR_DID = "odata_did";
 
     private static final String PATH_BLOCKS = "blocks";
     private static final String PATH_AT = "at";
@@ -702,9 +794,9 @@ public class AquaNotesDbContract {
     public static class Controllers implements ControllersColumns, BaseColumns {
 
         public static final String CONTENT_TYPE =
-                "vnd.android.cursor.dir/vnd.reefandy.controllers";
+                "vnd.android.cursor.dir/vnd.aquanotes.controllers";
         public static final String CONTENT_ITEM_TYPE =
-                "vnd.android.cursor.item/vnd.reefandy.controllers";
+                "vnd.android.cursor.item/vnd.aquanotes.controllers";
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_CONTROLLERS).build();
@@ -713,11 +805,11 @@ public class AquaNotesDbContract {
         public static final String PROBES_COUNT = "probes_count";
 
         /** Default "ORDER BY" clause. */
-        public static final String DEFAULT_SORT = ControllersColumns.LAST_UPDATED + " ASC "
+        public static final String DEFAULT_SORT = ControllersColumns.LAST_UPDATED + " DESC "
               /*  + ControllersColumns.BLOCK_END + " ASC"*/;
 
         /** Build {@link Uri} for requested {@link #CONTROLLER_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x
+        //          content://org.dvrc.aquanotes/controllers/x
         public static Uri buildQueryControllersUri() {
             return BASE_CONTENT_URI.buildUpon().appendPath(PATH_CONTROLLERS)
             		.build();
@@ -728,7 +820,7 @@ public class AquaNotesDbContract {
         }
 
         /** Build {@link Uri} for requested {@link #CONTROLLER_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x
+        //          content://org.dvrc.aquanotes/controllers/x
         public static Uri buildQueryControllerXUri(Integer controllerId) {
             return BASE_CONTENT_URI.buildUpon()
             		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
@@ -744,9 +836,9 @@ public class AquaNotesDbContract {
         }
 
         /** Read {@link #CONTROLLER_ID} from {@link Controllers} {@link Uri}. */
-        //          content://org.dvrc.reefandy/controllers/x
-       public static Integer getControllerId(Uri controllerXUri) {
-            return Integer.valueOf(controllerXUri.getPathSegments().get(1));
+        //          content://org.dvrc.aquanotes/controllers/x
+        public static String getControllerId(Uri controllerXUri) {
+            return controllerXUri.getPathSegments().get(1);
         }
     }
 
@@ -757,9 +849,9 @@ public class AquaNotesDbContract {
     public static class Probes implements ProbesColumns, BaseColumns {
 
         public static final String CONTENT_TYPE =
-                "vnd.android.cursor.dir/vnd.reefandy.probes";
+                "vnd.android.cursor.dir/vnd.aquanotes.probes";
         public static final String CONTENT_ITEM_TYPE =
-                "vnd.android.cursor.item/vnd.reefandy.probes";
+                "vnd.android.cursor.item/vnd.aquanotes.probes";
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_PROBES).build();
@@ -768,7 +860,7 @@ public class AquaNotesDbContract {
         public static final String DATA_COUNT = "data_count";
 
         /** Default "ORDER BY" clause. */
-        public static final String DEFAULT_SORT = ProbesColumns.TYPE + " DESC, " + ProbesColumns.PROBE_NAME + " ASC";
+        public static final String DEFAULT_SORT = ProbesColumns._ID + " ASC";
 
 
 //////////////////////////////////////////////
@@ -786,7 +878,7 @@ public class AquaNotesDbContract {
 //private static final String PATH_OUTLETS_DEVICE_ID = "outlets_did";
 
         /** Build {@link Uri} for requested {@link #PROBE_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/probes
+        //          content://org.dvrc.aquanotes/controllers/x/probes
         public static Uri buildQueryProbesUri(Integer controllerId) {
             return BASE_CONTENT_URI.buildUpon()
             		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
@@ -795,7 +887,7 @@ public class AquaNotesDbContract {
         }
 
         /** Build {@link Uri} for requested {@link #PROBE_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/probes
+        //          content://org.dvrc.aquanotes/controllers/x/probes
         public static Uri buildQueryProbesUri(Uri controllerUri) {
             return controllerUri.buildUpon()
             		.appendPath(PATH_PROBES)
@@ -807,7 +899,7 @@ public class AquaNotesDbContract {
         }
 
         /** Build {@link Uri} for requested {@link #PROBE_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/probes/y
+        //          content://org.dvrc.aquanotes/controllers/x/probes/y
         public static Uri buildQueryProbeXByIdUri(Integer controllerId, Integer probeId) {
             return BASE_CONTENT_URI.buildUpon()
             		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
@@ -816,7 +908,7 @@ public class AquaNotesDbContract {
         }
 
         /** Build {@link Uri} for requested {@link #PROBE_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/probes_nm/abc
+        //          content://org.dvrc.aquanotes/controllers/x/probes_nm/abc
         public static Uri buildQueryProbeXByNameUri(Integer controllerId, String probeName) {
             return BASE_CONTENT_URI.buildUpon()
             		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
@@ -825,68 +917,13 @@ public class AquaNotesDbContract {
         }
 
         /** Build {@link Uri} for requested {@link #PROBE_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/probes_nm/abc
+        //          content://org.dvrc.aquanotes/controllers/x/probes_nm/abc
         public static Uri buildQueryProbeByNameUri(Uri controllerUri, String probeName) {
             return controllerUri.buildUpon()
              		.appendPath(PATH_PROBES_NAME).appendPath(Uri.encode(probeName))
             		.build();
         }
 
-        /** Build {@link Uri} for requested {@link #PROBE_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/outlets
-        public static Uri buildQueryOutletsUri(Integer controllerId) {
-            return BASE_CONTENT_URI.buildUpon()
-            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
-            		.appendPath(PATH_OUTLETS)
-            		.build();
-        }
-
-        /** Build {@link Uri} for requested {@link #PROBE_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/outlets
-        public static Uri buildQueryOutletsUri(Uri controllerUri) {
-            return controllerUri.buildUpon()
-            		.appendPath(PATH_OUTLETS)
-            		.build();
-        }
-
-        /** Build {@link Uri} for requested {@link #PROBE_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/outlets/x
-       public static Uri buildQueryOutletXByIdUri(Integer controllerId, Integer probeId) {
-            return BASE_CONTENT_URI.buildUpon()
-            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
-            		.appendPath(PATH_OUTLETS).appendPath(probeId.toString())
-            		.build();
-        }
-
-        /** Build {@link Uri} for requested {@link #PROBE_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/outlets_did/abc
-        public static Uri buildQueryOutletXByDeviceIdUri(Integer controllerId, String outletDId) {
-            return BASE_CONTENT_URI.buildUpon()
-            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
-            		.appendPath(PATH_OUTLETS_DEVICE_ID).appendPath(Uri.encode(outletDId))
-            		.build();
-        }
-
-        /** Build {@link Uri} for requested {@link #PROBE_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/outlets_did/abc
-        public static Uri buildQueryOutletXByDeviceIdUri(Uri controllerUri, String outletDId) {
-            return controllerUri.buildUpon()
-            		.appendPath(PATH_OUTLETS_DEVICE_ID).appendPath(Uri.encode(outletDId))
-            		.build();
-        }
-
-        /** Build {@link Uri} for requested {@link #PROBE_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/outlets_rsc/abc
-        public static Uri buildQueryOutletXByResourceIdUri(Integer controllerId, String outletRId) {
-            return BASE_CONTENT_URI.buildUpon()
-            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
-            		.appendPath(PATH_OUTLETS_RESOURCE_ID).appendPath(Uri.encode(outletRId))
-            		.build();
-        }
-
-        public static Uri buildInsertOutletUri(Uri controllerUri) {
-        	return buildQueryOutletsUri(controllerUri); // same as query
-        }
 
         public static String getControllerId(Uri controllerXprobeYUri) {
             return controllerXprobeYUri.getPathSegments().get(1);
@@ -901,34 +938,127 @@ public class AquaNotesDbContract {
     }
 
     /**
-     * ProbeData are physical locations at the conference venue.
+     * Probes are overall categories for {@link Sessions} and {@link Vendors},
+     * such as "Android" or "Enterprise."
      */
-    public static class ProbeData implements ProbeDataColumns, BaseColumns {
+    public static class Outlets implements OutletsColumns, BaseColumns {
 
         public static final String CONTENT_TYPE =
-                "vnd.android.cursor.dir/vnd.reefandy.probe_data";
+                "vnd.android.cursor.dir/vnd.aquanotes.outlets";
         public static final String CONTENT_ITEM_TYPE =
-                "vnd.android.cursor.item/vnd.reefandy.probe_data";
+                "vnd.android.cursor.item/vnd.aquanotes.outlets";
 
         public static final Uri CONTENT_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(PATH_PROBE_DATA).build();
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_OUTLETS).build();
+
+        /** Count of {@link Sessions} inside given track. */
+        public static final String DATA_COUNT = "data_count";
+
+        /** Default "ORDER BY" clause. */
+        public static final String DEFAULT_SORT = ProbesColumns._ID + " ASC";
+
+
+//////////////////////////////////////////////
+//private static final int CONTROLLERS_ID_PROBES = 201;
+//private static final int CONTROLLERS_ID_PROBES_ID = 202;
+//private static final int CONTROLLERS_ID_PROBES_NAME = 203;
+//private static final int CONTROLLERS_ID_OUTLETS = 204;
+//private static final int CONTROLLERS_ID_OUTLETS_ID = 205;
+//private static final int CONTROLLERS_ID_OUTLETS_DEVICE_ID = 206;
+//private static final int CONTROLLERS_ID_OUTLETS_RSC = 207; 
+//private static final String PATH_PROBES = "probes";
+//private static final String PATH_PROBES_NAME = "probes_nm";
+//private static final String PATH_OUTLETS = "outlets";
+//private static final String PATH_OUTLETS_RESOURCE_ID = "outlets_rsc";
+//private static final String PATH_OUTLETS_DEVICE_ID = "outlets_did";
+
+        /** Build {@link Uri} for requested {@link #PROBE_ID}. */
+        //          content://org.dvrc.aquanotes/controllers/x/outlets
+        public static Uri buildQueryOutletsUri(Integer controllerId) {
+            return BASE_CONTENT_URI.buildUpon()
+            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
+            		.appendPath(PATH_OUTLETS)
+            		.build();
+        }
+
+        /** Build {@link Uri} for requested {@link #PROBE_ID}. */
+        //          content://org.dvrc.aquanotes/controllers/x/outlets
+        public static Uri buildQueryOutletsUri(Uri controllerUri) {
+            return controllerUri.buildUpon()
+            		.appendPath(PATH_OUTLETS)
+            		.build();
+        }
+
+        /** Build {@link Uri} for requested {@link #PROBE_ID}. */
+        //          content://org.dvrc.aquanotes/controllers/x/outlets/x
+       public static Uri buildQueryOutletXByIdUri(Integer controllerId, Integer probeId) {
+            return BASE_CONTENT_URI.buildUpon()
+            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
+            		.appendPath(PATH_OUTLETS).appendPath(probeId.toString())
+            		.build();
+        }
+
+        /** Build {@link Uri} for requested {@link #PROBE_ID}. */
+        //          content://org.dvrc.aquanotes/controllers/x/outlets_did/abc
+        public static Uri buildQueryOutletXByDeviceIdUri(Integer controllerId, String outletDId) {
+            return BASE_CONTENT_URI.buildUpon()
+            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
+            		.appendPath(PATH_OUTLETS_DEVICE_ID).appendPath(Uri.encode(outletDId))
+            		.build();
+        }
+
+        /** Build {@link Uri} for requested {@link #PROBE_ID}. */
+        //          content://org.dvrc.aquanotes/controllers/x/outlets_did/abc
+        public static Uri buildQueryOutletXByDeviceIdUri(Uri controllerUri, String outletDId) {
+            return controllerUri.buildUpon()
+            		.appendPath(PATH_OUTLETS_DEVICE_ID).appendPath(Uri.encode(outletDId))
+            		.build();
+        }
+
+        /** Build {@link Uri} for requested {@link #PROBE_ID}. */
+        //          content://org.dvrc.aquanotes/controllers/x/outlets_rsc/abc
+        public static Uri buildQueryOutletXByResourceIdUri(Integer controllerId, String outletRId) {
+            return BASE_CONTENT_URI.buildUpon()
+            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
+            		.appendPath(PATH_OUTLETS_RESOURCE_ID).appendPath(Uri.encode(outletRId))
+            		.build();
+        }
+
+        public static Uri buildInsertOutletUri(Uri controllerUri) {
+        	return buildQueryOutletsUri(controllerUri); // same as query
+        }
+
+        public static String getControllerId(Uri controllerXprobeYUri) {
+            return controllerXprobeYUri.getPathSegments().get(1);
+        }
+        public static Integer getOutletId(Uri controllerXprobeYUri) {
+            return Integer.valueOf(controllerXprobeYUri.getPathSegments().get(3));
+        }
+        public static String getOutletName(Uri controllerXprobeYUri) {
+            return controllerXprobeYUri.getPathSegments().get(3);
+        }
+
+    }
+
+    /**
+     * ProbeData are physical locations at the conference venue.
+     */
+    public static class Data implements DataColumns, BaseColumns {
+
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/vnd.aquanotes.probe_data";
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/vnd.aquanotes.probe_data";
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_DATA).build();
  
 
         /** Default "ORDER BY" clause. */
 //        public static final String DEFAULT_SORT = ProbeDataColumns.PROBE_ID + " ASC, "
 //                + ProbeDataColumns.VALUE + " COLLATE NOCASE ASC";
-        public static final String DEFAULT_SORT = ProbeDataColumns.TIMESTAMP + " DESC ";
+        public static final String DEFAULT_SORT = DataColumns.TIMESTAMP + " DESC ";
 //                + ProbeDataColumns.VALUE + " COLLATE NOCASE ASC";
-
-        /** Build {@link Uri} for requested {@link #DATA_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
-        public static Uri buildQueryProbeDataUri(Integer controllerId, Integer probeId) {
-            return BASE_CONTENT_URI.buildUpon()
-            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
-            		.appendPath(PATH_PROBES).appendPath(probeId.toString())
-            		.appendPath(PATH_PROBE_DATA)
-            		.build();
-        }
 
 //////////////////////////////////////////////
 //private static final int CONTROLLERS_ID_PROBEDATA_AT = 303; 
@@ -937,17 +1067,47 @@ public class AquaNotesDbContract {
 //private static final int CONTROLLERS_ID_OUTLETDATA_FOR_ID = 306; 
 //private static final int CONTROLLERS_ID_PROBEDATA_FOR_NAME = 307; 
 //private static final int CONTROLLERS_ID_OUTLETDATA_FOR_DEVICE_ID = 310; 
+        
         /** Build {@link Uri} for requested {@link #DATA_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
+        //          content://org.dvrc.aquanotes/controllers/x/probes/y/data
+        public static Uri buildQueryProbeDataUri(Integer controllerId, Integer probeId) {
+            return BASE_CONTENT_URI.buildUpon()
+            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
+            		.appendPath(PATH_PROBES).appendPath(probeId.toString())
+            		.appendPath(PATH_DATA)
+            		.build();
+        }
+
+        /** Build {@link Uri} for requested {@link #DATA_ID}. */
+        //          content://org.dvrc.aquanotes/controllers/x/probes/y/data
         public static Uri buildQueryProbeDataUri(Uri controllerUri, Integer probeId) {
             return controllerUri.buildUpon()
             		.appendPath(PATH_PROBES).appendPath(probeId.toString())
-            		.appendPath(PATH_PROBE_DATA)
+            		.appendPath(PATH_DATA)
+            		.build();
+        }
+
+        /** Build {@link Uri} for requested {@link #DATA_ID}. */
+        //          content://org.dvrc.aquanotes/controllers/x/probes/y/data
+        public static Uri buildQueryOutletDataUri(Integer controllerId, Integer outletId) {
+            return BASE_CONTENT_URI.buildUpon()
+            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
+            		.appendPath(PATH_OUTLETS).appendPath(outletId.toString())
+            		.appendPath(PATH_DATA)
+            		.build();
+        }
+
+        /** Build {@link Uri} for requested {@link #DATA_ID}. */
+        //          content://org.dvrc.aquanotes/controllers/x/probes/y/data
+        public static Uri buildQueryOutletDataUri(Uri controllerUri, Integer outletId) {
+            return controllerUri.buildUpon()
+            		.appendPath(PATH_OUTLETS).appendPath(outletId.toString())
+            		.appendPath(PATH_DATA)
             		.build();
         }
 
 //        /** Build {@link Uri} for requested {@link #DATA_ID}. */
-//        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
+//        //          content://org.dvrc.aquanotes/controllers/x/probes/y/data
 //        public static Uri buildQueryProbeDataUri(Uri probeUri) {
 //            return probeUri.buildUpon()
 //            		.appendPath(PATH_PROBE_DATA)
@@ -955,7 +1115,7 @@ public class AquaNotesDbContract {
 //        }
 //        
 //        /** Build {@link Uri} for requested {@link #DATA_ID}. */
-//        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
+//        //          content://org.dvrc.aquanotes/controllers/x/probes/y/data
 //        public static Uri buildQueryProbeDataXUri(Integer controllerId, Integer probeId, Integer dataId) {
 //            return BASE_CONTENT_URI.buildUpon()
 //            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
@@ -965,7 +1125,7 @@ public class AquaNotesDbContract {
 //        }
 //
 //        /** Build {@link Uri} for requested {@link #DATA_ID}. */
-//        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
+//        //          content://org.dvrc.aquanotes/controllers/x/probes/y/data
 //        public static Uri buildQueryProbeDataXUri(Uri controllerUri, Integer probeId, Integer dataId) {
 //            return controllerUri.buildUpon()
 //            		.appendPath(PATH_PROBES).appendPath(probeId.toString())
@@ -975,7 +1135,7 @@ public class AquaNotesDbContract {
 //        }
 //
 //        /** Build {@link Uri} for requested {@link #DATA_ID}. */
-//        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
+//        //          content://org.dvrc.aquanotes/controllers/x/probes/y/data
 //        public static Uri buildQueryProbeDataXUri(Uri probeUri, Integer dataId) {
 //            return probeUri.buildUpon()
 //            		.appendPath(PATH_PROBE_DATA)
@@ -984,7 +1144,7 @@ public class AquaNotesDbContract {
 //        }
 //        
 //        /** Build {@link Uri} for requested {@link #DATA_ID}. */
-//        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
+//        //          content://org.dvrc.aquanotes/controllers/x/probes/y/data
 //        public static Uri buildQueryOutletDataXUri(Uri outletUri, Integer dataId) {
 //            return outletUri.buildUpon()
 //            		.appendPath(PATH_PROBE_DATA)
@@ -993,10 +1153,18 @@ public class AquaNotesDbContract {
 //        }
         
         /** Build {@link Uri} for requested {@link #DATA_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
+        //          content://org.dvrc.aquanotes/controllers/x/probes/y/data
         public static Uri buildInsertProbeDataUri(Uri controllerUri, Integer probeId) {
             return controllerUri.buildUpon()
             		.appendPath(PATH_PROBES).appendPath(probeId.toString())
+            		.build();
+        }
+        
+        /** Build {@link Uri} for requested {@link #DATA_ID}. */
+        //          content://org.dvrc.aquanotes/controllers/x/probes/y/data
+        public static Uri buildInsertOutletDataUri(Uri controllerUri, Integer outletId) {
+            return controllerUri.buildUpon()
+            		.appendPath(PATH_OUTLETS).appendPath(outletId.toString())
             		.build();
         }
 
@@ -1008,102 +1176,43 @@ public class AquaNotesDbContract {
     public static class ViewProbeData implements ViewProbeDataColumns, BaseColumns {
 
         public static final String CONTENT_TYPE =
-                "vnd.android.cursor.dir/vnd.reefandy.probe_data";
+                "vnd.android.cursor.dir/vnd.aquanotes.data";
         public static final String CONTENT_ITEM_TYPE =
-                "vnd.android.cursor.item/vnd.reefandy.probe_data";
+                "vnd.android.cursor.item/vnd.aquanotes.data";
 
         public static final Uri CONTENT_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(PATH_PROBE_DATA).build();
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_DATA).build();
  
 
         /** Default "ORDER BY" clause. */
 //        public static final String DEFAULT_SORT = ProbeDataColumns.PROBE_ID + " ASC, "
 //                + ProbeDataColumns.VALUE + " COLLATE NOCASE ASC";
-        public static final String DEFAULT_SORT = ProbeDataColumns.TIMESTAMP + " DESC ";
+        public static final String DEFAULT_SORT = DataColumns.TIMESTAMP + " DESC ";
 //                + ProbeDataColumns.VALUE + " COLLATE NOCASE ASC";
-
-        /** Build {@link Uri} for requested {@link #DATA_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
-        public static Uri buildQueryProbeDataUri(Integer controllerId, Integer probeId) {
-            return BASE_CONTENT_URI.buildUpon()
-            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
-            		.appendPath(PATH_PROBES).appendPath(probeId.toString())
-            		.appendPath(PATH_PROBE_DATA)
-            		.build();
-        }
-
-//////////////////////////////////////////////
-//private static final int CONTROLLERS_ID_PROBEDATA_AT = 303; 
-//private static final int CONTROLLERS_ID_OUTLETDATA_AT = 304; 
-//private static final int CONTROLLERS_ID_PROBEDATA_FOR_ID = 305; 
-//private static final int CONTROLLERS_ID_OUTLETDATA_FOR_ID = 306; 
-//private static final int CONTROLLERS_ID_PROBEDATA_FOR_NAME = 307; 
-//private static final int CONTROLLERS_ID_OUTLETDATA_FOR_DEVICE_ID = 310; 
-        /** Build {@link Uri} for requested {@link #DATA_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
-        public static Uri buildQueryProbeDataUri(Uri controllerUri, Integer probeId) {
-            return controllerUri.buildUpon()
-            		.appendPath(PATH_PROBES).appendPath(probeId.toString())
-            		.appendPath(PATH_PROBE_DATA)
-            		.build();
-        }
-
-//        /** Build {@link Uri} for requested {@link #DATA_ID}. */
-//        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
-//        public static Uri buildQueryProbeDataUri(Uri probeUri) {
-//            return probeUri.buildUpon()
-//            		.appendPath(PATH_PROBE_DATA)
-//            		.build();
-//        }
-//        
-//        /** Build {@link Uri} for requested {@link #DATA_ID}. */
-//        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
-//        public static Uri buildQueryProbeDataXUri(Integer controllerId, Integer probeId, Integer dataId) {
-//            return BASE_CONTENT_URI.buildUpon()
-//            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
-//            		.appendPath(PATH_PROBES).appendPath(probeId.toString())
-//            		.appendPath(PATH_PROBE_DATA).appendPath(dataId.toString())
-//            		.build();
-//        }
-//
-//        /** Build {@link Uri} for requested {@link #DATA_ID}. */
-//        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
-//        public static Uri buildQueryProbeDataXUri(Uri controllerUri, Integer probeId, Integer dataId) {
-//            return controllerUri.buildUpon()
-//            		.appendPath(PATH_PROBES).appendPath(probeId.toString())
-//            		.appendPath(PATH_PROBE_DATA)
-//            		.appendPath(PATH_PROBE_DATA).appendPath(dataId.toString())
-//            		.build();
-//        }
-//
-//        /** Build {@link Uri} for requested {@link #DATA_ID}. */
-//        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
-//        public static Uri buildQueryProbeDataXUri(Uri probeUri, Integer dataId) {
-//            return probeUri.buildUpon()
-//            		.appendPath(PATH_PROBE_DATA)
-//            		.appendPath(PATH_PROBE_DATA).appendPath(dataId.toString())
-//            		.build();
-//        }
-//        
-//        /** Build {@link Uri} for requested {@link #DATA_ID}. */
-//        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
-//        public static Uri buildQueryOutletDataXUri(Uri outletUri, Integer dataId) {
-//            return outletUri.buildUpon()
-//            		.appendPath(PATH_PROBE_DATA)
-//            		.appendPath(PATH_PROBE_DATA).appendPath(dataId.toString())
-//            		.build();
-//        }
-        
-        /** Build {@link Uri} for requested {@link #DATA_ID}. */
-        //          content://org.dvrc.reefandy/controllers/x/probes/y/data
-        public static Uri buildInsertProbeDataUri(Uri controllerUri, Integer probeId) {
-            return controllerUri.buildUpon()
-            		.appendPath(PATH_PROBES).appendPath(probeId.toString())
-            		.build();
-        }
 
     }
 
+    /**
+     * ProbeData are physical locations at the conference venue.
+     */
+    public static class ViewOutletData implements ViewOutletDataColumns, BaseColumns {
+
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/vnd.aquanotes.data";
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/vnd.aquanotes.data";
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_DATA).build();
+ 
+
+        /** Default "ORDER BY" clause. */
+//        public static final String DEFAULT_SORT = ProbeDataColumns.PROBE_ID + " ASC, "
+//                + ProbeDataColumns.VALUE + " COLLATE NOCASE ASC";
+        public static final String DEFAULT_SORT = DataColumns.TIMESTAMP + " DESC ";
+//                + ProbeDataColumns.VALUE + " COLLATE NOCASE ASC";
+
+    }
 
     private AquaNotesDbContract() {
     }

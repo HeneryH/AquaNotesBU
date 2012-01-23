@@ -18,7 +18,7 @@ package com.heneryh.aquanotes.ui;
 
 import com.heneryh.aquanotes.R;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Controllers;
-import com.heneryh.aquanotes.provider.AquaNotesDbContract.ProbeData;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.Data;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Probes;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Sessions;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Vendors;
@@ -153,7 +153,7 @@ public class DbMaintActivity extends BaseMultiPaneActivity {
                         ViewGroup.LayoutParams.FILL_PARENT));
         ((ViewGroup) findViewById(android.R.id.tabcontent)).addView(fragmentContainer);
 
-        final Intent intent = new Intent(Intent.ACTION_VIEW, ProbeData.CONTENT_URI);
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Data.CONTENT_URI);
 
         final FragmentManager fm = getSupportFragmentManager();
         mDataFragment = (DbMaintDataFragment) fm.findFragmentByTag("data");

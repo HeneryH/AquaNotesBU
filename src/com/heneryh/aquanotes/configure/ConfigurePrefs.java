@@ -169,7 +169,7 @@ public class ConfigurePrefs extends Activity implements View.OnClickListener {
 				interval = cursor2.getInt(ControllersQuery.UPDATE_INTERVAL);
 				prune_age = cursor2.getInt(ControllersQuery.DB_SAVE_DAYS);
 				prune_age = cursor2.getInt(ControllersQuery.DB_SAVE_DAYS);
-				type = cursor2.getString(ControllersQuery.CONTROLLER_TYPE);
+				type = cursor2.getString(ControllersQuery.MODEL);
 				
 				mTitle.setText(title);
 				mUrl.setText(apexBaseURL);
@@ -232,11 +232,11 @@ public class ConfigurePrefs extends Activity implements View.OnClickListener {
 			values.put(BaseColumns._ID, mAppWidgetId);
 			values.put(AquaNotesDbContract.Controllers.TITLE, title);
 			values.put(AquaNotesDbContract.Controllers.WAN_URL, url);
-			values.put(AquaNotesDbContract.Controllers.WIFI_URL, wiFiUrl);
+			values.put(AquaNotesDbContract.Controllers.LAN_URL, wiFiUrl);
 			values.put(AquaNotesDbContract.Controllers.WIFI_SSID, wiFiSid);
 			values.put(AquaNotesDbContract.Controllers.USER, user);
 			values.put(AquaNotesDbContract.Controllers.PW, pword);
-			if(type==null) values.put(AquaNotesDbContract.Controllers.CONTROLLER_TYPE, "none set");
+			if(type==null) values.put(AquaNotesDbContract.Controllers.MODEL, "none set");
 			try {
 				Integer updIntervalMinsInt = Integer.parseInt(updIntervalMins.trim());
 				values.put(AquaNotesDbContract.Controllers.UPDATE_INTERVAL, updIntervalMinsInt);  
@@ -321,7 +321,7 @@ public class ConfigurePrefs extends Activity implements View.OnClickListener {
 //              String CONTROLLER_ID = "_id";
 //              String TITLE = "title";
 //              String WAN_URL = "wan_url";
-//              String WIFI_URL = "wifi_url";
+//              String LAN_URL = "wifi_url";
 //              String WIFI_SSID = "wifi_ssid";
 //              String USER = "user";
 //              String PW = "pw";
@@ -332,14 +332,14 @@ public class ConfigurePrefs extends Activity implements View.OnClickListener {
                 BaseColumns._ID,
                 AquaNotesDbContract.Controllers.TITLE,
                 AquaNotesDbContract.Controllers.WAN_URL,
-                AquaNotesDbContract.Controllers.WIFI_URL,
+                AquaNotesDbContract.Controllers.LAN_URL,
                 AquaNotesDbContract.Controllers.WIFI_SSID,
                 AquaNotesDbContract.Controllers.USER,
                 AquaNotesDbContract.Controllers.PW,
                 AquaNotesDbContract.Controllers.LAST_UPDATED,
                 AquaNotesDbContract.Controllers.UPDATE_INTERVAL,
                 AquaNotesDbContract.Controllers.DB_SAVE_DAYS,
-                AquaNotesDbContract.Controllers.CONTROLLER_TYPE,
+                AquaNotesDbContract.Controllers.MODEL,
         };
         
         int _ID = 0;
@@ -352,6 +352,6 @@ public class ConfigurePrefs extends Activity implements View.OnClickListener {
         int LAST_UPDATED = 7;
         int UPDATE_INTERVAL = 8;
         int DB_SAVE_DAYS = 9;
-        int CONTROLLER_TYPE = 10;
+        int MODEL = 10;
     }
 }  // end of ConfigurePrefs

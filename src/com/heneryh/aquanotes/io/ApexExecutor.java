@@ -119,8 +119,9 @@ public class ApexExecutor {
 			// Get the currently connected SSID, if it matches the 'Home' one then use the local WiFi URL rather than the public one
 			WifiManager wm = (WifiManager) mActContext.getSystemService(Context.WIFI_SERVICE);
 			WifiInfo wInfo = wm.getConnectionInfo();
+			String debug = wInfo.getSSID(); // somewhere read this was a quoted string but appears not to be
 
-			if(wInfo.getSSID().substring(1).toLowerCase().startsWith(apexWiFiSID.toLowerCase())) {  // the ssid will be quoted in the info class
+			if(debug.toLowerCase().startsWith(apexWiFiSID.toLowerCase())) {  // the ssid will be quoted in the info class
 				apexBaseURL=apexWiFiURL;
 			} else {
 				apexBaseURL=apexWANURL;

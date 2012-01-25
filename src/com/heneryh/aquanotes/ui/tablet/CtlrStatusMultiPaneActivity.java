@@ -33,12 +33,12 @@ import android.view.ViewGroup;
 
 /**
  * A multi-pane activity, where the primary navigation pane is a
- * {@link com.heneryh.aquanotes.ui.ScheduleFragment}, that
+ * {@link com.heneryh.aquanotes.ui.CtlrStatusFragment}, that
  * shows {@link DbMaintProbesFragment} and {@link SessionDetailFragment} as popups.
  *
  * This activity requires API level 11 or greater because of its use of {@link FragmentBreadCrumbs}.
  */
-public class ScheduleMultiPaneActivity extends BaseMultiPaneActivity implements
+public class CtlrStatusMultiPaneActivity extends BaseMultiPaneActivity implements
         View.OnClickListener, FragmentManager.OnBackStackChangedListener {
 
     private FragmentManager mFragmentManager;

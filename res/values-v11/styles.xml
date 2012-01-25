@@ -16,7 +16,7 @@
 
 <resources>
     <!-- Start with the Holographic Light theme -->
-    <style name="Theme.IOSched" parent="android:style/Theme.Holo.Light">
+    <style name="Theme.AquaNotes" parent="android:style/Theme.Holo.Light">
         <item name="android:windowBackground">@drawable/window_background</item>
         <item name="android:actionBarStyle">@style/ActionBar</item>
 
@@ -25,7 +25,7 @@
         <item name="trackAbstractMaxLines">@integer/track_abstract_max_lines</item>
     </style>
 
-    <style name="Theme.IOSched.Home" parent="style/Theme.IOSched">
+    <style name="Theme.AquaNotes.Home" parent="style/Theme.AquaNotes">
         <item name="android:windowBackground">@drawable/window_background_home</item>
         <item name="android:actionBarStyle">@style/ActionBar</item>
     </style>

@@ -17,15 +17,15 @@
 package com.heneryh.aquanotes.ui.phone;
 
 import com.heneryh.aquanotes.ui.BaseSinglePaneActivity;
-import com.heneryh.aquanotes.ui.ScheduleFragment;
+import com.heneryh.aquanotes.ui.CtlrStatusFragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-public class ScheduleActivity extends BaseSinglePaneActivity {
+public class CtlrStatusActivity extends BaseSinglePaneActivity {
     @Override
     protected Fragment onCreatePane() {
-        return new ScheduleFragment();
+        return new CtlrStatusFragment();
     }
 
     @Override

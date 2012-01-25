@@ -28,7 +28,7 @@
     <string name="description_now">Go to Now</string>
 
     <string name="title_now_playing">Now playing</string>
-    <string name="title_schedule">Schedule</string>
+    <string name="title_ctlr_status">Controllers</string>
     <string name="title_sessions">Sessions</string>
     <string name="title_session_detail">Session information</string>
     <string name="title_db_maint">DB Maint</string>
@@ -37,7 +37,7 @@
     <string name="title_vendor_detail">Company information</string>
     <string name="title_map">Map</string>
     <string name="title_tagstream">Realtime stream</string>
-    <string name="title_bulletin">Bulletin</string>
+    <string name="title_bulletin">Preferences</string>
 
     <string name="title_session_tracks">Session tracks</string>
     <string name="title_vendor_tracks">Sandbox pods</string>
@@ -47,12 +47,12 @@
     <string name="title_search">Search</string>
     <string name="title_search_query">Search for \"<xliff:g id="query">%1$s</xliff:g>\"</string>
 
-    <string name="btn_schedule">Schedule</string>
+    <string name="btn_schedule">Controllers</string>
     <string name="btn_map">Map</string>
     <string name="btn_sessions">Sessions</string>
     <string name="btn_db_maint">DB Maint</string>
     <string name="btn_vendors">Sandbox</string>
-    <string name="btn_announcements">Bulletin</string>
+    <string name="btn_announcements">Prefs</string>
 
     <string name="toast_sync_error">Sync error: <xliff:g id="error">%1$s</xliff:g></string>
 
@@ -134,7 +134,7 @@
 
     <!-- EULA -->
     <string name="eula_title">EULA title.</string>
-    <string name="eula_text">EULA goes here.</string>
+    <string name="eula_text">Please use the preferences icon to set your controller credentials before using any of the app features..</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
 
@@ -153,7 +153,7 @@
     <string name="conf_controller_password_instr">Enter a password for this controller:</string>
     <string name="conf_controller_password_default">1234</string>
     <string name="conf_controller_update_interval_instr">Enter a widget update interval in minutes:</string>
-    <string name="conf_controller_update_interval_default">5</string>
+    <string name="conf_controller_update_interval_default">15</string>
     <string name="conf_controller_prune_instr">Days of historic data to keep:</string>
     <string name="conf_controller_prune_default">7</string>
     <string name="conf_save">Save</string>

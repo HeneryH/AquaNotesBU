@@ -58,9 +58,10 @@ public class AquaNotesDatabase extends SQLiteOpenHelper {
     // sure user data is saved.
 
     private static final int VER_LAUNCH = 1;
-    private static final int VER_REWORK_ALL_TABLES = 2;
+//    private static final int VER_REWORK_ALL_TABLES = 2;
+//    private static final int VER_URL_NOW_KEY = 3;
 
-    private static final int DATABASE_VERSION = VER_REWORK_ALL_TABLES;
+    private static final int DATABASE_VERSION = VER_LAUNCH;
 
     interface Tables {
         String CONTROLLERS = "controllers";
@@ -211,9 +212,8 @@ public class AquaNotesDatabase extends SQLiteOpenHelper {
 //      String UPDATE_INTERVAL = "update_i";
 //      String DB_SAVE_DAYS = "db_save_days";
 //      String CONTROLLER_TYPE = "controller_type";
-
       db.execSQL("CREATE TABLE " + Tables.CONTROLLERS + " ("
-              + BaseColumns._ID + " INTEGER PRIMARY KEY ,"  /*AUTOINCREMENT*/
+              + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," 
               + ControllersColumns.TITLE + " TEXT,"
               + ControllersColumns.WAN_URL + " TEXT,"
               + ControllersColumns.LAN_URL + " TEXT,"
@@ -223,16 +223,17 @@ public class AquaNotesDatabase extends SQLiteOpenHelper {
               + ControllersColumns.LAST_UPDATED + " LONG,"
               + ControllersColumns.UPDATE_INTERVAL + " INTEGER,"
               + ControllersColumns.DB_SAVE_DAYS + " INTEGER,"
-              + ControllersColumns.MODEL + " TEXT"
-              + ")");
+              + ControllersColumns.MODEL + " TEXT,"    
+      + "UNIQUE (" + ControllersColumns.WAN_URL + ") ON CONFLICT REPLACE)");
+//    + ")");  // make sure to take this comma out if removing the unique
 
+      
 //      String PROBE_ID = "_id";
 //      String PROBE_NAME = "probe_name";
 //      String DEVICE_ID = "device_id";
 //      String TYPE = "probe_type";
 //      String RESOURCE_ID = "resource_id";
 //      String CONTROLLER_ID = "controller_id";
-
       db.execSQL("CREATE TABLE " + Tables.PROBES + " ("
               + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
               + ProbesColumns.NAME + " TEXT,"
@@ -504,40 +505,37 @@ public class AquaNotesDatabase extends SQLiteOpenHelper {
         switch (version) {
         case VER_LAUNCH:
         	// Version 2 reworked a lot but not the controllers.
-            Log.w(TAG, "Destroying old data during upgrade");
-
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.CONTROLLERS);
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.PROBES);
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.OUTLETS);
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.DATA);
-            
-            db.execSQL("DROP VIEW IF EXISTS " + Tables.PROBE_VIEW);
-            db.execSQL("DROP VIEW IF EXISTS " + Tables.OUTLET_VIEW);
-            db.execSQL("DROP VIEW IF EXISTS " + Tables.PDATA_VIEW);
-            db.execSQL("DROP VIEW IF EXISTS " + Tables.ODATA_VIEW);
-
-            /// delete below
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.BLOCKS);
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.TRACKS);
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.ROOMS);
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.SESSIONS);
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.SPEAKERS);
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.SESSIONS_SPEAKERS);
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.SESSIONS_TRACKS);
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.VENDORS);
-
-            db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.SESSIONS_SEARCH_INSERT);
-            db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.SESSIONS_SEARCH_DELETE);
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.SESSIONS_SEARCH);
-
-            db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.VENDORS_SEARCH_INSERT);
-            db.execSQL("DROP TRIGGER IF EXISTS " + Triggers.VENDORS_SEARCH_DELETE);
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.VENDORS_SEARCH);
-
-            db.execSQL("DROP TABLE IF EXISTS " + Tables.SEARCH_SUGGEST);
-
-            onCreate(db);
-        	version = VER_REWORK_ALL_TABLES;
+//            Log.w(TAG, "Destroying old data during upgrade");
+//
+//            db.execSQL("DROP TABLE IF EXISTS " + Tables.CONTROLLERS);
+//            db.execSQL("DROP TABLE IF EXISTS " + Tables.PROBES);
+//            db.execSQL("DROP TABLE IF EXISTS " + Tables.OUTLETS);
+//            db.execSQL("DROP TABLE IF EXISTS " + Tables.DATA);
+//            
+//            db.execSQL("DROP VIEW IF EXISTS " + Tables.PROBE_VIEW);
+//            db.execSQL("DROP VIEW IF EXISTS " + Tables.OUTLET_VIEW);
+//            db.execSQL("DROP VIEW IF EXISTS " + Tables.PDATA_VIEW);
+//            db.execSQL("DROP VIEW IF EXISTS " + Tables.ODATA_VIEW);
+//
+//            onCreate(db);
+//        	version = VER_REWORK_ALL_TABLES;
+        	
+//        case VER_REWORK_ALL_TABLES:
+//        	// Version 3 changed key for controllers, sorry.
+//            Log.w(TAG, "Destroying old data during upgrade");
+//
+//            db.execSQL("DROP TABLE IF EXISTS " + Tables.CONTROLLERS);
+//            db.execSQL("DROP TABLE IF EXISTS " + Tables.PROBES);
+//            db.execSQL("DROP TABLE IF EXISTS " + Tables.OUTLETS);
+//            db.execSQL("DROP TABLE IF EXISTS " + Tables.DATA);
+//            
+//            db.execSQL("DROP VIEW IF EXISTS " + Tables.PROBE_VIEW);
+//            db.execSQL("DROP VIEW IF EXISTS " + Tables.OUTLET_VIEW);
+//            db.execSQL("DROP VIEW IF EXISTS " + Tables.PDATA_VIEW);
+//            db.execSQL("DROP VIEW IF EXISTS " + Tables.ODATA_VIEW);
+//
+//            onCreate(db);
+//        	version = VER_URL_NOW_KEY;
 //
 //  case VER_SESSION_FEEDBACK_URL:
 //      // Version 3 added columns for session official notes URL and slug.

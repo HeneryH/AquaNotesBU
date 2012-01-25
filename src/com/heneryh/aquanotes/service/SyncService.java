@@ -174,28 +174,48 @@ public class SyncService extends IntentService {
 		/**
 		 * Using the intent, we can tell why we are running this service
 		 */
+ 		Cursor cursor = null;
 		if (ACTION_UPDATE_ALL.equals(intent.getAction())) { // This came from the timer expiring, get all widgets onto queue
-
-			Uri controllerUri = Controllers.buildQueryControllerXUri(999);
- 			Cursor cursor = null;
 			try {
-				cursor = dbResolverSyncSrvc.query(controllerUri, ControllersQuery.PROJECTION, null, null, null);
+				Uri controllersQueryUri = Controllers.buildQueryControllersUri();
+				cursor = dbResolverSyncSrvc.query(controllersQueryUri, ControllersQuery.PROJECTION, null, null, null);
 				if (cursor != null && cursor.moveToFirst()) {
-					// there is a gui version, add that to the queue
-					requestUpdate(999);
+	   				while (!cursor.isAfterLast()) {
+	    				Integer controllerId = cursor.getInt(ControllersQuery._ID); 
+	    				requestUpdate(controllerId);
+	    				cursor.moveToNext();
+					}
 				}
 			} catch (SQLException e) {
-				Log.e(TAG, "Checking if the controller is configured", e);
+				Log.e(TAG, "getting controller list", e);	
+				// need a little more here!
 			} finally {
 				if (cursor != null) {
 					cursor.close();
 				}
 			}
-
 		} else if (ACTION_UPDATE_SINGLE.equals(intent.getAction())) { // This came from the a widget update, id is in the queue
 
 		} else if(Intent.ACTION_SYNC.equals(intent.getAction())) { // this came from the main GUI
 			guiStatusReceiver = intent.getParcelableExtra(EXTRA_STATUS_RECEIVER);
+			try {
+				Uri controllersQueryUri = Controllers.buildQueryControllersUri();
+				cursor = dbResolverSyncSrvc.query(controllersQueryUri, ControllersQuery.PROJECTION, null, null, null);
+				if (cursor != null && cursor.moveToFirst()) {
+	   				while (!cursor.isAfterLast()) {
+	    				Integer controllerId = cursor.getInt(ControllersQuery._ID); 
+	    				requestUpdate(controllerId);
+	    				cursor.moveToNext();
+					}
+				}
+			} catch (SQLException e) {
+				Log.e(TAG, "getting controller list", e);	
+				// need a little more here!
+			} finally {
+				if (cursor != null) {
+					cursor.close();
+				}
+			}
 		}
 
 		/**
@@ -368,15 +388,15 @@ public class SyncService extends IntentService {
 							// Announce success to any surface listener
 							Log.d(TAG, "sync finished");
 
-							if(controllerId==999) {
-							} else {
-								// Process this update through the correct provider
-								AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mSyncServiceContext);
-
-								AppWidgetProviderInfo info = appWidgetManager.getAppWidgetInfo(controllerId);
-								String providerName = info.provider.getClassName();   // <--- there are crash reports of null pointer here.  How?
-								RemoteViews updateViews = null;
-								Log.d(TAG, "Build a graphical update whatever type of widget this is.");
+//							if(controllerId==999) {
+//							} else {
+//								// Process this update through the correct provider
+//								AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mSyncServiceContext);
+//
+//								AppWidgetProviderInfo info = appWidgetManager.getAppWidgetInfo(controllerId);
+//								String providerName = info.provider.getClassName();   // <--- there are crash reports of null pointer here.  How?
+//								RemoteViews updateViews = null;
+//								Log.d(TAG, "Build a graphical update whatever type of widget this is.");
 //								if (providerName.equals(Widget2x1.class.getName())) {
 //									Log.d(TAG, "Building a 2x1 widget, ID = " + controllerId + ".");
 //									Log.d(TAG, "Building a 2x1 widget, Uri = " + controllerUri + ".");
@@ -390,15 +410,15 @@ public class SyncService extends IntentService {
 //									Log.d(TAG, "Building a 1x1 widget, Uri = " + controllerUri + ".");
 //									updateViews = Widget1x1.buildUpdate(mSyncServiceContext, controllerUri);
 //								}
-
-								// Push this update to surface
-								if (updateViews != null) {
-									Log.d(TAG, "Pushing update to the surface, ID = " + controllerId + ".");
-									appWidgetManager.updateAppWidget(controllerId, updateViews);
-								} else {
-									Log.e(TAG, "Some problem building the view, not pushed to the surface.");
-								}
-							}
+//
+//								// Push this update to surface
+//								if (updateViews != null) {
+//									Log.d(TAG, "Pushing update to the surface, ID = " + controllerId + ".");
+//									appWidgetManager.updateAppWidget(controllerId, updateViews);
+//								} else {
+//									Log.e(TAG, "Some problem building the view, not pushed to the surface.");
+//								}
+//							}
 						} catch (HandlerException e) {
 							Log.e(TAG, "Problem while syncing", e);
 							resultFailedFlag=true;

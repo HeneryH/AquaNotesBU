@@ -30,21 +30,22 @@ import android.view.ViewGroup;
  * instances of {@link BlockView}. Also positions current "now" divider using
  * {@link R.id#blocks_now} view when applicable.
  */
-public class BlocksLayout extends ViewGroup {
-    private int mColumns = 3;
+public class ControllersLayout extends ViewGroup {
 
-    private TimeRulerView mRulerView;
-    private View mNowView;
+	private int mColumns = 3;
 
-    public BlocksLayout(Context context) {
+	private TimeRulerView mRulerView;
+//    private View mNowView;
+
+    public ControllersLayout(Context context) {
         this(context, null);
     }
 
-    public BlocksLayout(Context context, AttributeSet attrs) {
+    public ControllersLayout(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public BlocksLayout(Context context, AttributeSet attrs, int defStyle) {
+    public ControllersLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         final TypedArray a = context.obtainStyledAttributes(attrs,
@@ -56,17 +57,19 @@ public class BlocksLayout extends ViewGroup {
     }
 
     private void ensureChildren() {
-        mRulerView = (TimeRulerView) findViewById(R.id.blocks_ruler);
-        if (mRulerView == null) {
+    	
+    	mRulerView = (TimeRulerView) findViewById(R.id.blocks_ruler);
+
+    	if (mRulerView == null) {
             throw new IllegalStateException("Must include a R.id.blocks_ruler view.");
         }
         mRulerView.setDrawingCacheEnabled(true);
 
-        mNowView = findViewById(R.id.blocks_now);
-        if (mNowView == null) {
-            throw new IllegalStateException("Must include a R.id.blocks_now view.");
-        }
-        mNowView.setDrawingCacheEnabled(true);
+//        mNowView = findViewById(R.id.blocks_now);
+//        if (mNowView == null) {
+//            throw new IllegalStateException("Must include a R.id.blocks_now view.");
+//        }
+//        mNowView.setDrawingCacheEnabled(true);
     }
 
     /**
@@ -76,13 +79,14 @@ public class BlocksLayout extends ViewGroup {
     public void removeAllBlocks() {
         ensureChildren();
         removeAllViews();
+        
         addView(mRulerView);
-        addView(mNowView);
+//        addView(mNowView);
     }
 
     public void addBlock(BlockView blockView) {
-        blockView.setDrawingCacheEnabled(true);
-        addView(blockView, 1);
+//        blockView.setDrawingCacheEnabled(true);
+//        addView(blockView, 1);
     }
 
     @Override
@@ -90,7 +94,7 @@ public class BlocksLayout extends ViewGroup {
         ensureChildren();
 
         mRulerView.measure(widthMeasureSpec, heightMeasureSpec);
-        mNowView.measure(widthMeasureSpec, heightMeasureSpec);
+//        mNowView.measure(widthMeasureSpec, heightMeasureSpec);
 
         final int width = mRulerView.getMeasuredWidth();
         final int height = mRulerView.getMeasuredHeight();
@@ -101,38 +105,40 @@ public class BlocksLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        ensureChildren();
+
+    	ensureChildren();
 
         final TimeRulerView rulerView = mRulerView;
+        
         final int headerWidth = rulerView.getHeaderWidth();
         final int columnWidth = (getWidth() - headerWidth) / mColumns;
 
         rulerView.layout(0, 0, getWidth(), getHeight());
 
-        final int count = getChildCount();
-        for (int i = 0; i < count; i++) {
-            final View child = getChildAt(i);
-            if (child.getVisibility() == GONE) continue;
-
-            if (child instanceof BlockView) {
-                final BlockView blockView = (BlockView) child;
-                final int top = rulerView.getTimeVerticalOffset(blockView.getStartTime());
-                final int bottom = rulerView.getTimeVerticalOffset(blockView.getEndTime());
-                final int left = headerWidth + (blockView.getColumn() * columnWidth);
-                final int right = left + columnWidth;
-                child.layout(left, top, right, bottom);
-            }
-        }
+//        final int count = getChildCount();
+//        for (int i = 0; i < count; i++) {
+//            final View child = getChildAt(i);
+//            if (child.getVisibility() == GONE) continue;
+//
+//            if (child instanceof BlockView) {
+//                final BlockView blockView = (BlockView) child;
+//                final int top = rulerView.getTimeVerticalOffset(blockView.getStartTime());
+//                final int bottom = rulerView.getTimeVerticalOffset(blockView.getEndTime());
+//                final int left = headerWidth + (blockView.getColumn() * columnWidth);
+//                final int right = left + columnWidth;
+//                child.layout(left, top, right, bottom);
+//            }
+//        }
 
         // Align now view to match current time
-        final View nowView = mNowView;
-        final long now = UIUtils.getCurrentTime(getContext());
-
-        final int top = rulerView.getTimeVerticalOffset(now);
-        final int bottom = top + nowView.getMeasuredHeight();
-        final int left = 0;
-        final int right = getWidth();
-
-        nowView.layout(left, top, right, bottom);
+//        final View nowView = mNowView;
+//        final long now = UIUtils.getCurrentTime(getContext());
+//
+//        final int top = rulerView.getTimeVerticalOffset(now);
+//        final int bottom = top + nowView.getMeasuredHeight();
+//        final int left = 0;
+//        final int right = getWidth();
+//
+//        nowView.layout(left, top, right, bottom);
     }
 }

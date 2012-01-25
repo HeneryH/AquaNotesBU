@@ -51,12 +51,14 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.provider.BaseColumns;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 
 /**
@@ -77,25 +79,28 @@ public class AquaNotesDbProvider extends ContentProvider {
 	 */
 	private static final int CONTROLLERS = 901;
 	private static final int CONTROLLERS_ID = 902;
+	private static final int CONTROLLERS_URL = 903;
 
-	private static final int PROBES = 903;
-	private static final int CONTROLLERS_ID_PROBES = 904;
-	private static final int CONTROLLERS_ID_PROBES_ID = 905;
-	private static final int CONTROLLERS_ID_PROBES_NAME = 906;
+	private static final int PROBES = 904;
+	private static final int CONTROLLERS_ID_PROBES = 905;
+	private static final int CONTROLLERS_ID_PROBES_ID = 906;
+	private static final int CONTROLLERS_ID_PROBES_NAME = 907;
 	
-	private static final int OUTLETS = 907;
-	private static final int CONTROLLERS_ID_OUTLETS = 908;
-	private static final int CONTROLLERS_ID_OUTLETS_ID = 909;
-	private static final int CONTROLLERS_ID_OUTLETS_DEVICE_ID = 910;
-	private static final int CONTROLLERS_ID_OUTLETS_RSC = 911; 
+	private static final int OUTLETS = 908;
+	private static final int CONTROLLERS_ID_OUTLETS = 909;
+	private static final int CONTROLLERS_ID_OUTLETS_ID = 910;
+	private static final int CONTROLLERS_ID_OUTLETS_DEVICE_ID = 911;
+	private static final int CONTROLLERS_ID_OUTLETS_RSC = 912; 
 
-	private static final int DATA = 912; 
-	private static final int CONTROLLERS_ID_PROBEDATA_AT = 913; 
-	private static final int CONTROLLERS_ID_PROBEDATA_FOR_ID = 914; 
-	private static final int CONTROLLERS_ID_PROBEDATA_FOR_NAME = 915; 
-	private static final int CONTROLLERS_ID_OUTLETDATA_AT = 916; 
-	private static final int CONTROLLERS_ID_OUTLETDATA_FOR_ID = 917; 
-	private static final int CONTROLLERS_ID_OUTLETDATA_FOR_DEVICE_ID = 918; 
+	private static final int DATA = 913; 
+	private static final int PDATA = 920; 
+	private static final int ODATA = 921; 
+	private static final int CONTROLLERS_ID_PROBEDATA_AT = 914; 
+	private static final int CONTROLLERS_ID_PROBEDATA_FOR_ID = 915; 
+	private static final int CONTROLLERS_ID_PROBEDATA_FOR_NAME = 916; 
+	private static final int CONTROLLERS_ID_OUTLETDATA_AT = 917; 
+	private static final int CONTROLLERS_ID_OUTLETDATA_FOR_ID = 918; 
+	private static final int CONTROLLERS_ID_OUTLETDATA_FOR_DEVICE_ID = 919; 
     
     private static final int BLOCKS = 100;
     private static final int BLOCKS_BETWEEN = 101;
@@ -147,6 +152,7 @@ public class AquaNotesDbProvider extends ContentProvider {
 //////////////////////////////////////////////
 //    	private static final int CONTROLLERS = 101;
 //    	private static final int CONTROLLERS_ID = 102;
+//    	private static final int CONTROLLERS_URL = 903;
 //      private static final String PATH_CONTROLLERS = "controllers";
         matcher.addURI(authority, "controllers", CONTROLLERS);
 		// query = return all controllers 
@@ -156,6 +162,13 @@ public class AquaNotesDbProvider extends ContentProvider {
 		// getType = return type for multiple items
 
         matcher.addURI(authority, "controllers/#", CONTROLLERS_ID);
+		// query = return just one controller
+		// insert = ?
+		// update = Update this one controller with the values object
+		// delete = delete the referenced controller, its probes and all probe data for this controller
+		// getType = return type for single item
+
+        matcher.addURI(authority, "controllers/*", CONTROLLERS_URL);
 		// query = return just one controller
 		// insert = ?
 		// update = Update this one controller with the values object
@@ -256,6 +269,8 @@ public class AquaNotesDbProvider extends ContentProvider {
 //	    private static final String PATH_OUTLET_DATA_FOR_ID = "odata_id";
 //	    private static final String PATH_OUTLET_DATA_FOR_DID = "odata_did";
 		matcher.addURI(authority, "data", DATA);
+		matcher.addURI(authority, "pdata", PDATA);
+		matcher.addURI(authority, "odata", ODATA);
 		// query = return all the probe data records for all controllers, only used in db maint screen.
 		// insert = N/A
 		// update = N/A
@@ -356,11 +371,15 @@ public class AquaNotesDbProvider extends ContentProvider {
 //////////////////////////////////////////////
 //    	private static final int CONTROLLERS = 901;
 //    	private static final int CONTROLLERS_ID = 902;
+//    	private static final int CONTROLLERS_URL = 903;
 //private static final String PATH_CONTROLLERS = "controllers";
         case CONTROLLERS:
         	return Controllers.CONTENT_TYPE;
         	
         case CONTROLLERS_ID:
+        	return Controllers.CONTENT_ITEM_TYPE;
+
+        case CONTROLLERS_URL:
         	return Controllers.CONTENT_ITEM_TYPE;
 
 //////////////////////////////////////////////
@@ -421,6 +440,10 @@ public class AquaNotesDbProvider extends ContentProvider {
 //    	    private static final String PATH_OUTLET_DATA_FOR_ID = "odata_id";
 //    	    private static final String PATH_OUTLET_DATA_FOR_DID = "odata_did";
         case DATA:
+        	return Probes.CONTENT_TYPE;
+        case PDATA:
+        	return Probes.CONTENT_TYPE;
+        case ODATA:
         	return Probes.CONTENT_TYPE;
         	
         case CONTROLLERS_ID_PROBEDATA_AT:
@@ -503,72 +526,78 @@ public class AquaNotesDbProvider extends ContentProvider {
             String sortOrder) {
         if (LOGV) Log.v(TAG, "query(uri=" + uri + ", proj=" + Arrays.toString(projection) + ")");
         final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
-		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-		String limit1 = null;
 
         final int match = sUriMatcher.match(uri);
         switch (match) {
-        /**
-         * First off, the sample uses a simple selection builder and a common query.  I don't know why
-         * it didn't work for me but I went brute force...
-         */
-        
-        // All all controllers
-        case CONTROLLERS: {
-        	qb.setTables(Tables.CONTROLLERS);
-        	return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
-        }
-
-        // Controller where ID=x
-        case CONTROLLERS_ID: {
-        	String controllerId = Controllers.getControllerId(uri);
-        	qb.setTables(Tables.CONTROLLERS);
-        	qb.appendWhere(BaseColumns._ID + "=" + controllerId);
-        	return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
-        }
-
-        // All probes regardless of controller, maint only
-        case PROBES: {
-        	qb.setTables(Tables.PROBES);
-        	return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
-        }
-
-        // All outlets regardless of controller, maint only
-        case OUTLETS: {
-        	qb.setTables(Tables.OUTLETS);
-        	return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
-        }
-
-        // Get a probe record by controller id and probe name.
-        case CONTROLLERS_ID_PROBES_NAME: {
-        	String controllerId = uri.getPathSegments().get(1);
-        	String probeName = uri.getPathSegments().get(3);
-        	qb.setTables(Tables.PROBES);
-        	qb.appendWhere(Probes.CONTROLLER_ID + "=");
-        	qb.appendWhereEscapeString(controllerId);
-        	qb.appendWhere(" and " + Probes.NAME + "=");
-        	qb.appendWhereEscapeString(probeName);
-        	return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
-        }
-
-        // Get a outlet record by controller id and outlet device id.
-        case CONTROLLERS_ID_OUTLETS_DEVICE_ID: {   
-        	String controllerId = uri.getPathSegments().get(1);
-        	String outletDeviceID = uri.getPathSegments().get(3);
-        	qb.setTables(Tables.OUTLETS);
-        	qb.appendWhere(Outlets.CONTROLLER_ID + "=");
-        	qb.appendWhereEscapeString(controllerId);
-        	qb.appendWhere(" and " + Outlets.DEVICE_ID + "=");
-        	qb.appendWhereEscapeString(outletDeviceID);
-        	return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
-        }
-        
-        // Get all data records regardless of controller, db maint use only
-        case DATA: {
-        	qb.setTables(Tables.PDATA_VIEW);
-        	return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
-        }
-        
+//        /**
+//         * First off, the sample uses a simple selection builder and a common query.  I don't know why
+//         * it didn't work for me but I went brute force...
+//         */
+//        
+//        // All all controllers
+//        case CONTROLLERS: {
+//        	qb.setTables(Tables.CONTROLLERS);
+//        	return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
+//        }
+//
+//        // Controller where ID=x
+//        case CONTROLLERS_ID: {
+//        	String controllerId = Controllers.getControllerId(uri);
+//        	qb.setTables(Tables.CONTROLLERS);
+//        	qb.appendWhere(BaseColumns._ID + "=" + controllerId);
+//        	return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
+//        }
+//
+//        // Controller where ID=x
+//        case CONTROLLERS_URL: {
+//        	String controllerUrl = Controllers.getControllerId(uri);
+//        	qb.setTables(Tables.CONTROLLERS);
+//        	qb.appendWhere(Controllers.WAN_URL + "=" + controllerUrl);
+//        	return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
+//        }
+//
+//        // All probes regardless of controller, maint only
+//        case PROBES: {
+//        	qb.setTables(Tables.PROBES);
+//        	return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
+//        }
+//
+//        // All outlets regardless of controller, maint only
+//        case OUTLETS: {
+//        	qb.setTables(Tables.OUTLETS);
+//        	return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
+//        }
+//
+//        // Get a probe record by controller id and probe name.
+//        case CONTROLLERS_ID_PROBES_NAME: {
+//        	String controllerId = uri.getPathSegments().get(1);
+//        	String probeName = uri.getPathSegments().get(3);
+//        	qb.setTables(Tables.PROBES);
+//        	qb.appendWhere(Probes.CONTROLLER_ID + "=");
+//        	qb.appendWhereEscapeString(controllerId);
+//        	qb.appendWhere(" and " + Probes.NAME + "=");
+//        	qb.appendWhereEscapeString(probeName);
+//        	return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
+//        }
+//
+//        // Get a outlet record by controller id and outlet device id.
+//        case CONTROLLERS_ID_OUTLETS_DEVICE_ID: {   
+//        	String controllerId = uri.getPathSegments().get(1);
+//        	String outletDeviceID = uri.getPathSegments().get(3);
+//        	qb.setTables(Tables.OUTLETS);
+//        	qb.appendWhere(Outlets.CONTROLLER_ID + "=");
+//        	qb.appendWhereEscapeString(controllerId);
+//        	qb.appendWhere(" and " + Outlets.DEVICE_ID + "=");
+//        	qb.appendWhereEscapeString(outletDeviceID);
+//        	return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
+//        }
+//        
+//        // Get all data records regardless of controller, db maint use only
+//        case DATA: {
+//        	qb.setTables(Tables.PDATA_VIEW);
+//        	return qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, limit1);
+//        }
+//        
         default: {
         	// Most cases are handled with simple SelectionBuilder
         	final SelectionBuilder builder = buildExpandedSelection(uri, match);
@@ -605,21 +634,21 @@ public class AquaNotesDbProvider extends ContentProvider {
         
         // Insert a single controller
 		case CONTROLLERS: {
-			rowId = db.insert(Tables.CONTROLLERS, Controllers.TITLE, values);
+			rowId = db.insertOrThrow(Tables.CONTROLLERS, Controllers.TITLE, values);
             getContext().getContentResolver().notifyChange(uri, null);
             return ContentUris.withAppendedId(uri, rowId);
 		}
 		
 		// Insert a probe for controller x.
 		case CONTROLLERS_ID_PROBES: {
-			rowId = db.insert(Tables.PROBES, Probes.NAME, values);
+			rowId = db.insertOrThrow(Tables.PROBES, Probes.NAME, values);
             getContext().getContentResolver().notifyChange(uri, null);
             return ContentUris.withAppendedId(uri, rowId);
 		}
 		
 		// Insert an outlet for controller x.
 		case CONTROLLERS_ID_OUTLETS: {
-			rowId = db.insert(Tables.OUTLETS, Outlets.NAME, values);
+			rowId = db.insertOrThrow(Tables.OUTLETS, Outlets.NAME, values);
             getContext().getContentResolver().notifyChange(uri, null);
             return ContentUris.withAppendedId(uri, rowId);
 		}
@@ -627,13 +656,13 @@ public class AquaNotesDbProvider extends ContentProvider {
 		// Insert data for controller x and probe/outlet y
 		case CONTROLLERS_ID_PROBES_ID: {
 			values.put(Data.TYPE, 1);
-			rowId = db.insert(Tables.DATA, Data.VALUE, values);
+			rowId = db.insertOrThrow(Tables.DATA, Data.VALUE, values);
             getContext().getContentResolver().notifyChange(uri, null);
             return ContentUris.withAppendedId(uri, rowId);
 		}
 		case CONTROLLERS_ID_OUTLETS_ID: {
 			values.put(Data.TYPE, 0);
-			rowId = db.insert(Tables.DATA, Data.VALUE, values);
+			rowId = db.insertOrThrow(Tables.DATA, Data.VALUE, values);
             getContext().getContentResolver().notifyChange(uri, null);
             return ContentUris.withAppendedId(uri, rowId);
 		}
@@ -695,14 +724,20 @@ public class AquaNotesDbProvider extends ContentProvider {
         if (LOGV) Log.v(TAG, "update(uri=" + uri + ", values=" + values.toString() + ")");
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         
-    	switch (sUriMatcher.match(uri)) {
-    	case CONTROLLERS_ID: {
-    		String controllerId = uri.getPathSegments().get(1);
-    		return db.update(Tables.CONTROLLERS, values, BaseColumns._ID + "=?",
-    				new String []{controllerId});
-		}
-    	// I guess updating probes/outlets works with the default???
-    	}
+//        
+//    	switch (sUriMatcher.match(uri)) {
+//    	case CONTROLLERS_ID: {
+//    		String controllerId = uri.getPathSegments().get(1);
+//    		return db.update(Tables.CONTROLLERS, values, BaseColumns._ID + "=?",
+//    				new String []{controllerId});
+//		}
+//    	case CONTROLLERS_URL: {
+//    		String controllerId = uri.getPathSegments().get(1);
+//    		return db.update(Tables.CONTROLLERS, values, Controllers.WAN_URL + "=?",
+//    				new String []{controllerId});
+//		}
+//    	// I guess updating probes/outlets works with the default???
+//    	}
         final SelectionBuilder builder = buildSimpleSelection(uri);
         int retVal = builder.where(selection, selectionArgs).update(db, values);
         getContext().getContentResolver().notifyChange(uri, null);
@@ -714,10 +749,76 @@ public class AquaNotesDbProvider extends ContentProvider {
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         if (LOGV) Log.v(TAG, "delete(uri=" + uri + ")");
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        final SelectionBuilder builder = buildSimpleSelection(uri);
-        int retVal = builder.where(selection, selectionArgs).delete(db);
+        
+		int count = 0;
+//
+//		switch (sUriMatcher.match(uri)) {
+//		case CONTROLLERS: {
+//			//count = db.delete(TABLE_CONTROLLERS, selection, selectionArgs);
+//			break;
+//		}
+//		case CONTROLLERS_ID: {
+//			// Delete a specific controller and all its probes and data
+//			String controllerId = uri.getPathSegments().get(1);
+//			count = db.delete(Tables.CONTROLLERS, BaseColumns._ID + "=?", 
+//					new String[]{controllerId});
+//			count += db.delete(Tables.PROBES, Probes.CONTROLLER_ID + "=?",
+//					new String[]{controllerId});
+//			count += db.delete(Tables.OUTLETS, Outlets.CONTROLLER_ID + "=?",
+//					new String[]{controllerId});
+////			count += db.delete(Tables.DATA, Data.C + "=?",
+////					new String[]{controllerId});
+//			break;
+//		}
+//		case CONTROLLERS_URL: {
+//			// Delete a specific controller and all its probes and data
+//			String controllerUrl = uri.getPathSegments().get(1);
+//			count = db.delete(Tables.CONTROLLERS, Controllers.WAN_URL + "=?", 
+//					new String[]{controllerUrl});
+//			/* TODO: need to cascase the deletes, same for above */
+////			count += db.delete(Tables.PROBES, Probes.CONTROLLER_ID + "=?",
+////					new String[]{controllerId});
+////			count += db.delete(Tables.OUTLETS, Outlets.CONTROLLER_ID + "=?",
+////					new String[]{controllerId});
+////			count += db.delete(Tables.DATA, Data.C + "=?",
+////					new String[]{controllerId});
+//			break;
+//		}
+//		case CONTROLLERS_ID_PROBEDATA_AT: {
+//			// Delete all the probe data older than x (in days)
+//			String controllerId = uri.getPathSegments().get(1);
+//			long ageDays = Long.parseLong(uri.getPathSegments().get(3));
+//			long now = System.currentTimeMillis();
+//			String cutoff = Long.toString(now- (ageDays*DateUtils.DAY_IN_MILLIS));
+//			count += db.delete(Tables.DATA, 
+////					Data.CONTROLLER_ID + "= ? and " +
+//							Data.TYPE + "= ? and " +
+//							Data.TIMESTAMP + "< ?", 
+//							new String[]{/*controllerId,*/ "1", cutoff});
+//			break;
+//		}
+//		case CONTROLLERS_ID_OUTLETDATA_AT: {
+//			// Delete all the probe data older than x
+//			String controllerId = uri.getPathSegments().get(1);
+//			long age = Long.parseLong(uri.getPathSegments().get(3));
+//			long now = System.currentTimeMillis();
+//			String cutoff = Long.toString(now-age);
+//			count += db.delete(Tables.DATA, 
+////					ProbeDataColumns.CONTROLLER_ID + "= ?  and " +
+//							Data.TYPE + "= ? and " +
+//							Data.TIMESTAMP + "< ?",
+//							new String[]{/*controllerId,*/ "0", cutoff});
+//			break;
+//		}
+//		default:
+	        final SelectionBuilder builder = buildSimpleSelection(uri);
+	        count = builder.where(selection, selectionArgs).delete(db);
+//		}
+//
+//		
+//		
         getContext().getContentResolver().notifyChange(uri, null);
-        return retVal;
+        return count;
     }
 
     /**
@@ -752,9 +853,23 @@ public class AquaNotesDbProvider extends ContentProvider {
         final SelectionBuilder builder = new SelectionBuilder();
         final int match = sUriMatcher.match(uri);
         switch (match) {
-            case BLOCKS: {
-                return builder.table(Tables.BLOCKS);
-            }
+        case CONTROLLERS: {
+            return builder.table(Tables.CONTROLLERS);
+        }
+        case CONTROLLERS_ID: {
+            final String controllerId = Controllers.getControllerId(uri);
+            return builder.table(Tables.CONTROLLERS)
+                    .where(BaseColumns._ID + "=?", controllerId);
+        }
+        case CONTROLLERS_URL: {
+            final String controllerURL = Controllers.getControllerId(uri);
+    		/** TODO: I sure hope this is escaped! */
+            return builder.table(Tables.CONTROLLERS)
+                    .where(Controllers.WAN_URL + "=?", controllerURL);
+        }
+        case BLOCKS: {
+            return builder.table(Tables.BLOCKS);
+        }
             case BLOCKS_ID: {
                 final String blockId = Blocks.getBlockId(uri);
                 return builder.table(Tables.BLOCKS)
@@ -828,22 +943,59 @@ public class AquaNotesDbProvider extends ContentProvider {
         final SelectionBuilder builder = new SelectionBuilder();
         switch (match) {
 
-        // I just don't get this yet, I have a view for the join anyway...
+//        // I just don't get this yet, I have a view for the join anyway...
+   
+        case CONTROLLERS: {
+            return builder.table(Tables.CONTROLLERS);
+        }
+        case CONTROLLERS_ID: {
+            final String controllerId = Controllers.getControllerId(uri);
+            return builder.table(Tables.CONTROLLERS)
+                    .where(BaseColumns._ID + "=?", controllerId);
+        }
+        case CONTROLLERS_URL: {
+            final String controllerURL = Controllers.getControllerId(uri);
+    		/** TODO: I sure hope this is escaped! */
+            return builder.table(Tables.CONTROLLERS)
+                    .where(Controllers.WAN_URL + "=?", Uri.decode(controllerURL));
+        }
+
         case CONTROLLERS_ID_PROBES_NAME: {
-            final String controllerId = Probes.getControllerId(uri);
-            final String probeName = Probes.getProbeName(uri);
-            return builder.table(Tables.PROBES)
-            		.where(Probes.CONTROLLER_ID + "=", controllerId)
-                    .where(Probes.NAME + "=?", Uri.encode(probeName));
+        	final String controllerId = Probes.getControllerId(uri);
+        	final String probeName = Probes.getProbeName(uri);
+        	return builder.table(Tables.PROBES)
+        			.where(Probes.CONTROLLER_ID + "=?", controllerId)
+        			.where(Probes.NAME + "=?", probeName);
         }
 
         case CONTROLLERS_ID_OUTLETS_DEVICE_ID: {
-            final String controllerId = Probes.getControllerId(uri);
-            final String outletDID = Probes.getProbeName(uri);
-            return builder.table(Tables.OUTLETS)
-            		.where(Outlets.CONTROLLER_ID + "=", controllerId)
-                    .where(Outlets.DEVICE_ID + "=?", Uri.encode(outletDID));
+        	final String controllerId = Probes.getControllerId(uri);
+        	final String outletDID = Probes.getProbeName(uri);
+        	return builder.table(Tables.OUTLETS)
+        			.where(Outlets.CONTROLLER_ID + "=?", controllerId)
+        			.where(Outlets.DEVICE_ID + "=?", outletDID);
         }
+        case PROBES: {
+        	return builder.table(Tables.PROBES);
+        }
+        case OUTLETS: {
+        	return builder.table(Tables.OUTLETS);
+        }
+      
+      // Get all data records regardless of controller, db maint use only
+        /** TODO: probe and outlet data both! */
+      case DATA: {
+      	return builder.table(Tables.DATA);
+      }
+      case PDATA: {
+        	return builder.table(Tables.PDATA_VIEW)
+			.where(Data.TYPE + "=?", "1");
+        }
+      case ODATA: {
+      	return builder.table(Tables.PDATA_VIEW)
+			.where(Data.TYPE + "=?", "0");
+        }
+      
 
         case BLOCKS: {
                 return builder.table(Tables.BLOCKS);

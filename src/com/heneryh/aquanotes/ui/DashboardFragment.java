@@ -17,14 +17,16 @@
 package com.heneryh.aquanotes.ui;
 
 import com.heneryh.aquanotes.R;
+import com.heneryh.aquanotes.configure.ConfigurePrefs;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract;
-import com.heneryh.aquanotes.ui.phone.ScheduleActivity;
-import com.heneryh.aquanotes.ui.tablet.ScheduleMultiPaneActivity;
+import com.heneryh.aquanotes.ui.phone.CtlrStatusActivity;
+import com.heneryh.aquanotes.ui.tablet.CtlrStatusMultiPaneActivity;
 import com.heneryh.aquanotes.ui.tablet.SessionsMultiPaneActivity;
 import com.heneryh.aquanotes.ui.tablet.VendorsMultiPaneActivity;
 import com.heneryh.aquanotes.util.AnalyticsUtils;
 import com.heneryh.aquanotes.util.UIUtils;
 
+import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -49,9 +51,9 @@ public class DashboardFragment extends Fragment {
             public void onClick(View view) {
                 fireTrackerEvent("Schedule");
                 if (UIUtils.isHoneycombTablet(getActivity())) {
-                    startActivity(new Intent(getActivity(), ScheduleMultiPaneActivity.class));
+                    startActivity(new Intent(getActivity(), CtlrStatusMultiPaneActivity.class));
                 } else {
-                    startActivity(new Intent(getActivity(), ScheduleActivity.class));
+                    startActivity(new Intent(getActivity(), CtlrStatusActivity.class));
                 }
                 
             }
@@ -113,10 +115,10 @@ public class DashboardFragment extends Fragment {
         root.findViewById(R.id.home_btn_announcements).setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
-                        // splicing in tag streamer
-                        fireTrackerEvent("Bulletin");
-                        Intent intent = new Intent(getActivity(), BulletinActivity.class);
-                        startActivity(intent);
+        				Intent i = new Intent(getActivity(), ConfigurePrefs.class);
+        				int controllerId = 999; // use the special case of widget=999 , this is not a good solution
+        				i.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, controllerId);
+        				startActivity(i);
                     }
                 });
 

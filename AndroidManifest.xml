@@ -17,8 +17,8 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.heneryh.aquanotes"
-    android:versionCode="5"
-    android:versionName="0.05"
+    android:versionCode="7"
+    android:versionName="0.07"
     android:installLocation="auto">
 
     <uses-sdk
@@ -36,14 +36,14 @@
         android:label="@string/app_name"
         android:icon="@drawable/ic_launcher"
         android:logo="@drawable/title_logo"
-        android:theme="@style/Theme.IOSched"
+        android:theme="@style/Theme.AquaNotes"
         android:hardwareAccelerated="true">
 
         <!-- Activities for both phones and tablets -->
 
         <activity
             android:name=".ui.HomeActivity"
-            android:theme="@style/Theme.IOSched.Home"
+            android:theme="@style/Theme.AquaNotes.Home"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -89,8 +89,8 @@
         <!-- Phone-only activities -->
 
         <activity
-            android:name=".ui.phone.ScheduleActivity"
-            android:label="@string/title_schedule" />
+            android:name=".ui.phone.CtlrStatusActivity"
+            android:label="@string/title_ctlr_status" />
 
         <activity
             android:name=".ui.phone.TracksActivity"
@@ -109,7 +109,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.TAB" />
-                <data android:mimeType="vnd.android.cursor.dir/vnd.iosched.session" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.aquanotes.probes" />
             </intent-filter>
         </activity>
 
@@ -128,7 +128,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.TAB" />
-                <data android:mimeType="vnd.android.cursor.dir/vnd.iosched.vendor" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.aquanotes.controllers" />
             </intent-filter>
         </activity>
 
@@ -141,6 +141,17 @@
         </activity>
 
         <activity
+            android:name=".ui.phone.DbMaintDataActivity"
+            android:label="@string/title_vendors">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.TAB" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.aquanotes.data" />
+            </intent-filter>
+        </activity>
+
+            <activity
             android:name=".ui.phone.MapActivity"
             android:label="@string/title_map"
             android:configChanges="orientation|keyboardHidden" />
@@ -154,8 +165,8 @@
             android:name=".ui.tablet.VendorsMultiPaneActivity"
             android:label="@string/title_vendors" />
         <activity
-            android:name=".ui.tablet.ScheduleMultiPaneActivity"
-            android:label="@string/title_schedule" />
+            android:name=".ui.tablet.CtlrStatusMultiPaneActivity"
+            android:label="@string/title_ctlr_status" />
         <activity
             android:name=".ui.tablet.MapMultiPaneActivity"
             android:label="@string/title_map"
@@ -180,6 +191,7 @@
             android:value=".ui.SearchActcom.heneryh.aquanotes.service.SyncServices.service.SyncServices.service.SyncService" />
 
         <service android:name="com.heneryh.aquanotes.service.SyncService" />
+        <service android:name="com.heneryh.aquanotes.service.NightlyService" />
         
         <provider
             android:name=".provider.AquaNotesDbProvider"

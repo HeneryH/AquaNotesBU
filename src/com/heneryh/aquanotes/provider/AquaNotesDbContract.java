@@ -415,6 +415,8 @@ public class AquaNotesDbContract {
     private static final String PATH_OUTLETS_DEVICE_ID = "outlets_did";
 
     private static final String PATH_DATA = "data";
+    private static final String PATH_PDATA = "pdata";
+    private static final String PATH_ODATA = "odata";
     private static final String PATH_PROBE_DATA_AT = "pdata_at";
     private static final String PATH_PROBE_DATA_FOR_ID = "pdata_id";
     private static final String PATH_PROBE_DATA_FOR_NAME = "pdata_nm";
@@ -801,15 +803,11 @@ public class AquaNotesDbContract {
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_CONTROLLERS).build();
 
-        /** Count of {@link Sessions} inside given block. */
-        public static final String PROBES_COUNT = "probes_count";
-
         /** Default "ORDER BY" clause. */
         public static final String DEFAULT_SORT = ControllersColumns.LAST_UPDATED + " DESC "
               /*  + ControllersColumns.BLOCK_END + " ASC"*/;
 
-        /** Build {@link Uri} for requested {@link #CONTROLLER_ID}. */
-        //          content://org.dvrc.aquanotes/controllers/x
+        //          content://org.dvrc.aquanotes/controllers
         public static Uri buildQueryControllersUri() {
             return BASE_CONTENT_URI.buildUpon().appendPath(PATH_CONTROLLERS)
             		.build();
@@ -819,7 +817,6 @@ public class AquaNotesDbContract {
         	return buildQueryControllersUri();  // same as query
         }
 
-        /** Build {@link Uri} for requested {@link #CONTROLLER_ID}. */
         //          content://org.dvrc.aquanotes/controllers/x
         public static Uri buildQueryControllerXUri(Integer controllerId) {
             return BASE_CONTENT_URI.buildUpon()
@@ -827,15 +824,29 @@ public class AquaNotesDbContract {
             		.build();
         }
         
+        //          content://org.dvrc.aquanotes/controllers/nnn
+        public static Uri buildQueryControllerXUri(String controllerUrl) {
+            return BASE_CONTENT_URI.buildUpon()
+            		.appendPath(PATH_CONTROLLERS).appendPath(Uri.encode(controllerUrl))
+            		.build();
+        }
+        
         public static Uri buildDeleteControllerXUri(int controllerId) {
         	return buildQueryControllerXUri(controllerId); // same as query
+        }
+
+        public static Uri buildDeleteControllerXUri(String controllerUrl) {
+        	return buildQueryControllerXUri(Uri.encode(controllerUrl)); // same as query
         }
 
         public static Uri buildUpdateControllerXUri(int controllerId) {
         	return buildQueryControllerXUri(controllerId); // same as query
         }
 
-        /** Read {@link #CONTROLLER_ID} from {@link Controllers} {@link Uri}. */
+        public static Uri buildUpdateControllerXUri(String controllerUrl) {
+        	return buildQueryControllerXUri(Uri.encode(controllerUrl)); // same as query
+        }
+
         //          content://org.dvrc.aquanotes/controllers/x
         public static String getControllerId(Uri controllerXUri) {
             return controllerXUri.getPathSegments().get(1);
@@ -1051,7 +1062,7 @@ public class AquaNotesDbContract {
                 "vnd.android.cursor.item/vnd.aquanotes.probe_data";
 
         public static final Uri CONTENT_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(PATH_DATA).build();
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_PDATA).build();
  
 
         /** Default "ORDER BY" clause. */
@@ -1067,6 +1078,22 @@ public class AquaNotesDbContract {
 //private static final int CONTROLLERS_ID_OUTLETDATA_FOR_ID = 306; 
 //private static final int CONTROLLERS_ID_PROBEDATA_FOR_NAME = 307; 
 //private static final int CONTROLLERS_ID_OUTLETDATA_FOR_DEVICE_ID = 310; 
+        
+        /** Build {@link Uri} for requested {@link #DATA_ID}. */
+        //          content://org.dvrc.aquanotes/controllers/x/pdata_at/*
+        public static Uri buildDeletePDataOlderThanUri(Integer controllerId, Integer days) {
+            return BASE_CONTENT_URI.buildUpon()
+            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
+            		.appendPath(PATH_PROBE_DATA_AT).appendPath(days.toString())
+            		.build();
+        }
+        public static Uri buildDeleteODataOlderThanUri(Integer controllerId, Integer days) {
+            return BASE_CONTENT_URI.buildUpon()
+            		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
+            		.appendPath(PATH_OUTLET_DATA_AT).appendPath(days.toString())
+            		.build();
+        }
+      
         
         /** Build {@link Uri} for requested {@link #DATA_ID}. */
         //          content://org.dvrc.aquanotes/controllers/x/probes/y/data

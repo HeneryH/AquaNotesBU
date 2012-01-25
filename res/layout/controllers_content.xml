@@ -1,0 +1,71 @@
+<!--
+  Copyright 2011 Google Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<view
+    class="com.heneryh.aquanotes.ui.widget.ObservableScrollView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aquanotes="http://schemas.android.com/apk/res/com.heneryh.aquanotes"
+    android:id="@+id/controllers_scroll"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fadingEdge="vertical">
+        <view
+        class="com.heneryh.aquanotes.ui.widget.ControllersLayout"
+        android:id="@+id/controllers"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layerType="software"
+        aquanotes:columns="3">
+        <view
+            class="com.heneryh.aquanotes.ui.widget.TimeRulerView"
+            android:id="@id/blocks_ruler"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            aquanotes:headerWidth="@dimen/schedule_label_header_width"
+            aquanotes:hourHeight="@dimen/schedule_hour_height"
+            aquanotes:horizontalDivider="true"
+            aquanotes:labelTextSize="@dimen/text_size_small"
+            aquanotes:labelPaddingLeft="@dimen/schedule_label_padding"
+            aquanotes:labelColor="#000000"
+            aquanotes:dividerColor="#22000000"
+            aquanotes:startHour="7"
+            aquanotes:endHour="23" />
+        </view>
+</view>
+
+    
+    <!-- 
+    
+         <view
+            class="com.heneryh.aquanotes.ui.widget.TimeRulerView"
+            android:id="@id/blocks_ruler"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            aquanotes:headerWidth="@dimen/schedule_label_header_width"
+            aquanotes:hourHeight="@dimen/schedule_hour_height"
+            aquanotes:horizontalDivider="true"
+            aquanotes:labelTextSize="@dimen/text_size_small"
+            aquanotes:labelPaddingLeft="@dimen/schedule_label_padding"
+            aquanotes:labelColor="#000000"
+            aquanotes:dividerColor="#22000000"
+            aquanotes:startHour="7"
+            aquanotes:endHour="23" />
+        <View
+            android:id="@id/blocks_now"
+            android:background="@drawable/now_bar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+    
+     -->

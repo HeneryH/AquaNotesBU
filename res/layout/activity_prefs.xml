@@ -152,14 +152,20 @@
             android:orientation="horizontal"
             style="@android:style/ButtonBar">
 
-
-
             <Button
                 android:id="@+id/conf_save"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/conf_save" />
+            
+
+            <Button
+                android:id="@+id/conf_delete"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/conf_delete" />
 
         </LinearLayout>
 

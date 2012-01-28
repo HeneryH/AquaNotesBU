@@ -58,10 +58,10 @@ public class AquaNotesDatabase extends SQLiteOpenHelper {
     // sure user data is saved.
 
     private static final int VER_LAUNCH = 1;
-//    private static final int VER_REWORK_ALL_TABLES = 2;
+    private static final int VER_ADD_WIDGET = 2;
 //    private static final int VER_URL_NOW_KEY = 3;
 
-    private static final int DATABASE_VERSION = VER_LAUNCH;
+    private static final int DATABASE_VERSION = VER_ADD_WIDGET;
 
     interface Tables {
         String CONTROLLERS = "controllers";
@@ -224,6 +224,7 @@ public class AquaNotesDatabase extends SQLiteOpenHelper {
               + ControllersColumns.UPDATE_INTERVAL + " INTEGER,"
               + ControllersColumns.DB_SAVE_DAYS + " INTEGER,"
               + ControllersColumns.MODEL + " TEXT,"    
+              + ControllersColumns.WIDGET + " INTEGER,"    
       + "UNIQUE (" + ControllersColumns.WAN_URL + ") ON CONFLICT REPLACE)");
 //    + ")");  // make sure to take this comma out if removing the unique
 
@@ -505,20 +506,10 @@ public class AquaNotesDatabase extends SQLiteOpenHelper {
         switch (version) {
         case VER_LAUNCH:
         	// Version 2 reworked a lot but not the controllers.
-//            Log.w(TAG, "Destroying old data during upgrade");
-//
-//            db.execSQL("DROP TABLE IF EXISTS " + Tables.CONTROLLERS);
-//            db.execSQL("DROP TABLE IF EXISTS " + Tables.PROBES);
-//            db.execSQL("DROP TABLE IF EXISTS " + Tables.OUTLETS);
-//            db.execSQL("DROP TABLE IF EXISTS " + Tables.DATA);
-//            
-//            db.execSQL("DROP VIEW IF EXISTS " + Tables.PROBE_VIEW);
-//            db.execSQL("DROP VIEW IF EXISTS " + Tables.OUTLET_VIEW);
-//            db.execSQL("DROP VIEW IF EXISTS " + Tables.PDATA_VIEW);
-//            db.execSQL("DROP VIEW IF EXISTS " + Tables.ODATA_VIEW);
-//
-//            onCreate(db);
-//        	version = VER_REWORK_ALL_TABLES;
+            Log.w(TAG, "Adding widget ID column to controllers table");
+            db.execSQL("ALTER TABLE " + Tables.CONTROLLERS + " ADD COLUMN "
+            		+ Controllers.WIDGET + " INTEGER");
+        	version = VER_ADD_WIDGET;
         	
 //        case VER_REWORK_ALL_TABLES:
 //        	// Version 3 changed key for controllers, sorry.

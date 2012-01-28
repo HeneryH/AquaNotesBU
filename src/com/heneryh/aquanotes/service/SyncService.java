@@ -34,6 +34,9 @@ import com.heneryh.aquanotes.io.RemoteWorksheetsHandler;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract.Controllers;
 import com.heneryh.aquanotes.provider.AquaNotesDbProvider;
+import com.heneryh.aquanotes.ui.widget.Widget1x1;
+import com.heneryh.aquanotes.ui.widget.Widget2x1;
+import com.heneryh.aquanotes.ui.widget.Widget2x2;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
@@ -121,9 +124,6 @@ public class SyncService extends IntentService {
 	 */
     private static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
     private static final String ENCODING_GZIP = "gzip";
-
-    private static final int VERSION_NONE = 0;
-    private static final int VERSION_CURRENT = 11;
 
     private LocalExecutor mLocalExecutor;
 	private ApexExecutor mRemoteExecutor;
@@ -270,16 +270,13 @@ public class SyncService extends IntentService {
 
 			final SharedPreferences prefs = getSharedPreferences(Prefs.IOSCHED_SYNC,
 					Context.MODE_PRIVATE);
-			final int localVersion = prefs.getInt(Prefs.LOCAL_VERSION, VERSION_NONE);
 
 			try {
 				// Bulk of sync work, performed by executing several fetches from
 				// local and online sources.
 
 				final long startLocal = System.currentTimeMillis();
-				final boolean localParse = localVersion < VERSION_CURRENT;
-				Log.d(TAG, "found localVersion=" + localVersion + " and VERSION_CURRENT="
-						+ VERSION_CURRENT);
+				final boolean localParse = true;
 				if (localParse) {
 					// Load static local data
 					mLocalExecutor.execute(R.xml.blocks, new LocalBlocksHandler());
@@ -294,15 +291,12 @@ public class SyncService extends IntentService {
 					mLocalExecutor.execute(mSyncServiceContext, "cache-speakers.xml", new RemoteSpeakersHandler());
 					mLocalExecutor.execute(mSyncServiceContext, "cache-vendors.xml", new RemoteVendorsHandler());
 
-					// Save local parsed version
-					prefs.edit().putInt(Prefs.LOCAL_VERSION, VERSION_CURRENT).commit();
 				} // end of localParse
 				Log.d(TAG, "local sync took " + (System.currentTimeMillis() - startLocal) + "ms");
 
 				// Always hit remote spreadsheet for any updates
 				final long startRemote = System.currentTimeMillis();
-//            	mRemoteExecutor
-//                    .executeGet(WORKSHEETS_URL, new RemoteWorksheetsHandler(mRemoteExecutor));
+
 				/**
 				 * Interval to wait between background widget updates. These will be pulled
 				 * from the database during processing.
@@ -330,6 +324,7 @@ public class SyncService extends IntentService {
 					// Pull the next update request off the queue
 					// and build a database Uri from it.
 					int controllerId = getNextUpdate();
+					int widgetId = -1;
 					Uri controllerUri = Controllers.buildQueryControllerXUri(controllerId);
 
 					// Check if controller is configured in the database, 
@@ -343,6 +338,7 @@ public class SyncService extends IntentService {
 							// Pull the database info for this controller
 							updateIntervalMins = cursor.getInt(ControllersQuery.UPDATE_INTERVAL); // getInt() will autoconvert the string to an int.
 							long lastUpdated = cursor.getLong(ControllersQuery.LAST_UPDATED);
+							widgetId = cursor.getInt(ControllersQuery.WIDGET);
 
 							// This is a little silly, if the db query works then it must be configured.
 
@@ -388,37 +384,36 @@ public class SyncService extends IntentService {
 							// Announce success to any surface listener
 							Log.d(TAG, "sync finished");
 
-//							if(controllerId==999) {
-//							} else {
-//								// Process this update through the correct provider
-//								AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mSyncServiceContext);
-//
-//								AppWidgetProviderInfo info = appWidgetManager.getAppWidgetInfo(controllerId);
-//								String providerName = info.provider.getClassName();   // <--- there are crash reports of null pointer here.  How?
-//								RemoteViews updateViews = null;
-//								Log.d(TAG, "Build a graphical update whatever type of widget this is.");
-//								if (providerName.equals(Widget2x1.class.getName())) {
-//									Log.d(TAG, "Building a 2x1 widget, ID = " + controllerId + ".");
-//									Log.d(TAG, "Building a 2x1 widget, Uri = " + controllerUri + ".");
-//									updateViews = Widget2x1.buildUpdate(mSyncServiceContext, controllerUri);
-//								} else if (providerName.equals(Widget2x2.class.getName())) {
-//									Log.d(TAG, "Building a 2x2 widget, ID = " + controllerId + ".");
-//									Log.d(TAG, "Building a 2x2 widget, Uri = " + controllerUri + ".");
-//									updateViews = Widget2x2.buildUpdate(mSyncServiceContext, controllerUri);
-//								} else if (providerName.equals(Widget1x1.class.getName())) {
-//									Log.d(TAG, "Building a 1x1 widget, ID = " + controllerId + ".");
-//									Log.d(TAG, "Building a 1x1 widget, Uri = " + controllerUri + ".");
-//									updateViews = Widget1x1.buildUpdate(mSyncServiceContext, controllerUri);
-//								}
-//
-//								// Push this update to surface
-//								if (updateViews != null) {
-//									Log.d(TAG, "Pushing update to the surface, ID = " + controllerId + ".");
-//									appWidgetManager.updateAppWidget(controllerId, updateViews);
-//								} else {
-//									Log.e(TAG, "Some problem building the view, not pushed to the surface.");
-//								}
-//							}
+							// Process this update through the correct provider
+							AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mSyncServiceContext);
+
+							if(widgetId>0) {
+								AppWidgetProviderInfo info = appWidgetManager.getAppWidgetInfo(widgetId);
+								String providerName = info.provider.getClassName();   // <--- there are crash reports of null pointer here.  How?
+								RemoteViews updateViews = null;
+								Log.d(TAG, "Build a graphical update whatever type of widget this is.");
+								if (providerName.equals(Widget2x1.class.getName())) {
+									Log.d(TAG, "Building a 2x1 widget, ID = " + controllerId + ".");
+									Log.d(TAG, "Building a 2x1 widget, Uri = " + controllerUri + ".");
+									updateViews = Widget2x1.buildUpdate(mSyncServiceContext, controllerUri);
+								} else if (providerName.equals(Widget2x2.class.getName())) {
+									Log.d(TAG, "Building a 2x2 widget, ID = " + controllerId + ".");
+									Log.d(TAG, "Building a 2x2 widget, Uri = " + controllerUri + ".");
+									updateViews = Widget2x2.buildUpdate(mSyncServiceContext, controllerUri);
+								} else if (providerName.equals(Widget1x1.class.getName())) {
+									Log.d(TAG, "Building a 1x1 widget, ID = " + controllerId + ".");
+									Log.d(TAG, "Building a 1x1 widget, Uri = " + controllerUri + ".");
+									updateViews = Widget1x1.buildUpdate(mSyncServiceContext, controllerUri);
+								}
+
+								// Push this update to surface
+								if (updateViews != null) {
+									Log.d(TAG, "Pushing update to the surface, ID = " + controllerId + ".");
+									appWidgetManager.updateAppWidget(controllerId, updateViews);
+								} else {
+									Log.e(TAG, "Some problem building the view, not pushed to the surface.");
+								}
+							}
 						} catch (HandlerException e) {
 							Log.e(TAG, "Problem while syncing", e);
 							resultFailedFlag=true;
@@ -428,7 +423,7 @@ public class SyncService extends IntentService {
 								bundle.putString(Intent.EXTRA_TEXT, e.toString());
 								guiStatusReceiver.send(STATUS_ERROR, bundle);
 							}
-						}
+						} // end of catch
 					} // end of if(should update)
 				} // end of while(more updates)
 
@@ -463,9 +458,6 @@ public class SyncService extends IntentService {
 				Log.e(TAG, "Problem while syncing", e);
 				resultFailedFlag = true;
 			} // end of catch exception
-
-
-//        	Log.d(TAG, "sync finished");
 			return resultFailedFlag;
 		} // end of doInBackgrount
 
@@ -682,6 +674,7 @@ public class SyncService extends IntentService {
                 AquaNotesDbContract.Controllers.UPDATE_INTERVAL,
                 AquaNotesDbContract.Controllers.DB_SAVE_DAYS,
                 AquaNotesDbContract.Controllers.MODEL,
+                AquaNotesDbContract.Controllers.WIDGET,
         };
         
         int _ID = 0;
@@ -695,5 +688,6 @@ public class SyncService extends IntentService {
         int UPDATE_INTERVAL = 8;
         int DB_SAVE_DAYS = 9;
         int MODEL = 10;
+        int WIDGET = 11;
     }
 }

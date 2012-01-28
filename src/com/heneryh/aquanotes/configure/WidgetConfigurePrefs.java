@@ -44,17 +44,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class ConfigurePrefs extends Activity implements View.OnClickListener {
+public class WidgetConfigurePrefs extends Activity implements View.OnClickListener {
 
 	private static final boolean LOGD = true;
-	private static final String LOG_TAG = "ConfigurePrefs";
+	private static final String LOG_TAG = "WidgetConfigurePrefs";
 
-	public static final String ACTION_UPDATE_SINGLE = "com.heneryh.aquanotes.UPDATE_SINGLE"; // probably shouldn't repeat this but import it
 	public static final String ACTION_UPDATE_ALL = "com.heneryh.aquanotes.UPDATE_ALL"; // probably shouldn't repeat this but import it
 
 	// Graphical elements
 	private Button mSave;
-	private Button mDelete;
 	private EditText mTitle;
 	private EditText mWanUrl;
 	private EditText mLanUrl;
@@ -66,21 +64,22 @@ public class ConfigurePrefs extends Activity implements View.OnClickListener {
 
 	String type = null;
 
-	// Controller/Widget ID is used across many methods so make it a class variable.
-	//int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-
-	ContentResolver dbResolverConfigAct;
+	// Widget ID is used across many methods so make it a class variable.
+	int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
+	int mControllerId = -1;
+	
+	ContentResolver dbResolverWConfigAct;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		// Read the Controller/AppWidget Id to configure from the incoming intent
-		//mAppWidgetId = getIntent().getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+		mAppWidgetId = getIntent().getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
 
 		setConfigureResult(Activity.RESULT_CANCELED);
 
-		dbResolverConfigAct = getContentResolver();
+		dbResolverWConfigAct = getContentResolver();
 
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
@@ -99,8 +98,6 @@ public class ConfigurePrefs extends Activity implements View.OnClickListener {
 
 		mSave = (Button)findViewById(R.id.conf_save);
 		mSave.setOnClickListener(this);
-		mDelete = (Button)findViewById(R.id.conf_delete);
-		mDelete.setOnClickListener(this);
 
 		/**
 		 * First lets get a list of all active controllers then present the list to the user in a dialog.
@@ -110,7 +107,7 @@ public class ConfigurePrefs extends Activity implements View.OnClickListener {
  		Cursor cursor = null;
 		try {
 			Uri controllersQueryUri = Controllers.buildQueryControllersUri();
-			cursor = dbResolverConfigAct.query(controllersQueryUri, ControllersQuery.PROJECTION, null, null, null);
+			cursor = dbResolverWConfigAct.query(controllersQueryUri, ControllersQuery.PROJECTION, null, null, null);
 			if (cursor != null && cursor.moveToFirst()) {
    				while (!cursor.isAfterLast()) {
     				String mURL = cursor.getString(ControllersQuery.WAN_URL); 
@@ -129,7 +126,7 @@ public class ConfigurePrefs extends Activity implements View.OnClickListener {
 		final CharSequence[] items = controllerURLs.toArray(new String[controllerURLs.size()]);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Select a new or existing controller:");
+		builder.setTitle("Select a new or existing controller for this widget:");
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_SHORT).show();
@@ -153,6 +150,7 @@ public class ConfigurePrefs extends Activity implements View.OnClickListener {
 						ContentResolver dbResolverDialogAct = getContentResolver();
 						cursor2 = dbResolverDialogAct.query(controllerXUri, ControllersQuery.PROJECTION, null, null, null);
 						if (cursor2 != null && cursor2.moveToFirst()) {
+							mControllerId = cursor2.getInt(ControllersQuery._ID);
 							title = cursor2.getString(ControllersQuery.TITLE);
 							username = cursor2.getString(ControllersQuery.USER);
 							password = cursor2.getString(ControllersQuery.PW);
@@ -185,8 +183,6 @@ public class ConfigurePrefs extends Activity implements View.OnClickListener {
 		});
 		AlertDialog alert = builder.create();
 		alert.show();
-
-
 
 //		if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
 //			finish();
@@ -333,6 +329,7 @@ public class ConfigurePrefs extends Activity implements View.OnClickListener {
 			values.put(AquaNotesDbContract.Controllers.WIFI_SSID, wiFiSid);
 			values.put(AquaNotesDbContract.Controllers.USER, user);
 			values.put(AquaNotesDbContract.Controllers.PW, pword);
+			values.put(AquaNotesDbContract.Controllers.WIDGET, mAppWidgetId);  
 			if(type==null) values.put(AquaNotesDbContract.Controllers.MODEL, "none set");
 			try {
 				Integer updIntervalMinsInt = Integer.parseInt(updIntervalMins.trim());
@@ -388,17 +385,6 @@ public class ConfigurePrefs extends Activity implements View.OnClickListener {
 
 			break;
 		} // end of case save:
-		case R.id.conf_delete: {
-			String url = mWanUrl.getText().toString().toLowerCase();
-			Uri deleteOne = Controllers.buildDeleteControllerUrlUri(url);
-			ContentResolver resolver = getContentResolver();
-			int ct = resolver.delete(deleteOne, null, null);
-			if(ct!=1)
-				Log.e(LOG_TAG, "error deleting controller");
-			setConfigureResult(Activity.RESULT_OK);
-			finish();
-
-		}// end of case delete:
 		} // end of switch
 	}
 

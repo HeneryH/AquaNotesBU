@@ -12,13 +12,15 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
+  
+  title_logo becomes title_neptune_logo
   -->
 
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.heneryh.aquanotes"
-    android:versionCode="7"
-    android:versionName="0.07"
+    android:versionCode="10"
+    android:versionName="0.10"
     android:installLocation="auto">
 
     <uses-sdk
@@ -34,8 +36,8 @@
     
     <application
         android:label="@string/app_name"
-        android:icon="@drawable/ic_launcher"
-        android:logo="@drawable/title_logo"
+        android:icon="@drawable/ic_neptune_launcher"
+        android:logo="@drawable/title_neptune_logo"
         android:theme="@style/Theme.AquaNotes"
         android:hardwareAccelerated="true">
 
@@ -81,10 +83,18 @@
             android:name=".configure.ConfigurePrefs"
             android:windowSoftInputMode="stateHidden" >
             <intent-filter >
+            </intent-filter>
+        </activity>
+        <activity
+            android:label="@string/title_configure"
+            android:launchMode="singleTop"
+            android:name=".configure.WidgetConfigurePrefs"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter >
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
-
+            
             
         <!-- Phone-only activities -->
 
@@ -175,6 +185,45 @@
             android:name=".ui.tablet.NowPlayingMultiPaneActivity"
             android:label="@string/title_now_playing" />
 
+        <!-- Broadcast Receiver that will process AppWidget updates -->
+        <receiver
+            android:label="@string/widget_name_2x1"
+            android:name=".ui.widget.Widget2x1" >
+            <intent-filter >
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_2x1" />
+        </receiver>
+
+        <!-- Broadcast Receiver that will process AppWidget updates -->
+        <receiver
+            android:label="@string/widget_name_2x2"
+            android:name=".ui.widget.Widget2x2" >
+            <intent-filter >
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_2x2" />
+        </receiver>
+
+        <!-- Broadcast Receiver that will process AppWidget updates -->
+        <receiver
+            android:label="@string/widget_name_1x1"
+            android:name=".ui.widget.Widget1x1" >
+            <intent-filter >
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_1x1" />
+        </receiver>
+        
         <!-- Used for install referrer tracking -->
         <receiver
             android:name="com.google.android.apps.analytics.AnalyticsReceiver"

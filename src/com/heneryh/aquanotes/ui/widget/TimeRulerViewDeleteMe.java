@@ -36,7 +36,7 @@ import android.view.View;
  * progression of a single day. Usually shown along with {@link BlockView}
  * instances to give a spatial sense of time.
  */
-public class TimeRulerView extends View {
+public class TimeRulerViewDeleteMe extends View {
 
     private int mHeaderWidth = 70;
     private int mHourHeight = 90;
@@ -48,15 +48,15 @@ public class TimeRulerView extends View {
     private int mStartHour = 0;
     private int mEndHour = 23;
 
-    public TimeRulerView(Context context) {
+    public TimeRulerViewDeleteMe(Context context) {
         this(context, null);
     }
 
-    public TimeRulerView(Context context, AttributeSet attrs) {
+    public TimeRulerViewDeleteMe(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public TimeRulerView(Context context, AttributeSet attrs, int defStyle) {
+    public TimeRulerViewDeleteMe(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TimeRulerView,

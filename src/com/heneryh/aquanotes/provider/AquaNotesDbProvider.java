@@ -80,6 +80,7 @@ public class AquaNotesDbProvider extends ContentProvider {
 	private static final int CONTROLLERS = 901;
 	private static final int CONTROLLERS_ID = 902;
 	private static final int CONTROLLERS_URL = 903;
+	private static final int CONTROLLERS_WID = 922;
 
 	private static final int PROBES = 904;
 	private static final int CONTROLLERS_ID_PROBES = 905;
@@ -153,6 +154,7 @@ public class AquaNotesDbProvider extends ContentProvider {
 //    	private static final int CONTROLLERS = 101;
 //    	private static final int CONTROLLERS_ID = 102;
 //    	private static final int CONTROLLERS_URL = 903;
+//    	private static final int CONTROLLERS_WID = 922;
 //      private static final String PATH_CONTROLLERS = "controllers";
         matcher.addURI(authority, "controllers", CONTROLLERS);
 		// query = return all controllers 
@@ -168,7 +170,14 @@ public class AquaNotesDbProvider extends ContentProvider {
 		// delete = delete the referenced controller, its probes and all probe data for this controller
 		// getType = return type for single item
 
-        matcher.addURI(authority, "controllers/*", CONTROLLERS_URL);
+        matcher.addURI(authority, "controllers/url/*", CONTROLLERS_URL);
+		// query = return just one controller
+		// insert = ?
+		// update = Update this one controller with the values object
+		// delete = delete the referenced controller, its probes and all probe data for this controller
+		// getType = return type for single item
+
+        matcher.addURI(authority, "controllers/widget/#", CONTROLLERS_WID);
 		// query = return just one controller
 		// insert = ?
 		// update = Update this one controller with the values object
@@ -380,6 +389,9 @@ public class AquaNotesDbProvider extends ContentProvider {
         	return Controllers.CONTENT_ITEM_TYPE;
 
         case CONTROLLERS_URL:
+        	return Controllers.CONTENT_ITEM_TYPE;
+
+        case CONTROLLERS_WID:
         	return Controllers.CONTENT_ITEM_TYPE;
 
 //////////////////////////////////////////////
@@ -862,10 +874,16 @@ public class AquaNotesDbProvider extends ContentProvider {
                     .where(BaseColumns._ID + "=?", controllerId);
         }
         case CONTROLLERS_URL: {
-            final String controllerURL = Controllers.getControllerId(uri);
+            final String controllerURL = Controllers.getControllerUrl(uri);
     		/** TODO: I sure hope this is escaped! */
             return builder.table(Tables.CONTROLLERS)
-                    .where(Controllers.WAN_URL + "=?", controllerURL);
+                    .where(Controllers.WAN_URL + "=?", Uri.decode(controllerURL));
+        }
+        case CONTROLLERS_WID: {
+            final String controllerWID = Controllers.getControllerWidget(uri);
+    		/** TODO: I sure hope this is escaped! */
+            return builder.table(Tables.CONTROLLERS)
+                    .where(Controllers.WIDGET + "=?", controllerWID);
         }
         case BLOCKS: {
             return builder.table(Tables.BLOCKS);
@@ -954,10 +972,16 @@ public class AquaNotesDbProvider extends ContentProvider {
                     .where(BaseColumns._ID + "=?", controllerId);
         }
         case CONTROLLERS_URL: {
-            final String controllerURL = Controllers.getControllerId(uri);
+            final String controllerURL = Controllers.getControllerUrl(uri);
     		/** TODO: I sure hope this is escaped! */
             return builder.table(Tables.CONTROLLERS)
                     .where(Controllers.WAN_URL + "=?", Uri.decode(controllerURL));
+        }
+        case CONTROLLERS_WID: {
+            final String controllerWID = Controllers.getControllerWidget(uri);
+    		/** TODO: I sure hope this is escaped! */
+            return builder.table(Tables.CONTROLLERS)
+                    .where(Controllers.WIDGET + "=?", controllerWID);
         }
 
         case CONTROLLERS_ID_PROBES_NAME: {
@@ -965,7 +989,7 @@ public class AquaNotesDbProvider extends ContentProvider {
         	final String probeName = Probes.getProbeName(uri);
         	return builder.table(Tables.PROBES)
         			.where(Probes.CONTROLLER_ID + "=?", controllerId)
-        			.where(Probes.NAME + "=?", probeName);
+        			.where(Probes.NAME + "=?", Uri.decode(probeName));
         }
 
         case CONTROLLERS_ID_OUTLETS_DEVICE_ID: {

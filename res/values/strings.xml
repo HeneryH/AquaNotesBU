@@ -73,7 +73,11 @@
     <string name="empty_search">No search results found.</string>
     <string name="empty_links">No links available.</string>
 
-    <string name="session_summary">Summary</string>
+    <string name="controllers_tabs_probes">Probes</string>
+    <string name="controllers_tabs_outlets">Outlets</string>
+    <string name="controllers_tabs_notes">Notes</string>
+        
+        <string name="session_summary">Summary</string>
     <string name="session_notes">Notes</string>
     <string name="session_links">Links</string>
     <string name="session_requirements">Requirements</string>
@@ -156,6 +160,13 @@
     <string name="conf_controller_update_interval_default">15</string>
     <string name="conf_controller_prune_instr">Days of historic data to keep:</string>
     <string name="conf_controller_prune_default">7</string>
-    <string name="conf_save">Save</string>
+    <string name="conf_save">Save/Add</string>
+    <string name="conf_delete">Delete</string>
+        
+    <string name="widget_name_1x1">Apex Icon</string>
+    <string name="widget_name_2x1">Apex Short</string>
+    <string name="widget_name_2x2">Apex Tall</string>
+    <string name="widget_loading">&quot;Loading\nApex status\u2026&quot;</string>
+        
         
 </resources>

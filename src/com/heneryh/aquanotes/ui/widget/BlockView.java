@@ -32,7 +32,7 @@ import java.util.TimeZone;
 /**
  * Custom view that represents a {@link Blocks#BLOCK_ID} instance, including its
  * title and time span that it occupies. Usually organized automatically by
- * {@link ControllersLayout} to match up against a {@link TimeRulerView} instance.
+ * {@link ControllersLayoutDeleteMe} to match up against a {@link TimeRulerViewDeleteMe} instance.
  */
 public class BlockView extends Button {
     private static final int TIME_STRING_FLAGS = DateUtils.FORMAT_SHOW_DATE

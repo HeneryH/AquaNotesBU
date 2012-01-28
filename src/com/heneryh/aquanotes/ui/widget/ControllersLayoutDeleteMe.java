@@ -26,26 +26,26 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Custom layout that contains and organizes a {@link TimeRulerView} and several
+ * Custom layout that contains and organizes a {@link TimeRulerViewDeleteMe} and several
  * instances of {@link BlockView}. Also positions current "now" divider using
  * {@link R.id#blocks_now} view when applicable.
  */
-public class ControllersLayout extends ViewGroup {
+public class ControllersLayoutDeleteMe extends ViewGroup {
 
 	private int mColumns = 3;
 
-	private TimeRulerView mRulerView;
+	private TimeRulerViewDeleteMe mRulerView;
 //    private View mNowView;
 
-    public ControllersLayout(Context context) {
+    public ControllersLayoutDeleteMe(Context context) {
         this(context, null);
     }
 
-    public ControllersLayout(Context context, AttributeSet attrs) {
+    public ControllersLayoutDeleteMe(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public ControllersLayout(Context context, AttributeSet attrs, int defStyle) {
+    public ControllersLayoutDeleteMe(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         final TypedArray a = context.obtainStyledAttributes(attrs,
@@ -58,7 +58,7 @@ public class ControllersLayout extends ViewGroup {
 
     private void ensureChildren() {
     	
-    	mRulerView = (TimeRulerView) findViewById(R.id.blocks_ruler);
+    	mRulerView = (TimeRulerViewDeleteMe) findViewById(R.id.blocks_ruler);
 
     	if (mRulerView == null) {
             throw new IllegalStateException("Must include a R.id.blocks_ruler view.");
@@ -74,7 +74,7 @@ public class ControllersLayout extends ViewGroup {
 
     /**
      * Remove any {@link BlockView} instances, leaving only
-     * {@link TimeRulerView} remaining.
+     * {@link TimeRulerViewDeleteMe} remaining.
      */
     public void removeAllBlocks() {
         ensureChildren();
@@ -108,7 +108,7 @@ public class ControllersLayout extends ViewGroup {
 
     	ensureChildren();
 
-        final TimeRulerView rulerView = mRulerView;
+        final TimeRulerViewDeleteMe rulerView = mRulerView;
         
         final int headerWidth = rulerView.getHeaderWidth();
         final int columnWidth = (getWidth() - headerWidth) / mColumns;

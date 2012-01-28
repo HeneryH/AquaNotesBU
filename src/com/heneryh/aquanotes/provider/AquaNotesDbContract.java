@@ -82,6 +82,9 @@ public class AquaNotesDbContract {
         
         /** Type describing this block. */
         String MODEL = "model";
+
+        /** Type describing this block. */
+        String WIDGET = "widget";
     }
 
 
@@ -406,6 +409,8 @@ public class AquaNotesDbContract {
     private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     private static final String PATH_CONTROLLERS = "controllers";
+    private static final String PATH_CONTROLLERS_URL = "url";
+    private static final String PATH_CONTROLLERS_WIDGET = "widget";
 
     private static final String PATH_PROBES = "probes";
     private static final String PATH_PROBES_NAME = "probes_nm";
@@ -824,10 +829,19 @@ public class AquaNotesDbContract {
             		.build();
         }
         
-        //          content://org.dvrc.aquanotes/controllers/nnn
-        public static Uri buildQueryControllerXUri(String controllerUrl) {
+        //          content://org.dvrc.aquanotes/controllers/url/nnn
+        public static Uri buildQueryControllerUrlUri(String controllerUrl) {
             return BASE_CONTENT_URI.buildUpon()
-            		.appendPath(PATH_CONTROLLERS).appendPath(Uri.encode(controllerUrl))
+            		.appendPath(PATH_CONTROLLERS)
+            		.appendPath(PATH_CONTROLLERS_URL).appendPath(/*Uri.encode(*/controllerUrl) // appendPath() already encodes
+            		.build();
+        }
+        
+        //          content://org.dvrc.aquanotes/controllers/widget/nnn
+        public static Uri buildQueryControllerWidgetUri(String controllerWid) {
+            return BASE_CONTENT_URI.buildUpon()
+            		.appendPath(PATH_CONTROLLERS)
+            		.appendPath(PATH_CONTROLLERS_WIDGET).appendPath(controllerWid)
             		.build();
         }
         
@@ -835,21 +849,27 @@ public class AquaNotesDbContract {
         	return buildQueryControllerXUri(controllerId); // same as query
         }
 
-        public static Uri buildDeleteControllerXUri(String controllerUrl) {
-        	return buildQueryControllerXUri(Uri.encode(controllerUrl)); // same as query
+        public static Uri buildDeleteControllerUrlUri(String controllerUrl) {
+        	return buildQueryControllerUrlUri(controllerUrl); // same as query
         }
 
         public static Uri buildUpdateControllerXUri(int controllerId) {
         	return buildQueryControllerXUri(controllerId); // same as query
         }
 
-        public static Uri buildUpdateControllerXUri(String controllerUrl) {
-        	return buildQueryControllerXUri(Uri.encode(controllerUrl)); // same as query
+        public static Uri buildUpdateControllerUrlUri(String controllerUrl) {
+        	return buildQueryControllerUrlUri(controllerUrl); // same as query
         }
 
         //          content://org.dvrc.aquanotes/controllers/x
         public static String getControllerId(Uri controllerXUri) {
             return controllerXUri.getPathSegments().get(1);
+        }
+        public static String getControllerWidget(Uri controllerXUri) {
+            return controllerXUri.getPathSegments().get(2);
+        }
+        public static String getControllerUrl(Uri controllerXUri) {
+            return controllerXUri.getPathSegments().get(2);
         }
     }
 
@@ -923,7 +943,7 @@ public class AquaNotesDbContract {
         public static Uri buildQueryProbeXByNameUri(Integer controllerId, String probeName) {
             return BASE_CONTENT_URI.buildUpon()
             		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
-            		.appendPath(PATH_PROBES_NAME).appendPath(Uri.encode(probeName))
+            		.appendPath(PATH_PROBES_NAME).appendPath(/*Uri.encode(*/probeName)
             		.build();
         }
 
@@ -931,7 +951,7 @@ public class AquaNotesDbContract {
         //          content://org.dvrc.aquanotes/controllers/x/probes_nm/abc
         public static Uri buildQueryProbeByNameUri(Uri controllerUri, String probeName) {
             return controllerUri.buildUpon()
-             		.appendPath(PATH_PROBES_NAME).appendPath(Uri.encode(probeName))
+             		.appendPath(PATH_PROBES_NAME).appendPath(/*Uri.encode(*/probeName)
             		.build();
         }
 
@@ -1014,7 +1034,7 @@ public class AquaNotesDbContract {
         public static Uri buildQueryOutletXByDeviceIdUri(Integer controllerId, String outletDId) {
             return BASE_CONTENT_URI.buildUpon()
             		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
-            		.appendPath(PATH_OUTLETS_DEVICE_ID).appendPath(Uri.encode(outletDId))
+            		.appendPath(PATH_OUTLETS_DEVICE_ID).appendPath(outletDId)
             		.build();
         }
 
@@ -1022,7 +1042,7 @@ public class AquaNotesDbContract {
         //          content://org.dvrc.aquanotes/controllers/x/outlets_did/abc
         public static Uri buildQueryOutletXByDeviceIdUri(Uri controllerUri, String outletDId) {
             return controllerUri.buildUpon()
-            		.appendPath(PATH_OUTLETS_DEVICE_ID).appendPath(Uri.encode(outletDId))
+            		.appendPath(PATH_OUTLETS_DEVICE_ID).appendPath(outletDId)
             		.build();
         }
 
@@ -1031,7 +1051,7 @@ public class AquaNotesDbContract {
         public static Uri buildQueryOutletXByResourceIdUri(Integer controllerId, String outletRId) {
             return BASE_CONTENT_URI.buildUpon()
             		.appendPath(PATH_CONTROLLERS).appendPath(controllerId.toString())
-            		.appendPath(PATH_OUTLETS_RESOURCE_ID).appendPath(Uri.encode(outletRId))
+            		.appendPath(PATH_OUTLETS_RESOURCE_ID).appendPath(outletRId)
             		.build();
         }
 

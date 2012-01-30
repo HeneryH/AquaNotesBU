@@ -18,6 +18,7 @@ package com.heneryh.aquanotes.ui;
 
 import com.heneryh.aquanotes.R;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.Controllers;
 import com.heneryh.aquanotes.util.ActivityHelper;
 import com.heneryh.aquanotes.util.AnalyticsUtils;
 import com.heneryh.aquanotes.util.NotifyingAsyncQueryHandler;
@@ -30,9 +31,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.BaseColumns;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.text.Spannable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
@@ -56,15 +59,47 @@ public class DbMaintControllersFragment extends ListFragment implements
     private CursorAdapter mAdapter;
     private int mCheckedPosition = -1;
     private boolean mHasSetEmptyText = false;
+    
+    int mNum;
 
     private NotifyingAsyncQueryHandler mHandler;
+
+    /**
+     * Create a new instance of CountingFragment, providing "num"
+     * as an argument.
+     */
+    static DbMaintControllersFragment newInstance(int num) {
+    	DbMaintControllersFragment f = new DbMaintControllersFragment();
+
+        // Supply num input as an argument.
+        Bundle args = new Bundle();
+        args.putInt("num", num);
+        f.setArguments(args);
+
+        return f;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mNum = getArguments() != null ? getArguments().getInt("num") : 1;
         mHandler = new NotifyingAsyncQueryHandler(getActivity().getContentResolver(), this);
         reloadFromArguments(getArguments());
     }
+    
+//    /**
+//     * The Fragment's UI is xxx.
+//     */
+//    @Override
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//            Bundle savedInstanceState) {
+//        View v = inflater.inflate(R.id.fragment_controllers, container, false);
+//        View tv = v.findViewById(R.id.text);
+//        ((TextView)tv).setText("Fragment #" + mNum);
+//        tv.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.gallery_thumb));
+//        return v;
+//    }
+
 
     public void reloadFromArguments(Bundle arguments) {
         // Teardown from previous arguments
@@ -81,9 +116,11 @@ public class DbMaintControllersFragment extends ListFragment implements
 
         // Load new arguments
         final Intent intent = BaseActivity.fragmentArgumentsToIntent(arguments);
-        final Uri controllersUri = intent.getData();
+        //final Uri controllersUri = intent.getData();
         final int controllerQueryToken;
 
+        final Uri controllersUri = Controllers.CONTENT_URI;  // not gettting from intent
+        
         if (controllersUri == null) {
             return;
         }
@@ -142,7 +179,7 @@ public class DbMaintControllersFragment extends ListFragment implements
         if (token == ControllersQuery._TOKEN || token == SearchQuery._TOKEN) {
             onControllersOrSearchQueryComplete(cursor);
         } else if (token == TracksQuery._TOKEN) {
-            onTrackQueryComplete(cursor);
+            //onTrackQueryComplete(cursor);
         } else {
             cursor.close();
         }
@@ -168,28 +205,28 @@ public class DbMaintControllersFragment extends ListFragment implements
         }
     }
 
-    /**
-     * Handle {@link TracksQuery} {@link Cursor}.
-     */
-    private void onTrackQueryComplete(Cursor cursor) {
-        try {
-            if (!cursor.moveToFirst()) {
-                return;
-            }
-
-            // Use found track to build title-bar
-            ActivityHelper activityHelper = ((BaseActivity) getActivity()).getActivityHelper();
-            String trackName = cursor.getString(TracksQuery.TRACK_NAME);
-            activityHelper.setActionBarTitle(trackName);
-            activityHelper.setActionBarColor(cursor.getInt(TracksQuery.TRACK_COLOR));
-
-            AnalyticsUtils.getInstance(getActivity()).trackPageView("/Sandbox/Track/" + trackName);
-
-        } finally {
-            cursor.close();
-        }
-    }
-
+//    /**
+//     * Handle {@link TracksQuery} {@link Cursor}.
+//     */
+//    private void onTrackQueryComplete(Cursor cursor) {
+//        try {
+//            if (!cursor.moveToFirst()) {
+//                return;
+//            }
+//
+//            // Use found track to build title-bar
+//            ActivityHelper activityHelper = ((BaseActivity) getActivity()).getActivityHelper();
+//            String trackName = cursor.getString(TracksQuery.TRACK_NAME);
+//            activityHelper.setActionBarTitle(trackName);
+//            activityHelper.setActionBarColor(cursor.getInt(TracksQuery.TRACK_COLOR));
+//
+//            AnalyticsUtils.getInstance(getActivity()).trackPageView("/Sandbox/Track/" + trackName);
+//
+//        } finally {
+//            cursor.close();
+//        }
+//    }
+//
     @Override
     public void onResume() {
         super.onResume();
@@ -215,15 +252,15 @@ public class DbMaintControllersFragment extends ListFragment implements
     /** {@inheritDoc} */
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-//        // Launch viewer for specific vendor.
-//        final Cursor cursor = (Cursor)mAdapter.getItem(position);
-//        final String vendorId = cursor.getString(VendorsQuery.VENDOR_ID);
-//        final Uri vendorUri = AquaNotesDbContract.Vendors.buildVendorUri(vendorId);
-//        ((BaseActivity) getActivity()).openActivityOrFragment(new Intent(Intent.ACTION_VIEW,
-//                vendorUri));
-//
-//        getListView().setItemChecked(position, true);
-//        mCheckedPosition = position;
+        // Launch viewer for specific vendor.
+        final Cursor cursor = (Cursor)mAdapter.getItem(position);
+        final String vendorId = cursor.getString(VendorsQuery.VENDOR_ID);
+        final Uri vendorUri = AquaNotesDbContract.Vendors.buildVendorUri(vendorId);
+        ((BaseActivity) getActivity()).openActivityOrFragment(new Intent(Intent.ACTION_VIEW,
+                vendorUri));
+
+        getListView().setItemChecked(position, true);
+        mCheckedPosition = position;
     }
 
     public void clearCheckedPosition() {

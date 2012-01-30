@@ -18,6 +18,8 @@ package com.heneryh.aquanotes.ui;
 
 import com.heneryh.aquanotes.R;
 import com.heneryh.aquanotes.provider.AquaNotesDbContract;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.Controllers;
+import com.heneryh.aquanotes.provider.AquaNotesDbContract.Probes;
 import com.heneryh.aquanotes.util.ActivityHelper;
 import com.heneryh.aquanotes.util.AnalyticsUtils;
 import com.heneryh.aquanotes.util.NotifyingAsyncQueryHandler;
@@ -35,6 +37,7 @@ import android.provider.BaseColumns;
 import android.support.v4.app.ListFragment;
 import android.text.Spannable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
@@ -49,6 +52,8 @@ import static com.heneryh.aquanotes.util.UIUtils.formatSessionSubtitle;
  */
 public class DbMaintProbesFragment extends ListFragment implements
         NotifyingAsyncQueryHandler.AsyncQueryListener {
+	
+    int mNum;
 
     public static final String EXTRA_SCHEDULE_TIME_STRING =
             "com.google.android.iosched.extra.SCHEDULE_TIME_STRING";
@@ -63,13 +68,42 @@ public class DbMaintProbesFragment extends ListFragment implements
 
     private NotifyingAsyncQueryHandler mHandler;
     private Handler mMessageQueueHandler = new Handler();
+	
+    /**
+     * Create a new instance of CountingFragment, providing "num"
+     * as an argument.
+     */
+    static DbMaintProbesFragment newInstance(int num) {
+    	DbMaintProbesFragment f = new DbMaintProbesFragment();
+
+        // Supply num input as an argument.
+        Bundle args = new Bundle();
+        args.putInt("num", num);
+        f.setArguments(args);
+
+        return f;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mNum = getArguments() != null ? getArguments().getInt("num") : 1;
         mHandler = new NotifyingAsyncQueryHandler(getActivity().getContentResolver(), this);
         reloadFromArguments(getArguments());
     }
+
+//    /**
+//     * The Fragment's UI is xxx.
+//     */
+//    @Override
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//            Bundle savedInstanceState) {
+//        View v = inflater.inflate(R.id.fragment_probes, container, false);
+//        View tv = v.findViewById(R.id.text);
+//        ((TextView)tv).setText("Fragment #" + mNum);
+//        tv.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.gallery_thumb));
+//        return v;
+//    }
 
     public void reloadFromArguments(Bundle arguments) {
         // Teardown from previous arguments
@@ -87,8 +121,10 @@ public class DbMaintProbesFragment extends ListFragment implements
 
         // Load new arguments
         final Intent intent = BaseActivity.fragmentArgumentsToIntent(arguments);
-        final Uri probesUri = intent.getData();
+        //final Uri probesUri = intent.getData();
         final int probesQueryToken;
+
+        final Uri probesUri = Probes.CONTENT_URI;  // not gettting from intent
 
         if (probesUri == null) {
             return;
@@ -220,18 +256,18 @@ public class DbMaintProbesFragment extends ListFragment implements
     /** {@inheritDoc} */
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-//        // Launch viewer for specific session, passing along any track knowledge
-//        // that should influence the title-bar.
-//        final Cursor cursor = (Cursor)mAdapter.getItem(position);
-//        final String sessionId = cursor.getString(cursor.getColumnIndex(
-//                AquaNotesDbContract.Sessions.SESSION_ID));
-//        final Uri sessionUri = AquaNotesDbContract.Sessions.buildSessionUri(sessionId);
-//        final Intent intent = new Intent(Intent.ACTION_VIEW, sessionUri);
-//        intent.putExtra(SessionDetailFragment.EXTRA_TRACK, mTrackUri);
-//        ((BaseActivity) getActivity()).openActivityOrFragment(intent);
-//
-//        getListView().setItemChecked(position, true);
-//        mCheckedPosition = position;
+        // Launch viewer for specific session, passing along any track knowledge
+        // that should influence the title-bar.
+        final Cursor cursor = (Cursor)mAdapter.getItem(position);
+        final String sessionId = cursor.getString(cursor.getColumnIndex(
+                AquaNotesDbContract.Sessions.SESSION_ID));
+        final Uri sessionUri = AquaNotesDbContract.Sessions.buildSessionUri(sessionId);
+        final Intent intent = new Intent(Intent.ACTION_VIEW, sessionUri);
+        intent.putExtra(SessionDetailFragment.EXTRA_TRACK, mTrackUri);
+        ((BaseActivity) getActivity()).openActivityOrFragment(intent);
+
+        getListView().setItemChecked(position, true);
+        mCheckedPosition = position;
     }
 
     public void clearCheckedPosition() {

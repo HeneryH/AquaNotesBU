@@ -19,6 +19,33 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
     <include layout="@layout/actionbar"/>
-    <include layout="@layout/tabs_container"/>
+    <FrameLayout android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/schedule_header_padding">
+        <ImageView android:id="@+id/indicator_left"
+            android:src="@drawable/schedule_indicator_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:clickable="true"
+            android:focusable="true" />
+        <TextView android:id="@+id/controller_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textStyle="bold" />
+        <ImageView android:id="@+id/indicator_right"
+            android:src="@drawable/schedule_indicator_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:clickable="true"
+            android:focusable="true" />
+    </FrameLayout>
 
+    <view class="com.heneryh.aquanotes.ui.widget.Workspace"
+        android:id="@+id/workspace"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+    
 </LinearLayout>

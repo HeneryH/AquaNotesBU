@@ -97,7 +97,8 @@
 
     <string name="db_maint_controllers">Controllers</string>
     <string name="db_maint_probes">Probes</string>
-    <string name="db_maint_data">Data</string>
+    <string name="db_maint_outlets">Outlets</string>
+    <string name="db_maint_notes">Notes</string>
         
     <string name="search_label">Google I/O</string>
     <string name="search_hint">Session keywords</string>

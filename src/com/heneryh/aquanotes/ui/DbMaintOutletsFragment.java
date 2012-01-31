@@ -44,12 +44,10 @@ import android.widget.TextView;
 
 import static com.heneryh.aquanotes.util.UIUtils.buildStyledSnippet;
 
-
-// Vendors --> Controllers
 /**
  * A {@link ListFragment} showing a list of sandbox comapnies.
  */
-public class DbMaintControllersFragment extends ListFragment implements
+public class DbMaintOutletsFragment extends ListFragment implements
         NotifyingAsyncQueryHandler.AsyncQueryListener {
 
     private static final String STATE_CHECKED_POSITION = "checkedPosition";
@@ -68,8 +66,8 @@ public class DbMaintControllersFragment extends ListFragment implements
      * Create a new instance of CountingFragment, providing "num"
      * as an argument.
      */
-    static DbMaintControllersFragment newInstance(int num) {
-    	DbMaintControllersFragment f = new DbMaintControllersFragment();
+    static DbMaintOutletsFragment newInstance(int num) {
+    	DbMaintOutletsFragment f = new DbMaintOutletsFragment();
 
         // Supply num input as an argument.
         Bundle args = new Bundle();
@@ -132,7 +130,7 @@ public class DbMaintControllersFragment extends ListFragment implements
             controllerQueryToken = ControllersQuery._TOKEN;
 
         } else {
-            Log.d("DbMaintControllersFragment/reloadFromArguments", "A search URL definitely gets passed in.");
+            Log.d("DbMaintOutletsFragment/reloadFromArguments", "A search URL definitely gets passed in.");
             mAdapter = new SearchAdapter(getActivity());
             projection = SearchQuery.PROJECTION;
             controllerQueryToken = SearchQuery._TOKEN;
